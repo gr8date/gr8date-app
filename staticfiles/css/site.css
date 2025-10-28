@@ -1,0 +1,36 @@
+:root { --max: 900px; --fg: #1a1a1a; --muted:#666; --brand:#ea3a6d; }
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.6 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--fg)}
+a{color:#0b57d0;text-decoration:none} a:hover{text-decoration:underline}
+.container{max-width:var(--max);margin:2rem auto;padding:0 1rem}
+h1{font-size:2rem;margin:0 0 1rem}
+h2{font-size:1.25rem;margin:1rem 0 .5rem}
+.card{padding:1rem;border:1px solid #eee;border-radius:12px;margin:1rem 0;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.list{list-style:none;padding:0;margin:0}
+.list li{margin:1.25rem 0}
+.meta{color:var(--muted);font-size:.9rem}
+.post-hero{max-width:100%;height:auto;border-radius:10px;display:block;margin:.5rem 0 1rem}
+.back{display:inline-block;margin:1rem 0}
+.btn{display:inline-block;background:var(--brand);color:#fff;padding:.6rem 1rem;border-radius:999px}
+
+/* === GR8DATE unified header === */
+.gd-header{border-bottom:1px solid #e9edf2;background:#fff}
+.gd-wrap{max-width:1100px;margin:0 auto;padding:.6rem 1rem;display:flex;align-items:center;gap:1rem}
+.gd-brand{display:inline-flex;align-items:center;text-decoration:none}
+/* canonical logo size */
+.logo-img{height:32px;width:auto;display:inline-block;vertical-align:middle;max-width:none}
+.gd-nav{margin-left:auto;display:flex;align-items:center;gap:1rem}
+.gd-login{color:#0b57d0;text-decoration:none}
+.gd-cta{display:inline-block;background:#ea3a6d;color:#fff;text-decoration:none;border-radius:999px;padding:.45rem .9rem;font-weight:600}
+@media (max-width:640px){.gd-cta{padding:.4rem .75rem}}
+
+
+/* prevent accidental duplicate date text */
+.blog-meta::before,.blog-meta::after{content:none}
+
+/* kill duplicate date decorations */
+.blog-meta::before,.blog-meta::after,.blog-meta *::before,.blog-meta *::after{content:none!important}
+
+/* Stop duplicate date decorations */
+.blog-date::before,.blog-date::after,.blog-date *::before,.blog-date *::after{content:none!important}
+.blog-meta::before,.blog-meta::after,.meta::before,.meta::after{content:none!important}

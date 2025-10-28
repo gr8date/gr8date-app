@@ -1,0 +1,65 @@
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.approval-pending {
+    animation: blink 2s infinite;
+}
+
+.alert.warning {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-left: 4px solid #ffc107;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.alert.success {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-left: 4px solid #28a745;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.alert.info {
+    background: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    border-left: 4px solid #17a2b8;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.pending-alert {
+    background: #dc3545;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    animation: blink 1.5s infinite;
+    margin-left: 20px;
+}
+
+.activity-summary {
+    max-height: 200px;
+    overflow-y: auto;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+    border: 1px solid #dee2e6;
+}
