@@ -5,21 +5,74 @@ from django.views.generic import TemplateView, RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 
+# ADD THIS IMPORT - it should NOT cause circular imports now
+from pages import views
+
+from django.contrib.sitemaps.views import sitemap
+from pages.sitemaps import BlogSitemap, StaticViewSitemap
+
+sitemaps = {
+    'static': StaticViewSitemap,
+    'blog': BlogSitemap,
+}
+
 urlpatterns = [
     # Home
     path("", TemplateView.as_view(template_name="pages/index.html"), name="home"),
     
-    # Admin
+    # ✅ REDIRECT: Allauth signup to styled join page
+    path("accounts/signup/", RedirectView.as_view(url='/join/', permanent=False)),
+    
+    # ✅ NEW REDIRECT: Allauth password reset to styled password reset page
+    path("accounts/password/reset/", RedirectView.as_view(url='/password-reset/', permanent=False)),
+    
+    # ========================
+    # CUSTOM ADMIN URLS - MOVED BACK HERE (ABOVE STANDARD ADMIN)
+    # ========================
+    path("admin/approvals/", views.admin_profile_approvals, name="admin_profile_approvals"),
+    path("admin/approve-profile/<int:profile_id>/", views.admin_approve_profile, name="admin_approve_profile"),
+    path("admin/reject-profile/<int:profile_id>/", views.admin_reject_profile, name="admin_reject_profile"),
+    path("admin/new-profiles/", views.admin_new_profile, name="admin_new_profiles"),
+    path("admin/new-signups/", views.admin_new_signups, name="admin_new_signups"),
+    path("admin/send-message/<int:profile_id>/", views.admin_send_message, name="admin_send_message"),
+    # Add any other admin URLs you need here
+    
+    # ========================
+    # STANDARD DJANGO ADMIN
+    # ========================
     path("admin/", admin.site.urls),
     
     # Redirect old /login/ to new /accounts/login/
     path('login/', RedirectView.as_view(url='/accounts/login/', permanent=False)),
     
     # Allauth URLs
-     path("accounts/", include("allauth.urls")),
+    path("accounts/", include("allauth.urls")),
     
-    # Your pages
+    # Your pages (general URLs) - THIS SHOULD HANDLE ALL NON-ADMIN PAGES
     path("", include("pages.urls")),
+    
+    # Sitemap
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    
+    # Robots.txt
+    path(
+        "robots.txt",
+        TemplateView.as_view(
+            template_name="robots.txt",
+            content_type="text/plain"
+        ),
+        name="robots.txt"
+    ),
+    
+    # Google Search Console Verification
+    path(
+        "google-site-verification.html",
+        TemplateView.as_view(
+            template_name="google-site-verification.html",
+            content_type="text/html"
+        ),
+        name="google_verification"
+    ),
 ]
 
 # Static files for development

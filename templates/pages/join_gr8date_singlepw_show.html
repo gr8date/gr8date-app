@@ -59,6 +59,41 @@
     .alt a{color:#111}
     /* messages */
     .flash {margin:0 0 12px;padding:10px 12px;border-radius:12px;background:#fff3f6;border:1px solid #ffd4e2;color:#7a102e;font-weight:600}
+    .flash.success {background:#f0f9ff;border:1px solid #bae6fd;color:#0369a1}
+    
+    /* Email warning styles */
+    .email-warning {
+      margin: 20px 0;
+      padding: 16px;
+      background: #e7f3ff;
+      border: 2px solid #007bff;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+    .email-warning-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .email-warning-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .email-warning-text strong {
+      color: #0056b3;
+    }
+    .email-warning-text p {
+      margin: 8px 0 0 0;
+      color: #004085;
+    }
+    .email-warning-text ul {
+      margin: 8px 0 0 0;
+      padding-left: 20px;
+      color: #004085;
+    }
+    .email-warning-text li {
+      margin-bottom: 4px;
+    }
   </style>
 <style id="gd-header-override">
   .gd-header{border-bottom:1px solid #e9edf2;background:#fff}
@@ -76,7 +111,7 @@
 <header class="gd-header">
   <div class="gd-wrap">
     <a class="gd-brand" href="/">
-      <img alt="GR8Date Logo" class="logo-img" src="/static/images/gr8date-logo-desktop.59efa8369812.svg"/>
+      <img alt="GR8DATE Logo" class="logo-img" src="/static/images/gr8date-logo-desktop.59efa8369812.svg"/>
     </a>
     <nav class="gd-nav">
       <a class="gd-login" href="/login/">Login</a>
@@ -90,11 +125,34 @@
     <h1>Join GR8DATE</h1>
     <p class="sub">Create your free account in seconds.</p>
 
+    <!-- EMAIL WARNING - ADDED HERE -->
+    <div class="email-warning">
+      <div class="email-warning-content">
+        <span class="email-warning-icon">📧</span>
+        <div class="email-warning-text">
+          <strong>Important Email Notice</strong>
+          <p>After signing up, <strong>check your spam or junk folder</strong> for our welcome email. Some email providers may filter our messages. To ensure delivery:</p>
+          <ul>
+            <li>Add <strong>hello@gr8date.com.au</strong> to your contacts</li>
+            <li>Mark our email as "Not Spam" if it's filtered</li>
+            <li>Check spam folder if you don't see the email within 2 minutes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     {% if messages %}
-      {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
+      {% for m in messages %}
+        <div class="flash {% if m.tags == 'success' %}success{% endif %}">
+          {{ m }}
+          {% if m.tags == 'success' %}
+            <br><small>🎉 Account created! Check your email for welcome message.</small>
+          {% endif %}
+        </div>
+      {% endfor %}
     {% endif %}
 
-    <form method="post" action="{% url 'join' %}">
+    <form method="post" action="{% url 'join' %}" id="signupForm">
       {% csrf_token %}
       
       <label for="email">Email address</label>
@@ -102,17 +160,21 @@
 
       <label for="pass">Password</label>
       <div class="input-wrap">
-        <input id="pass" name="password" type="password" placeholder="••••••••••" autocomplete="new-password" required/>
+        <input id="pass" name="password" type="password" placeholder="••••••••••" autocomplete="new-password" required minlength="8"/>
         <button type="button" id="togglePass" class="toggle-btn" aria-pressed="false" aria-controls="pass" aria-label="Show password">Show</button>
       </div>
-      <p class="hint">Use at least <strong>10 characters</strong> and include two of: lowercase, uppercase, number, symbol.</p>
+      <p class="hint">Password must be at least <strong>8 characters</strong> with letters and numbers.</p>
 
       <label class="checkbox">
         <input name="accept_terms" type="checkbox" required/>
         <span>I confirm I am at least 18 years old and agree to the <a href="/terms/">Terms &amp; Conditions</a> and <a href="/privacy/">Privacy Policy</a>.</span>
       </label>
 
-      <div class="cta"><button type="submit">Sign up</button></div>
+      <div class="cta">
+        <button type="submit" id="submitBtn">
+          Create Account
+        </button>
+      </div>
     </form>
 
     <p class="alt">Already have an account? <a href="/login/">Log in</a></p>
@@ -137,10 +199,9 @@
       setState(!showing);
     });
 
-    // Optional: hold-to-reveal on desktop
-    btn.addEventListener('mousedown', () => setState(true));
-    btn.addEventListener('mouseup', () => setState(false));
-    btn.addEventListener('mouseleave', () => setState(false));
+    // Remove the hold-to-reveal functionality that was causing issues
+    // Only use click to toggle
+    
   })();
 </script>
 

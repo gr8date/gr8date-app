@@ -3,7 +3,35 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>GR8Date – Free Dating Website</title>
+  
+  <!-- Optimized Meta Tags -->
+  <title>GR8Date - Australia's Only 100% Free Dating Website | No Hidden Costs</title>
+  <meta name="description" content="Join GR8Date - Australia's completely FREE dating platform. No subscriptions, no hidden fees. Connect with genuine singles in your area. Start dating for free today!">
+  <meta name="keywords" content="free dating Australia, online dating, singles, relationship, dating app, free dating site, Australian dating">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="GR8Date - Australia's Only 100% Free Dating Website">
+  <meta property="og:description" content="Join Australia's completely FREE dating platform. No subscriptions, no hidden fees. Connect with genuine singles today!">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+
+  <!-- Structured Data for Homepage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "DatingService",
+    "name": "GR8Date",
+    "description": "Australia's only completely free dating website",
+    "url": "{{ request.build_absolute_uri }}",
+    "fees": "Free",
+    "areaServed": "Australia",
+    "offers": {
+      "@type": "Offer",
+      "description": "Completely free dating service"
+    }
+  }
+  </script>
+
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
   <style>
     body { margin:0; padding:0; font-family: Arial, sans-serif; background:#fff; color:#333; }
@@ -119,7 +147,7 @@
 <header class="site-header">
   <div class="container nav-container">
     <a href="/">
-      <img alt="GR8Date Logo" class="logo-img" src="/static/images/gr8date-logo-desktop.59efa8369812.svg"/>
+      <img alt="GR8Date Logo - Free Australian Dating Platform" class="logo-img" src="/static/images/gr8date-logo-desktop.59efa8369812.svg"/>
     </a>
     <nav class="site-nav">
       <a href="/login/">Login</a>
@@ -138,7 +166,7 @@
       </div>
     </div>
     <div class="hero-image-column">
-      <img alt="Dating App on Phone" class="hero-image" src="/static/images/herogirl.webp"/>
+      <img alt="Happy couple using GR8Date dating app on smartphone" class="hero-image" src="/static/images/herogirl.webp"/>
     </div>
   </div>
 </section>
@@ -149,19 +177,19 @@
     <p class="intro-text">At GR8Date, we're dedicated to helping you connect with people who truly align with your values, interests, and goals. With our advanced matching algorithms, secure platform, and personalized approach, we make it easier than ever to meet someone who could be 'the one.' Join GR8Date today for free and start your journey toward meaningful, lasting connections.</p>
     <div class="grid">
       <div class="feature-item">
-        <div class="icon-container"><img alt="Free Icon" src="/static/images/4-1free-icon.webp"/></div>
+        <div class="icon-container"><img alt="100% Free Dating Platform Icon" src="/static/images/4-1free-icon.webp"/></div>
         <h3>The only dating platform that is totally free.</h3>
       </div>
       <div class="feature-item">
-        <div class="icon-container"><img alt="No Surprises Icon" src="/static/images/4-2nosuprises_icon.svg"/></div>
+        <div class="icon-container"><img alt="No Surprises Dating Experience Icon" src="/static/images/4-2nosuprises_icon.svg"/></div>
         <h3>Avoid wasting time. No surprises or disappointments.</h3>
       </div>
       <div class="feature-item">
-        <div class="icon-container"><img alt="Female Icon" src="/static/images/4-3female_icon.svg"/></div>
+        <div class="icon-container"><img alt="Compatible Matches Icon" src="/static/images/4-3female_icon.svg"/></div>
         <h3>Engage with people that match your expectations.</h3>
       </div>
       <div class="feature-item">
-        <div class="icon-container"><img alt="Arrow Icon" src="/static/images/4-4arrow_icon.svg"/></div>
+        <div class="icon-container"><img alt="Clear Profile Expectations Icon" src="/static/images/4-4arrow_icon.svg"/></div>
         <h3>Browse profiles that clearly define expectations.</h3>
       </div>
     </div>
@@ -170,9 +198,9 @@
 
 <section class="image-gallery-section">
   <div class="image-grid-no-gap">
-    <img alt="man and woman smiling" src="/static/images/image1.webp"/>
-    <img alt="man and woman walking" src="/static/images/image2.webp"/>
-    <img alt="man and woman holding hands" src="/static/images/image3.webp"/>
+    <img alt="Happy Australian couple smiling and enjoying time together" src="/static/images/image1.webp"/>
+    <img alt="Couple walking together through Australian landscape" src="/static/images/image2.webp"/>
+    <img alt="Romantic couple holding hands and connecting" src="/static/images/image3.webp"/>
   </div>
 </section>
 
@@ -188,8 +216,8 @@
     <p class="title-text">Your GR8Date is Waiting</p>
     <p class="sub-title-text">Join now and meet them for free</p>
     <div class="image-row">
-      <div class="image-container"><img alt="First couple image" src="/static/images/image4.webp"/></div>
-      <div class="image-container"><img alt="Second couple image" src="/static/images/image5.webp"/></div>
+      <div class="image-container"><img alt="Happy couple enjoying their first date through GR8Date" src="/static/images/image4.webp"/></div>
+      <div class="image-container"><img alt="Successful match couple smiling and having fun" src="/static/images/image5.webp"/></div>
     </div>
     <div class="cta-button-container">
       <a class="btn-cta" href="/join/">Join Free Now</a>
@@ -198,7 +226,7 @@
 </section>
 
 <section class="full-width-image-section">
-  <img alt="man and woman showing the ok sign with their hands" class="responsive-center-image" src="/static/images/image6.webp"/>
+  <img alt="Couple showing OK sign - successful GR8Date match" class="responsive-center-image" src="/static/images/image6.webp"/>
 </section>
 
 <section class="content-section final-cta-section">

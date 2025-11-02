@@ -1,3 +1,5 @@
+[file name]: gr8date_preview_gate.html
+[file content begin]
 {% load static %}
 <!doctype html>
 <html lang="en">
@@ -57,7 +59,7 @@
       <img alt="GR8DATE" class="logo-img" src="{% static 'images/gr8date-logo-desktop.59efa8369812.svg' %}">
     </a>
     <nav class="gd-nav">
-      <a class="pill pill--fill" href="{% url 'home' %}">Logout</a>
+      <a class="pill pill--fill" href="{% url 'account_logout' %}">Logout</a>
     </nav>
   </div>
 </header>
@@ -69,10 +71,10 @@
       <p class="lead">Explore how GR8DATE works, view sample profiles, and understand messaging & safety tools — before you finish your profile.</p>
 
       <div class="cta">
-        <a class="pill pill--fill" href="{% url 'profile_create' %}">Finish My Profile</a>
-    <a class="pill pill--ghost" href="{% url 'dashboard' %}" style="margin-left:12px;">Preview the Dashboard</a>
+        <a class="pill pill--fill" href="{% url 'profile_create' %}">Create My Profile</a>
+        <a class="pill pill--ghost" href="{% url 'dashboard' %}">Preview the Dashboard</a>
       </div>
-      <p class="note">You’ll get more access once you complete your profile. Finishing takes ~2 minutes.</p>
+      <p class="note">You'll get full access once you complete your profile. Finishing takes ~2 minutes.</p>
     </section>
 
     <aside class="mock">
@@ -94,9 +96,7 @@
       <p>Report, block, and filter. Our moderation keeps the community real.</p>
     </div>
   </section>
-    <div class="cta" style="margin:16px 0;">
-    </div>
 </main>
 </body>
 </html>
-
+[file content end]

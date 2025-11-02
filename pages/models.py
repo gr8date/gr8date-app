@@ -19,39 +19,32 @@ from django.contrib.contenttypes.models import ContentType
 class Blog(models.Model):
     class Status(models.TextChoices):
         DRAFT = "draft", "Draft"
-        SCHEDULED = "scheduled", "Scheduled"
         PUBLISHED = "published", "Published"
 
     title = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=220, unique=True, blank=True)
-    summary = models.TextField(blank=True)
+    slug = models.SlugField(unique=True)
     content = models.TextField()
+    summary = models.TextField(blank=True)
+    excerpt = models.TextField(blank=True)
     hero_image = models.ImageField(upload_to="blog/", blank=True, null=True)
-
-    status = models.CharField(max_length=10, choices=Status.choices, default=Status.DRAFT)
-    published_at = models.DateTimeField(blank=True, null=True, help_text="When this post should go live.")
+    
+    # ADD THIS FIELD:
+    position = models.IntegerField(default=0, help_text="Higher numbers appear first")
+    
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
+    published_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ["-published_at", "-created_at"]
+        ordering = ["-position", "-published_at"]  # This needs the position field
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.title
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)[:220]
-        super().save(*args, **kwargs)
-
     @property
-    def is_published(self) -> bool:
-        if self.status != self.Status.PUBLISHED:
-            return False
-        if self.published_at is None:
-            return False
-        return self.published_at <= timezone.now()
-
+    def is_published(self):
+        return self.status == self.Status.PUBLISHED and self.published_at is not None
 
 # ---------------------------------------------------------------------
 # Profiles
@@ -76,6 +69,32 @@ class Profile(models.Model):
     last_submitted_for_approval = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # ✅ FIXED: Email Verification Fields (consistent naming)
+    email_verified = models.BooleanField(default=False)
+    email_verification_token = models.CharField(max_length=100, blank=True)  # RENAMED
+    email_verification_sent_at = models.DateTimeField(null=True, blank=True)  # RENAMED
+
+    # ✅ ADDED: Approval Status Field
+    approval_status = models.CharField(
+        max_length=20,
+        choices=[
+            ('pending_review', 'Pending Review'),
+            ('approved', 'Approved'),
+            ('rejected', 'Rejected')
+        ],
+        default='pending_review'
+    )
+    
+    # ✅ ADDED: Admin Approval Tracking
+    approved_at = models.DateTimeField(null=True, blank=True)
+    approved_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='approved_profiles'
+    )
 
     # Basics
     date_of_birth = models.DateField(blank=True, null=True)
@@ -390,6 +409,26 @@ class PrivateAccessRequest(models.Model):
 
     def is_active(self):
         return self.status == self.Status.APPROVED
+
+
+# ---------------------------------------------------------------------
+# NEW: Admin Messages Model
+# ---------------------------------------------------------------------
+
+class AdminMessage(models.Model):
+    """Messages from admins to users about profile changes needed"""
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="admin_messages")
+    admin_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sent_admin_messages")
+    message = models.TextField(help_text="What needs to be changed in the profile")
+    is_resolved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    resolved_at = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Admin message to {self.profile.user.username}"
 
 
 # ---------------------------------------------------------------------

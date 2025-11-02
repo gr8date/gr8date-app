@@ -13,17 +13,42 @@ import re
 from .models import ProfileImage
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction
+import secrets
+from pages.utils.emails import send_password_reset_email
+
+# ✅ PASSWORD VALIDATION IMPORTS
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+
+# ✅ ENHANCED EMAIL IMPORTS
+from django.urls import reverse
+from .utils.emails import (
+    send_welcome_email, 
+    send_profile_submitted_email, 
+    send_profile_approved_email,
+    send_admin_notification_email,
+    send_email_verification_email,
+    send_admin_message_notification
+)
+
+# ✅ PASSWORD RESET IMPORTS
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.conf import settings
 
 # Import your models
 from .models import (
     Profile, Message, Thread, Like, Block, PrivateAccessRequest, 
-    HotDate, HotDateView, HotDateNotification, Blog, UserActivity
+    HotDate, HotDateView, HotDateNotification, Blog, UserActivity,
+    AdminMessage
 )
 
 # ======================
 # PREVIEW USE - START (NEW VIEWS)
 # ======================
 
+@csrf_exempt  # ✅ KEEP CSRF EXEMPT FOR SIGNUP
 def join_view(request):
     """Handle new user signups - redirect to preview gate"""
     if request.method == 'POST':
@@ -35,8 +60,13 @@ def join_view(request):
             messages.error(request, "Valid email is required")
             return render(request, 'pages/join_gr8date_singlepw_show.html')
         
-        if not password or len(password) < 6:
-            messages.error(request, "Password must be at least 6 characters")
+        # ✅ ADDED: STRONG PASSWORD VALIDATION
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            # Show all password errors to user
+            for error in e.messages:
+                messages.error(request, error)
             return render(request, 'pages/join_gr8date_singlepw_show.html')
         
         if User.objects.filter(email=email).exists():
@@ -74,6 +104,14 @@ def join_view(request):
             
             # Create initial profile
             Profile.objects.create(user=user)
+            
+            # ✅ INTEGRATION: Send welcome email
+            try:
+                complete_profile_url = request.build_absolute_uri(reverse('create_profile'))
+                send_welcome_email(user.email, user.username, complete_profile_url)
+            except Exception as e:
+                print(f"DEBUG: Welcome email failed: {e}")
+                # Don't break the flow if email fails
             
             messages.success(request, "Welcome! Complete your profile to get started.")
             return redirect('preview_gate')
@@ -128,6 +166,69 @@ def browse_preview(request):
         'search_performed': False,
     }
     return render(request, 'pages/preview_gr8date_dashboard_fixed_v10_nolines.html', context)
+
+
+# ======================
+# PASSWORD RESET - STYLED VERSION  
+# ======================
+
+def custom_password_reset(request):
+    """Custom password reset view that uses our Brevo email system"""
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        
+        try:
+            user = User.objects.get(email=email)
+            
+            # Generate token and reset URL
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            reset_url = request.build_absolute_uri(
+    reverse('password_reset_confirm', kwargs={'uidb64': uid, 'token': token})
+)
+
+            
+            # Send email using your Brevo system
+            success = send_password_reset_email(
+                user_email=user.email,
+                username=user.username,
+                reset_url=reset_url
+            )
+            
+            if success:
+                messages.success(request, 'Password reset email sent! Check your inbox.')
+            else:
+                messages.error(request, 'Failed to send email. Please try again.')
+                
+        except User.DoesNotExist:
+            # Still show success for security (don't reveal which emails exist)
+            messages.success(request, 'If that email exists in our system, a password reset link has been sent.')
+        
+        return redirect('password_reset_done')
+    
+    # If GET request, show the password reset form
+    from django.contrib.auth.forms import PasswordResetForm
+    form = PasswordResetForm()
+    return render(request, 'registration/password_reset_form.html', {'form': form})
+
+# ======================
+# PASSWORD RESET SUPPORTING VIEWS
+# ======================
+
+from django.contrib.auth.views import (
+    PasswordResetDoneView, 
+    PasswordResetConfirmView, 
+    PasswordResetCompleteView
+)
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = 'registration/password_reset_done.html'
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'registration/password_reset_confirm.html'
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = 'registration/password_reset_complete.html'
 
 # ======================
 # PREVIEW USE - END
@@ -886,20 +987,29 @@ def pending_requests(request):
     }
     return render(request, 'pages/pending_requests.html', context)
 
-# Blog
+# Blog - FIXED PAGINATION
 def blog_list(request):
     """List published blog posts"""
     posts = Blog.objects.filter(
-        status=Blog.Status.PUBLISHED,
+        status='published',
         published_at__lte=timezone.now()
     ).order_by('-published_at')
     
-    context = {'posts': posts}
+    # Add pagination (9 posts per page as your grid shows 3 columns)
+    paginator = Paginator(posts, 9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'page_obj': page_obj,
+        'is_paginated': page_obj.has_other_pages(),
+        'posts': page_obj.object_list  # Include both for flexibility
+    }
     return render(request, 'pages/blog_list.html', context)
 
 def blog_detail(request, slug):
     """View individual blog post"""
-    post = get_object_or_404(Blog, slug=slug, status=Blog.Status.PUBLISHED)
+    post = get_object_or_404(Blog, slug=slug, status='published')
     context = {'post': post}
     return render(request, 'pages/blog_detail.html', context)
 
@@ -925,6 +1035,14 @@ def admin_approve_profile(request, profile_id):
     profile.approved_at = timezone.now()
     profile.approved_by = request.user
     profile.save()
+    
+    # ✅ INTEGRATION: Send profile approved email
+    try:
+        login_url = request.build_absolute_uri(reverse('dashboard'))
+        send_profile_approved_email(profile.user.email, profile.user.username, login_url)
+    except Exception as e:
+        print(f"DEBUG: Profile approved email failed: {e}")
+        # Don't break the flow if email fails
     
     messages.success(request, f"Profile for {profile.user.username} has been approved.")
     return redirect('admin_profile_approvals')
@@ -975,6 +1093,14 @@ def admin_quick_approve_profile(request, profile_id):
             profile.approved_by = request.user
             profile.save()
             
+            # ✅ INTEGRATION: Send profile approved email
+            try:
+                login_url = request.build_absolute_uri(reverse('dashboard'))
+                send_profile_approved_email(profile.user.email, profile.user.username, login_url)
+            except Exception as e:
+                print(f"DEBUG: Profile approved email failed: {e}")
+                # Don't break the flow if email fails
+            
             return JsonResponse({
                 'success': True, 
                 'message': f'Profile for {profile.user.username} approved successfully!'
@@ -987,6 +1113,132 @@ def admin_quick_approve_profile(request, profile_id):
             })
     
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+# ======================
+# NEW ADMIN NOTIFICATION SYSTEM - FIXED VERSION
+# ======================
+
+@login_required
+def admin_new_signups(request):
+    """Admin view for ALL users (even incomplete profiles)"""
+    if not request.user.is_staff:
+        return redirect('dashboard')
+    
+    try:
+        # Get all users with their profiles
+        users = User.objects.all().select_related('profile').order_by('-date_joined')
+        
+        # Calculate statistics - FIXED QUERIES
+        total_users = users.count()
+        approved_count = users.filter(profile__is_approved=True).count()
+        verified_count = users.filter(profile__email_verified=True).count()
+        pending_count = users.filter(profile__is_approved=False).count()
+        
+        # Handle users without profiles
+        users_without_profiles = users.filter(profile__isnull=True)
+        incomplete_count = users_without_profiles.count()
+        
+        context = {
+            'users': users,
+            'total_users': total_users,
+            'approved_count': approved_count,
+            'verified_count': verified_count,
+            'pending_count': pending_count,
+            'incomplete_count': incomplete_count,
+            'title': 'All Users - Admin'
+        }
+        return render(request, 'pages/admin_new_signups.html', context)
+    
+    except Exception as e:
+        print(f"DEBUG: Error in admin_new_signups: {e}")
+        # Fallback context if queries fail
+        context = {
+            'users': User.objects.all().order_by('-date_joined'),
+            'total_users': 0,
+            'approved_count': 0,
+            'verified_count': 0,
+            'pending_count': 0,
+            'incomplete_count': 0,
+            'title': 'All Users - Admin',
+            'error': str(e)
+        }
+        return render(request, 'pages/admin_new_signups.html', context)
+
+@login_required
+def admin_send_message(request, profile_id):
+    """Allow admins to message users about profile changes"""
+    if not request.user.is_staff:
+        return redirect('dashboard')
+    
+    profile = get_object_or_404(Profile, id=profile_id)
+    
+    if request.method == 'POST':
+        message_text = request.POST.get('message', '').strip()
+        
+        if message_text:
+            # Create admin message
+            admin_message = AdminMessage.objects.create(
+                profile=profile,
+                admin_user=request.user,
+                message=message_text
+            )
+            
+            # ✅ NEW: Send email notification to user
+            try:
+                profile_edit_url = request.build_absolute_uri(reverse('profile_edit'))
+                send_admin_message_notification(
+                    profile.user.email, 
+                    profile.user.username, 
+                    message_text, 
+                    profile_edit_url
+                )
+            except Exception as e:
+                print(f"DEBUG: Admin message notification email failed: {e}")
+            
+            # Log the activity
+            log_user_activity(
+                request.user, 
+                'admin_message_sent', 
+                request, 
+                admin_message,
+                target_user_id=profile.user.id
+            )
+            
+            messages.success(request, f"Message sent to {profile.user.username}")
+            return redirect('admin_new_profiles')
+        else:
+            messages.error(request, "Message cannot be empty")
+    
+    context = {
+        'profile': profile,
+        'title': f'Send Message to {profile.user.username}'
+    }
+    return render(request, 'pages/admin_send_message.html', context)
+
+def verify_email(request, token):
+    """Handle email verification links"""
+    try:
+        profile = Profile.objects.get(
+            email_verification_token=token,
+            email_verification_sent_at__gte=timezone.now() - timedelta(hours=24)
+        )
+        
+        if not profile.email_verified:
+            profile.email_verified = True
+            profile.save()
+            
+            messages.success(request, "✅ Email verified successfully! Your profile is now complete.")
+        else:
+            messages.info(request, "✅ Email already verified.")
+            
+    except Profile.DoesNotExist:
+        messages.error(request, "❌ Invalid or expired verification link.")
+    
+    # Redirect to appropriate page
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    else:
+        return redirect('home')
 
 # Blocking
 @login_required
@@ -1292,6 +1544,13 @@ def create_profile(request):
             profile.is_approved = False
             profile.save()
             
+            # ✅ INTEGRATION: Send profile submitted email
+            try:
+                send_profile_submitted_email(request.user.email, request.user.username)
+            except Exception as e:
+                print(f"DEBUG: Profile submitted email failed: {e}")
+                # Don't break the flow if email fails
+            
             messages.success(request, 'Profile submitted for admin approval! You can now browse profiles in preview mode.')
             return redirect('preview_gate')
             
@@ -1490,11 +1749,47 @@ def create_profile_api(request):
             # Mark as submitted for approval
             profile.is_complete = True
             profile.last_submitted_for_approval = timezone.now()
+            
+            # ✅ ENHANCED: GENERATE VERIFICATION TOKEN
+            profile.email_verification_token = secrets.token_urlsafe(32)
+            profile.email_verification_sent_at = timezone.now()
             profile.save()
+            
+            # ✅ ENHANCED: Send profile submitted email
+            try:
+                send_profile_submitted_email(request.user.email, request.user.username)
+            except Exception as e:
+                print(f"DEBUG: Profile submitted email failed: {e}")
+            
+            # ✅ NEW: Send email verification to user
+            try:
+                verification_url = request.build_absolute_uri(
+                    reverse('verify_email', kwargs={'token': profile.email_verification_token})
+                )
+                send_email_verification_email(request.user.email, request.user.username, verification_url)
+            except Exception as e:
+                print(f"DEBUG: Verification email failed: {e}")
+            
+            # ✅ NEW: Notify admins about new submission
+            try:
+                admin_emails = User.objects.filter(
+                    is_staff=True, 
+                    is_active=True
+                ).values_list('email', flat=True)
+                
+                profile_url = request.build_absolute_uri(
+                    reverse('admin_new_profiles')
+                )
+                
+                for admin_email in admin_emails:
+                    if admin_email:  # Ensure email is not empty
+                        send_admin_notification_email(admin_email, request.user.username, profile_url)
+            except Exception as e:
+                print(f"DEBUG: Admin notification failed: {e}")
             
             return JsonResponse({
                 'success': True, 
-                'message': 'Profile submitted for admin approval!',
+                'message': 'Profile submitted for admin approval! Please check your email for verification.',
                 'profile_id': profile.id
             })
             
@@ -1518,3 +1813,32 @@ def handler404(request, exception):
 def handler500(request):
     """Custom 500 error handler"""
     return render(request, 'pages/500.html', status=500)
+
+# ======================
+# MISSING HELPER FUNCTION
+# ======================
+
+def log_user_activity(user, activity_type, request, admin_message=None, target_user_id=None):
+    """Helper function to log user activity"""
+    try:
+        activity = UserActivity.objects.create(
+            user=user,
+            activity_type=activity_type,
+            ip_address=get_client_ip(request),
+            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+            admin_message=admin_message,
+            target_user_id=target_user_id
+        )
+        return activity
+    except Exception as e:
+        print(f"DEBUG: Error logging activity: {e}")
+        return None
+
+def get_client_ip(request):
+    """Get client IP address from request"""
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip

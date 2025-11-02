@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Message - GR8DATE Admin</title>
+    <style>
+        :root {
+            --primary: #8e44ad;
+            --primary-dark: #732d91;
+            --secondary: #3498db;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #f5f7fa;
+            --dark: #2c3e50;
+            --gray: #95a5a6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .admin-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .admin-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .admin-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .admin-nav {
+            background: var(--primary-dark);
+            padding: 15px 30px;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .admin-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+        
+        .admin-nav a:hover, .admin-nav a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .admin-content {
+            padding: 30px;
+        }
+        
+        .page-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .page-title h2 {
+            color: var(--dark);
+            font-size: 22px;
+        }
+        
+        .back-link {
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        
+        .user-info-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #e1e1e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--gray);
+        }
+        
+        .user-details h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+        
+        .user-details p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        .message-form {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-outline {
+            background: white;
+            color: var(--dark);
+            border: 1px solid #ddd;
+        }
+        
+        .btn-outline:hover {
+            background: #f9f9f9;
+        }
+        
+        .message-templates {
+            margin-top: 30px;
+        }
+        
+        .templates-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .templates-header h3 {
+            color: var(--dark);
+            font-size: 18px;
+        }
+        
+        .template-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .template-card {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #e1e1e1;
+        }
+        
+        .template-card:hover {
+            background: #e8e8e8;
+            transform: translateY(-2px);
+        }
+        
+        .template-card h4 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+        
+        .template-card p {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: #fff8e1;
+            color: #ffa000;
+        }
+        
+        .status-approved {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-rejected {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .status-verified {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .messages-container {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        .alert-warning {
+            background: #fff8e1;
+            color: #ff8f00;
+            border: 1px solid #ffecb3;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-nav {
+                flex-wrap: wrap;
+            }
+            
+            .user-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1><i class="fas fa-heart"></i> GR8DATE Admin System</h1>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span>{{ request.user.username }}</span>
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="admin-nav">
+            <a href="/admin/"><i class="fas fa-tachometer-alt"></i> Django Admin</a>
+            <a href="{% url 'admin_new_signups' %}"><i class="fas fa-users"></i> All Signups</a>
+            <a href="{% url 'admin_profile_approvals' %}"><i class="fas fa-check-circle"></i> Profile Approvals</a>
+            <a href="{% url 'admin_new_profiles' %}"><i class="fas fa-user-plus"></i> New Profiles</a>
+        </div>
+        
+        <div class="admin-content">
+            <div class="page-title">
+                <h2><i class="fas fa-envelope"></i> Send Message to User</h2>
+                <a href="{% url 'admin_new_signups' %}" class="back-link"><i class="fas fa-arrow-left"></i> Back to Users</a>
+            </div>
+
+            <!-- Messages Display -->
+            {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="user-info-card">
+                <div class="user-header">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <h3>{{ profile.user.username }}</h3>
+                        <p>{{ profile.user.email }} | Joined: {{ profile.user.date_joined|date:"Y-m-d" }}</p>
+                        <div style="display: flex; gap: 10px; margin-top: 8px;">
+                            {% if profile.email_verified %}
+                                <span class="status-badge status-verified">Verified</span>
+                            {% else %}
+                                <span class="status-badge status-pending">Unverified</span>
+                            {% endif %}
+                            {% if profile.is_approved %}
+                                <span class="status-badge status-approved">Approved</span>
+                            {% else %}
+                                <span class="status-badge status-pending">Pending Approval</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">
+                            {% if profile.headline %}Complete{% else %}Incomplete{% endif %}
+                        </div>
+                        <div class="stat-label">Profile Status</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ profile.images.count|default:0 }}</div>
+                        <div class="stat-label">Photos</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ profile.user.likes_received.count|default:0 }}</div>
+                        <div class="stat-label">Likes Received</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ profile.admin_messages.count|default:0 }}</div>
+                        <div class="stat-label">Previous Messages</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="message-form">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" name="subject" class="form-control" placeholder="Message subject..." value="About Your GR8DATE Profile" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Message to {{ profile.user.username }}</label>
+                        <textarea id="message" name="message" class="form-control" placeholder="Type your message to the user here..." required>Hello {{ profile.user.username }},
+
+Thank you for joining GR8DATE! Our team has reviewed your profile and we have some suggestions to help improve your matching experience.
+
+Please review your profile information and make any necessary updates.
+
+Best regards,
+GR8DATE Admin Team</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="send_email" checked> Send email notification to user
+                        </label>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <a href="{% url 'admin_new_signups' %}" class="btn btn-outline">Cancel</a>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Send Message</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="message-templates">
+                <div class="templates-header">
+                    <h3><i class="fas fa-sticky-note"></i> Quick Templates</h3>
+                </div>
+                
+                <div class="template-cards">
+                    <div class="template-card" onclick="loadTemplate('profile_improvement')">
+                        <h4>Profile Improvement</h4>
+                        <p>Suggestions for enhancing user profile</p>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('approval_notice')">
+                        <h4>Approval Notice</h4>
+                        <p>Notify user their profile has been approved</p>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('verification_reminder')">
+                        <h4>Verification Reminder</h4>
+                        <p>Remind user to verify their email address</p>
+                    </div>
+                    <div class="template-card" onclick="loadTemplate('rejection_notice')">
+                        <h4>Rejection Notice</h4>
+                        <p>Inform user their profile was rejected</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        function loadTemplate(templateType) {
+            const templates = {
+                profile_improvement: {
+                    subject: "Profile Improvement Suggestions",
+                    message: `Hello {{ profile.user.username }},
+
+Thank you for creating your GR8DATE profile. We've reviewed your submission and believe we can help you improve your profile to get better matches.
+
+We recommend adding more details about your interests and what you're looking for in a partner. High-quality photos also significantly increase profile engagement.
+
+Once you've made these updates, please let us know so we can review your profile again.
+
+Best regards,
+GR8DATE Admin Team`
+                },
+                approval_notice: {
+                    subject: "Your Profile Has Been Approved!",
+                    message: `Congratulations {{ profile.user.username }}!
+
+We're excited to inform you that your GR8DATE profile has been approved. You now have full access to all platform features.
+
+You can start browsing matches, sending messages, and connecting with other members right away.
+
+If you have any questions, please don't hesitate to contact our support team.
+
+Happy matching!
+The GR8DATE Team`
+                },
+                verification_reminder: {
+                    subject: "Email Verification Reminder",
+                    message: `Hello {{ profile.user.username }},
+
+We noticed you haven't verified your email address yet. Verification is required to access all GR8DATE features and ensure account security.
+
+Please check your inbox for our verification email and click the link to complete the process. If you can't find it, you can request a new verification email from your account settings.
+
+Thank you for helping us maintain a secure community.
+
+Best regards,
+GR8DATE Admin Team`
+                },
+                rejection_notice: {
+                    subject: "Profile Review Update",
+                    message: `Hello {{ profile.user.username }},
+
+Thank you for your interest in GR8DATE. After reviewing your profile submission, we're unable to approve it at this time.
+
+Your profile doesn't meet our community guidelines. Please review our guidelines and make the necessary changes before resubmitting.
+
+You're welcome to make the necessary changes and resubmit your profile for review. If you have questions about our community guidelines, please visit our help center.
+
+We appreciate your understanding.
+
+Sincerely,
+GR8DATE Admin Team`
+                }
+            };
+            
+            if (templates[templateType]) {
+                document.getElementById('subject').value = templates[templateType].subject;
+                document.getElementById('message').value = templates[templateType].message;
+                
+                // Scroll to the form
+                document.querySelector('.message-form').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    </script>
+</body>
+</html>

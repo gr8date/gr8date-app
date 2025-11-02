@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://gr8date.com.au/sitemap.xml
+Sitemap: https://www.gr8date.com.au/sitemap.xml
+
+# Development - uncomment for production
+# Disallow: /admin/
+# Disallow: /accounts/

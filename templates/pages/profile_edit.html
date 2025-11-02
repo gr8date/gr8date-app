@@ -1,3 +1,5 @@
+[file name]: profile_edit.html
+[file content begin]
 {% extends "base_header.html" %}
 
 {% block title %}GR8DATE • Edit Profile{% endblock %}
@@ -61,7 +63,7 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
   <div class="mobile-tabs">
     <button class="tab-button active" data-tab="preferences">
       <span class="material-icons" style="font-size:18px">flash_on</span>
-      Preferences
+      Lifestyle & Compatibility
     </button>
     <button class="tab-button" data-tab="profile-content">
       <span class="material-icons" style="font-size:18px">edit</span>
@@ -82,7 +84,7 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
     <div class="settings-section instant-update active" id="preferences-tab">
       <section class="card">
         <div class="section-header" style="display:flex;align-items:center;margin-bottom:8px">
-          <h3 style="margin:0">⚡ Quick Preferences</h3>
+          <h3 style="margin:0">⚡ Lifestyle & Compatibility</h3>
           <span class="badge badge-instant">
             <span class="material-icons" style="font-size:14px">flash_on</span>
             Updates Immediately
@@ -90,13 +92,137 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
         </div>
         
         <div class="grid-2">
-          <!-- Lifestyle Preferences -->
-          <div class="field"><label>Smoking</label><select name="smoking"><option value="prefer_not" {% if me.smoking == 'prefer_not' %}selected{% endif %}>Prefer not to say</option><option value="no" {% if me.smoking == 'no' %}selected{% endif %}>No</option><option value="occasionally" {% if me.smoking == 'occasionally' %}selected{% endif %}>Occasionally</option><option value="yes" {% if me.smoking == 'yes' %}selected{% endif %}>Yes</option></select></div>
-          <div class="field"><label>Drinking</label><select name="drinking"><option value="prefer_not" {% if me.drinking == 'prefer_not' %}selected{% endif %}>Prefer not to say</option><option value="no" {% if me.drinking == 'no' %}selected{% endif %}>No</option><option value="socially" {% if me.drinking == 'socially' %}selected{% endif %}>Socially</option><option value="often" {% if me.drinking == 'often' %}selected{% endif %}>Often</option></select></div>
-          <div class="field"><label>Exercise</label><select name="exercise"><option value="prefer_not" {% if me.exercise == 'prefer_not' %}selected{% endif %}>Prefer not to say</option><option value="never" {% if me.exercise == 'never' %}selected{% endif %}>Never</option><option value="sometimes" {% if me.exercise == 'sometimes' %}selected{% endif %}>Sometimes</option><option value="regularly" {% if me.exercise == 'regularly' %}selected{% endif %}>Regularly</option></select></div>
-          <div class="field"><label>Pets</label><select name="pets"><option value="prefer_not" {% if me.pets == 'prefer_not' %}selected{% endif %}>Prefer not to say</option><option value="no_pets" {% if me.pets == 'no_pets' %}selected{% endif %}>No pets</option><option value="cat" {% if me.pets == 'cat' %}selected{% endif %}>Cat</option><option value="dog" {% if me.pets == 'dog' %}selected{% endif %}>Dog</option><option value="other" {% if me.pets == 'other' %}selected{% endif %}>Other</option></select></div>
-          <div class="field"><label>Diet</label><select name="diet"><option value="prefer_not" {% if me.diet == 'prefer_not' %}selected{% endif %}>Prefer not to say</option><option value="anything" {% if me.diet == 'anything' %}selected{% endif %}>Anything</option><option value="vegetarian" {% if me.diet == 'vegetarian' %}selected{% endif %}>Vegetarian</option><option value="vegan" {% if me.diet == 'vegan' %}selected{% endif %}>Vegan</option><option value="halal" {% if me.diet == 'halal' %}selected{% endif %}>Halal</option><option value="kosher" {% if me.diet == 'kosher' %}selected{% endif %}>Kosher</option><option value="pescatarian" {% if me.diet == 'pescatarian' %}selected{% endif %}>Pescatarian</option></select></div>
-          <div class="field"><label>Children</label><select name="children"><option value="prefer_not" {% if me.children == 'prefer_not' %}selected{% endif %}>Prefer not to say</option><option value="yes" {% if me.children == 'yes' %}selected{% endif %}>Yes</option><option value="none" {% if me.children == 'none' %}selected{% endif %}>None</option></select></div>
+          <!-- Physical Attributes -->
+          <div class="field">
+            <label for="height">Height</label>
+            <select id="height" name="height">
+              <option value="">Select height</option>
+              <option value="4_0" {% if me.height == '4_0' %}selected{% endif %}>4'0" (122 cm)</option>
+              <option value="4_1" {% if me.height == '4_1' %}selected{% endif %}>4'1" (124 cm)</option>
+              <option value="4_2" {% if me.height == '4_2' %}selected{% endif %}>4'2" (127 cm)</option>
+              <option value="4_3" {% if me.height == '4_3' %}selected{% endif %}>4'3" (130 cm)</option>
+              <option value="4_4" {% if me.height == '4_4' %}selected{% endif %}>4'4" (132 cm)</option>
+              <option value="4_5" {% if me.height == '4_5' %}selected{% endif %}>4'5" (135 cm)</option>
+              <option value="4_6" {% if me.height == '4_6' %}selected{% endif %}>4'6" (137 cm)</option>
+              <option value="4_7" {% if me.height == '4_7' %}selected{% endif %}>4'7" (140 cm)</option>
+              <option value="4_8" {% if me.height == '4_8' %}selected{% endif %}>4'8" (142 cm)</option>
+              <option value="4_9" {% if me.height == '4_9' %}selected{% endif %}>4'9" (145 cm)</option>
+              <option value="4_10" {% if me.height == '4_10' %}selected{% endif %}>4'10" (147 cm)</option>
+              <option value="4_11" {% if me.height == '4_11' %}selected{% endif %}>4'11" (150 cm)</option>
+              <option value="5_0" {% if me.height == '5_0' %}selected{% endif %}>5'0" (152 cm)</option>
+              <option value="5_1" {% if me.height == '5_1' %}selected{% endif %}>5'1" (155 cm)</option>
+              <option value="5_2" {% if me.height == '5_2' %}selected{% endif %}>5'2" (157 cm)</option>
+              <option value="5_3" {% if me.height == '5_3' %}selected{% endif %}>5'3" (160 cm)</option>
+              <option value="5_4" {% if me.height == '5_4' %}selected{% endif %}>5'4" (163 cm)</option>
+              <option value="5_5" {% if me.height == '5_5' %}selected{% endif %}>5'5" (165 cm)</option>
+              <option value="5_6" {% if me.height == '5_6' %}selected{% endif %}>5'6" (168 cm)</option>
+              <option value="5_7" {% if me.height == '5_7' %}selected{% endif %}>5'7" (170 cm)</option>
+              <option value="5_8" {% if me.height == '5_8' %}selected{% endif %}>5'8" (173 cm)</option>
+              <option value="5_9" {% if me.height == '5_9' %}selected{% endif %}>5'9" (175 cm)</option>
+              <option value="5_10" {% if me.height == '5_10' %}selected{% endif %}>5'10" (178 cm)</option>
+              <option value="5_11" {% if me.height == '5_11' %}selected{% endif %}>5'11" (180 cm)</option>
+              <option value="6_0" {% if me.height == '6_0' %}selected{% endif %}>6'0" (183 cm)</option>
+              <option value="6_1" {% if me.height == '6_1' %}selected{% endif %}>6'1" (185 cm)</option>
+              <option value="6_2" {% if me.height == '6_2' %}selected{% endif %}>6'2" (188 cm)</option>
+              <option value="6_3" {% if me.height == '6_3' %}selected{% endif %}>6'3" (191 cm)</option>
+              <option value="6_4" {% if me.height == '6_4' %}selected{% endif %}>6'4" (193 cm)</option>
+              <option value="6_5_plus" {% if me.height == '6_5_plus' %}selected{% endif %}>6'5"+ (196 cm+)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="body_type">Body Type</label>
+            <select id="body_type" name="body_type">
+              <option value="">Select body type</option>
+              <option value="slim" {% if me.body_type == 'slim' %}selected{% endif %}>Slim</option>
+              <option value="athletic" {% if me.body_type == 'athletic' %}selected{% endif %}>Athletic</option>
+              <option value="average" {% if me.body_type == 'average' %}selected{% endif %}>Average</option>
+              <option value="curvy" {% if me.body_type == 'curvy' %}selected{% endif %}>Curvy</option>
+              <option value="stocky" {% if me.body_type == 'stocky' %}selected{% endif %}>Stocky</option>
+            </select>
+          </div>
+
+          <!-- Relationship & Family -->
+          <div class="field">
+            <label for="relationship_status">Relationship Status</label>
+            <select id="relationship_status" name="relationship_status">
+              <option value="">Select status</option>
+              <option value="single" {% if me.relationship_status == 'single' %}selected{% endif %}>Single</option>
+              <option value="divorced" {% if me.relationship_status == 'divorced' %}selected{% endif %}>Divorced</option>
+              <option value="separated" {% if me.relationship_status == 'separated' %}selected{% endif %}>Separated</option>
+              <option value="widowed" {% if me.relationship_status == 'widowed' %}selected{% endif %}>Widowed</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="children">Do you have children?</label>
+            <select id="children" name="children">
+              <option value="">Select</option>
+              <option value="none" {% if me.children == 'none' %}selected{% endif %}>No children</option>
+              <option value="yes_live_with_me" {% if me.children == 'yes_live_with_me' %}selected{% endif %}>Yes, live with me</option>
+              <option value="yes_not_with_me" {% if me.children == 'yes_not_with_me' %}selected{% endif %}>Yes, don't live with me</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="want_children">Want children?</label>
+            <select id="want_children" name="want_children">
+              <option value="">Select</option>
+              <option value="want" {% if me.want_children == 'want' %}selected{% endif %}>Want children</option>
+              <option value="dont_want" {% if me.want_children == 'dont_want' %}selected{% endif %}>Don't want children</option>
+              <option value="not_sure" {% if me.want_children == 'not_sure' %}selected{% endif %}>Not sure</option>
+              <option value="open" {% if me.want_children == 'open' %}selected{% endif %}>Open to it</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="ethnicity">Ethnicity</label>
+            <select id="ethnicity" name="ethnicity">
+              <option value="">Select ethnicity</option>
+              <option value="asian" {% if me.ethnicity == 'asian' %}selected{% endif %}>Asian</option>
+              <option value="black" {% if me.ethnicity == 'black' %}selected{% endif %}>Black</option>
+              <option value="caucasian" {% if me.ethnicity == 'caucasian' %}selected{% endif %}>Caucasian</option>
+              <option value="hispanic" {% if me.ethnicity == 'hispanic' %}selected{% endif %}>Hispanic</option>
+              <option value="mixed" {% if me.ethnicity == 'mixed' %}selected{% endif %}>Mixed</option>
+              <option value="middle_eastern" {% if me.ethnicity == 'middle_eastern' %}selected{% endif %}>Middle Eastern</option>
+              <option value="native" {% if me.ethnicity == 'native' %}selected{% endif %}>Native/Indigenous</option>
+              <option value="pacific_islander" {% if me.ethnicity == 'pacific_islander' %}selected{% endif %}>Pacific Islander</option>
+              <option value="prefer_not_say" {% if me.ethnicity == 'prefer_not_say' %}selected{% endif %}>Prefer not to say</option>
+            </select>
+          </div>
+
+          <!-- Lifestyle Habits -->
+          <div class="field">
+            <label for="smoking">Smoking</label>
+            <select id="smoking" name="smoking">
+              <option value="">Select</option>
+              <option value="non_smoker" {% if me.smoking == 'non_smoker' %}selected{% endif %}>Non-smoker</option>
+              <option value="social_smoker" {% if me.smoking == 'social_smoker' %}selected{% endif %}>Social smoker</option>
+              <option value="light_smoker" {% if me.smoking == 'light_smoker' %}selected{% endif %}>Light smoker</option>
+              <option value="regular_smoker" {% if me.smoking == 'regular_smoker' %}selected{% endif %}>Regular smoker</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="drinking">Drinking</label>
+            <select id="drinking" name="drinking">
+              <option value="">Select</option>
+              <option value="non_drinker" {% if me.drinking == 'non_drinker' %}selected{% endif %}>Non-drinker</option>
+              <option value="social_drinker" {% if me.drinking == 'social_drinker' %}selected{% endif %}>Social drinker</option>
+              <option value="regular_drinker" {% if me.drinking == 'regular_drinker' %}selected{% endif %}>Regular drinker</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="exercise">Exercise</label>
+            <select id="exercise" name="exercise">
+              <option value="">Select frequency</option>
+              <option value="daily" {% if me.exercise == 'daily' %}selected{% endif %}>Daily</option>
+              <option value="weekly" {% if me.exercise == 'weekly' %}selected{% endif %}>Several times a week</option>
+              <option value="occasionally" {% if me.exercise == 'occasionally' %}selected{% endif %}>Occasionally</option>
+              <option value="never" {% if me.exercise == 'never' %}selected{% endif %}>Never</option>
+            </select>
+          </div>
 
           <!-- Looking For Preferences -->
           <div class="field">
@@ -149,126 +275,102 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
               <option value="marriage" {% if me.preferred_intent == 'marriage' %}selected{% endif %}>Marriage</option>
             </select>
           </div>
+        </div>
 
-          <!-- My Interests Tags - PRE-DEFINED CHECKBOXES -->
-          <div class="field" style="grid-column:1/-1">
-            <label>My interests (tags)</label>
-            <div class="tag-options">
-              <label class="tag-option">
-                <input type="checkbox" name="my_interests[]" value="hiking" {% if 'hiking' in me.my_interests %}checked{% endif %}>
-                <span>Hiking</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="my_interests[]" value="beach" {% if 'beach' in me.my_interests %}checked{% endif %}>
-                <span>Beach</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="my_interests[]" value="dogs" {% if 'dogs' in me.my_interests %}checked{% endif %}>
-                <span>Dogs</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="my_interests[]" value="books" {% if 'books' in me.my_interests %}checked{% endif %}>
-                <span>Books</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="my_interests[]" value="music" {% if 'music' in me.my_interests %}checked{% endif %}>
-                <span>Music</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="my_interests[]" value="travel" {% if 'travel' in me.my_interests %}checked{% endif %}>
-                <span>Travel</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="my_interests[]" value="movies" {% if 'movies' in me.my_interests %}checked{% endif %}>
-                <span>Movies</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="my_interests[]" value="gaming" {% if 'gaming' in me.my_interests %}checked{% endif %}>
-                <span>Gaming</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="my_interests[]" value="cooking" {% if 'cooking' in me.my_interests %}checked{% endif %}>
-                <span>Cooking</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="my_interests[]" value="fitness" {% if 'fitness' in me.my_interests %}checked{% endif %}>
-                <span>Fitness</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="my_interests[]" value="art" {% if 'art' in me.my_interests %}checked{% endif %}>
-                <span>Art</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="my_interests[]" value="technology" {% if 'technology' in me.my_interests %}checked{% endif %}>
-                <span>Technology</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="my_interests[]" value="contact_to_know_more" {% if 'contact_to_know_more' in me.my_interests %}checked{% endif %}>
-                <span>Contact me to know more</span>
-              </label>
-            </div>
-            <small class="badge-note">Shown on your profile and used to match you with others.</small>
+        <!-- Important Qualities - UPDATED: Better wording -->
+        <div class="field" style="grid-column:1/-1">
+          <label>Important to Me in a Partner</label>
+          <div class="tag-options">
+            <label class="tag-option">
+              <input type="checkbox" name="important_qualities[]" value="honest" {% if 'honest' in me.important_qualities %}checked{% endif %}>
+              <span>Honesty</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="important_qualities[]" value="good_communication" {% if 'good_communication' in me.important_qualities %}checked{% endif %}>
+              <span>Good Communication</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="important_qualities[]" value="sense_of_humour" {% if 'sense_of_humour' in me.important_qualities %}checked{% endif %}>
+              <span>Sense of Humour</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="important_qualities[]" value="ambition" {% if 'ambition' in me.important_qualities %}checked{% endif %}>
+              <span>Ambition</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="important_qualities[]" value="kindness" {% if 'kindness' in me.important_qualities %}checked{% endif %}>
+              <span>Kindness</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="important_qualities[]" value="loyalty" {% if 'loyalty' in me.important_qualities %}checked{% endif %}>
+              <span>Loyalty</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="important_qualities[]" value="adventurous" {% if 'adventurous' in me.important_qualities %}checked{% endif %}>
+              <span>Adventurous Spirit</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="important_qualities[]" value="family_oriented" {% if 'family_oriented' in me.important_qualities %}checked{% endif %}>
+              <span>Family Oriented</span>
+            </label>
           </div>
+          <small class="badge-note">These qualities are important to you in a partner</small>
+        </div>
 
-          <!-- Must-Have Tags - PRE-DEFINED CHECKBOXES -->
-          <div class="field" style="grid-column:1/-1">
-            <label>Must-have tags</label>
-            <div class="tag-options">
-              <label class="tag-option">
-                <input type="checkbox" name="must_have_tags[]" value="hiking" {% if 'hiking' in me.must_have_tags %}checked{% endif %}>
-                <span>Hiking</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="must_have_tags[]" value="beach" {% if 'beach' in me.must_have_tags %}checked{% endif %}>
-                <span>Beach</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="must_have_tags[]" value="dogs" {% if 'dogs' in me.must_have_tags %}checked{% endif %}>
-                <span>Dogs</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="must_have_tags[]" value="books" {% if 'books' in me.must_have_tags %}checked{% endif %}>
-                <span>Books</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="must_have_tags[]" value="honest" {% if 'honest' in me.must_have_tags %}checked{% endif %}>
-                <span>Honest</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="must_have_tags[]" value="kind" {% if 'kind' in me.must_have_tags %}checked{% endif %}>
-                <span>Kind</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="must_have_tags[]" value="ambitious" {% if 'ambitious' in me.must_have_tags %}checked{% endif %}>
-                <span>Ambitious</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="must_have_tags[]" value="humorous" {% if 'humorous' in me.must_have_tags %}checked{% endif %}>
-                <span>Humorous</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="must_have_tags[]" value="adventurous" {% if 'adventurous' in me.must_have_tags %}checked{% endif %}>
-                <span>Adventurous</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="must_have_tags[]" value="loyal" {% if 'loyal' in me.must_have_tags %}checked{% endif %}>
-                <span>Loyal</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="must_have_tags[]" value="compassionate" {% if 'compassionate' in me.must_have_tags %}checked{% endif %}>
-                <span>Compassionate</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="must_have_tags[]" value="confident" {% if 'confident' in me.must_have_tags %}checked{% endif %}>
-                <span>Confident</span>
-              </label>
-              <label class="tag-option">
-                <input type="checkbox" name="must_have_tags[]" value="contact_to_know_more" {% if 'contact_to_know_more' in me.must_have_tags %}checked{% endif %}>
-                <span>Contact me to know more</span>
-              </label>
-            </div>
-            <small class="badge-note">These tags will be used as filters in search & matching.</small>
+        <!-- Interests & Hobbies - UPDATED: Better options -->
+        <div class="field" style="grid-column:1/-1">
+          <label>My Interests & Hobbies</label>
+          <div class="tag-options">
+            <label class="tag-option">
+              <input type="checkbox" name="my_interests[]" value="dining_out" {% if 'dining_out' in me.my_interests %}checked{% endif %}>
+              <span>Dining Out</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="my_interests[]" value="travel" {% if 'travel' in me.my_interests %}checked{% endif %}>
+              <span>Travel</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="my_interests[]" value="fitness" {% if 'fitness' in me.my_interests %}checked{% endif %}>
+              <span>Fitness</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="my_interests[]" value="movies" {% if 'movies' in me.my_interests %}checked{% endif %}>
+              <span>Movies & Cinema</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="my_interests[]" value="music" {% if 'music' in me.my_interests %}checked{% endif %}>
+              <span>Live Music</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="my_interests[]" value="cooking" {% if 'cooking' in me.my_interests %}checked{% endif %}>
+              <span>Cooking</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="my_interests[]" value="beach" {% if 'beach' in me.my_interests %}checked{% endif %}>
+              <span>Beach</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="my_interests[]" value="hiking" {% if 'hiking' in me.my_interests %}checked{% endif %}>
+              <span>Hiking & Nature</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="my_interests[]" value="sports" {% if 'sports' in me.my_interests %}checked{% endif %}>
+              <span>Sports</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="my_interests[]" value="art_culture" {% if 'art_culture' in me.my_interests %}checked{% endif %}>
+              <span>Art & Culture</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="my_interests[]" value="gaming" {% if 'gaming' in me.my_interests %}checked{% endif %}>
+              <span>Gaming</span>
+            </label>
+            <label class="tag-option">
+              <input type="checkbox" name="my_interests[]" value="reading" {% if 'reading' in me.my_interests %}checked{% endif %}>
+              <span>Reading</span>
+            </label>
           </div>
+          <small class="badge-note">Shown on your profile and used to match you with others.</small>
         </div>
 
         <!-- Save button for Preferences -->
@@ -294,7 +396,7 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
           </span>
         </div>
 
-        <!-- Profile Photo Section - FIXED: Proper image display -->
+        <!-- Profile Photo Section -->
         <div class="field">
           <label>Profile photo</label>
           <div style="display:flex;align-items:center;gap:20px;margin-bottom:10px;">
@@ -322,7 +424,7 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
           <small class="badge-note">This will replace your current profile photo after review</small>
         </div>
 
-        <!-- Additional Photos Section - FIXED: Proper counting and display -->
+        <!-- Additional Photos Section -->
         <div class="field">
           <label>Additional photos (up to 4)</label>
           <div class="photo-grid">
@@ -360,7 +462,7 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
           </div>
         </div>
 
-        <!-- Private Photos Section - FIXED: Proper counting and display -->
+        <!-- Private Photos Section -->
         <div class="field">
           <label>Private photos (up to 4, blurred to others)</label>
           <div class="photo-grid">
@@ -408,8 +510,8 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
 
           <div class="field">
             <label>Location</label>
-            <input name="location" placeholder="City / Suburb" value="{{ me.location|default:'' }}">
-            <small class="badge-note">Will be reviewed before going live</small>
+            <input name="location" placeholder="Suburb, City - e.g. Bondi, Sydney" value="{{ me.location|default:'' }}">
+            <small class="badge-note">Be specific - this helps find matches nearby</small>
           </div>
 
           <div class="field" style="grid-column:1/-1">
@@ -434,7 +536,7 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
 </main>
 
 <script>
-// Tab switching - FIXED: Proper event handling
+// Tab switching
 document.addEventListener('DOMContentLoaded', function() {
   // Tab switching
   document.querySelectorAll('.tab-button').forEach(button => {
@@ -452,7 +554,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Age range dropdown population - FIXED: Only populate if empty
+  // Age range dropdown population
   const minSelect = document.getElementById('prefAgeMin');
   const maxSelect = document.getElementById('prefAgeMax');
   
@@ -480,7 +582,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Photo management functions - FIXED: Consolidated and improved
+// Photo management functions
 function deletePhoto(imageId) {
   if (confirm('Are you sure you want to delete this photo?')) {
     fetch(`/delete-image/${imageId}/`, {
@@ -545,7 +647,7 @@ function uploadPhoto(isPrivate, isPrimary) {
   input.click();
 }
 
-// Form submission handling - FIXED: Added basic validation
+// Form submission handling
 document.getElementById('profileForm').addEventListener('submit', function(e) {
   const minAge = parseInt(document.getElementById('prefAgeMin').value);
   const maxAge = parseInt(document.getElementById('prefAgeMax').value);
@@ -565,3 +667,4 @@ document.getElementById('profileForm').addEventListener('submit', function(e) {
 });
 </script>
 {% endblock %}
+[file content end]

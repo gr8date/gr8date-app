@@ -1,9 +1,71 @@
+<!-- templates/pages/blog_detail.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>{{ post.title }} – GR8Date Blog</title>
+  
+  <!-- ✅ ENHANCED Dynamic Blog Post Meta Tags -->
+  <title>{{ post.get_meta_title }}</title>
+  <meta name="description" content="{{ post.get_meta_description }}">
+  {% if post.keywords %}
+  <meta name="keywords" content="dating advice, relationship tips, online dating, free dating, {{ post.keywords }}">
+  {% else %}
+  <meta name="keywords" content="dating advice, relationship tips, online dating, free dating, {{ post.title }}">
+  {% endif %}
+
+  <!-- ✅ ENHANCED Open Graph for Blog Post -->
+  <meta property="og:title" content="{{ post.get_meta_title }}">
+  <meta property="og:description" content="{{ post.get_meta_description }}">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.get_social_image_url }}">
+  <meta property="og:site_name" content="GR8Date - Free Dating Australia">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ post.get_meta_title }}">
+  <meta name="twitter:description" content="{{ post.get_meta_description }}">
+  <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.get_social_image_url }}">
+
+  <!-- ✅ ENHANCED Structured Data for Blog Post -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "{{ post.title }}",
+    "description": "{{ post.get_meta_description }}",
+    "author": {
+      "@type": "Organization",
+      "name": "GR8Date"
+    },
+    "datePublished": "{{ post.published_at|date:'c' }}",
+    "dateModified": "{{ post.updated_at|date:'c' }}",
+    "publisher": {
+      "@type": "Organization",
+      "name": "GR8Date",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "{{ request.scheme }}://{{ request.get_host }}/static/images/gr8date-logo-desktop.59efa8369812.svg"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "{{ request.build_absolute_uri }}"
+    },
+    {% if post.hero_image %}
+    "image": {
+      "@type": "ImageObject",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{{ post.hero_image.url }}",
+      "height": "630",
+      "width": "1200"
+    },
+    {% endif %}
+    "articleSection": "Dating Advice",
+    "keywords": "{{ post.keywords|default:'dating advice, relationship tips, online dating' }}"
+  }
+  </script>
+
   <link rel="stylesheet" href="/static/css/site.css">
   <style>
     .detail-wrap{max-width:860px;margin:0 auto;padding:1.25rem}
@@ -18,17 +80,33 @@
 <body>
   <header class="gd-header">
     <div class="gd-wrap">
-      <a class="gd-brand" href="/"><img alt="GR8Date Logo" class="logo-img" src="/static/images/gr8date-logo-desktop.59efa8369812.svg"/></a>
+      <a class="gd-brand" href="/"><img alt="GR8Date Logo - Free Dating Australia" class="logo-img" src="/static/images/gr8date-logo-desktop.59efa8369812.svg"/></a>
       <nav class="gd-nav"><a class="gd-login" href="/login/">Login</a><a class="gd-cta" href="/join/">Join Free Now</a></nav>
     </div>
   </header>
 
   <main class="detail-wrap">
-    <article>
-      {% if post.hero_image %}<img class="detail-hero" src="{{ post.hero_image.url }}" alt="{{ post.title }}" onerror="this.onerror=null;this.src='/static/images/images/image1.jpg';"/>{% endif %}
-      <h1 class="detail-title">{{ post.title }}</h1>
-      <div class="blog-date">{{ post.published_at|date:"d M Y" }}</div>
-      <div class="detail-body">
+    <article itemscope itemtype="https://schema.org/BlogPosting">
+      {% if post.hero_image %}
+      <img class="detail-hero" 
+           src="{{ post.hero_image.url }}" 
+           alt="{{ post.get_image_alt_text }}" 
+           onerror="this.onerror=null;this.src='/static/images/images/image1.jpg';" 
+           itemprop="image"
+           loading="lazy"/>
+      {% endif %}
+      <h1 class="detail-title" itemprop="headline">{{ post.title }}</h1>
+      <div class="blog-date">
+        <time itemprop="datePublished" content="{{ post.published_at|date:'c' }}">
+          {{ post.published_at|date:"d M Y" }}
+        </time>
+        {% if post.updated_at and post.updated_at|date:"Ymd" != post.published_at|date:"Ymd" %}
+        • Updated: <time itemprop="dateModified" content="{{ post.updated_at|date:'c' }}">
+          {{ post.updated_at|date:"d M Y" }}
+        </time>
+        {% endif %}
+      </div>
+      <div class="detail-body" itemprop="articleBody">
         {% if post.content %}
           {{ post.content|safe }}
         {% elif post.body %}

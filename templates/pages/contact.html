@@ -1,8 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8" />
+<head>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Contact Us – GR8Date</title>
+  
+  <!-- SEO Meta Tags -->
+  <title>Contact GR8Date - Free Dating Support & Help | Get In Touch</title>
+  <meta name="description" content="Contact GR8Date support team for help with Australia's free dating platform. Get assistance with your account, report issues, or share feedback with our team.">
+  <meta name="keywords" content="contact GR8Date, dating site support, free dating help, customer service, Australian dating support">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Contact GR8Date - Free Dating Support & Help">
+  <meta property="og:description" content="Get in touch with GR8Date support team for assistance with our free dating platform.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+
+  <!-- Structured Data for Contact Page -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact GR8Date",
+    "description": "Contact support for Australia's free dating platform",
+    "publisher": {
+      "@type": "Organization",
+      "name": "GR8Date",
+      "email": "admin@gr8date.au",
+      "url": "{{ request.build_absolute_uri }}"
+    }
+  }
+  </script>
   
   <style>
     body { margin:0; padding:0; font-family:Arial, sans-serif; background:#fff; color:#333 }
@@ -60,7 +87,7 @@
 <header class="gd-header">
   <div class="gd-wrap">
     <a class="gd-brand" href="/">
-      <img alt="GR8Date Logo" class="logo-img" src="/static/images/gr8date-logo-desktop.59efa8369812.svg"/>
+      <img alt="GR8Date Logo - Free Australian Dating Platform" class="logo-img" src="/static/images/gr8date-logo-desktop.59efa8369812.svg"/>
     </a>
     <nav class="gd-nav">
       <a class="gd-login" href="/login/">Login</a>

@@ -100,13 +100,15 @@
       border-radius: 25px;
       font-weight: 700;
       text-decoration: none;
-      transition: transform 0.2s ease;
+      transition: all 0.2s ease;
       border: none;
+      box-shadow: 0 4px 12px rgba(255, 84, 120, 0.3);
     }
     .btn-complete:hover {
       transform: translateY(-2px);
       background: var(--brand-900);
       color: white;
+      box-shadow: 0 6px 20px rgba(255, 84, 120, 0.4);
     }
 
     /* Hero Image */
@@ -115,6 +117,7 @@
       border-radius: 12px;
       overflow: hidden;
       margin-bottom: 20px;
+      cursor: pointer;
     }
     .hero img {
       width: 100%;
@@ -145,6 +148,17 @@
     /* Sections */
     .section {
       margin-bottom: 24px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      padding: 16px;
+      margin: -8px -8px 8px -8px;
+    }
+    .section:hover {
+      background: rgba(255, 84, 120, 0.05);
+      border-color: rgba(255, 84, 120, 0.2);
+      transform: translateY(-1px);
     }
     .section h3 {
       display: flex;
@@ -169,6 +183,7 @@
       aspect-ratio: 1;
       border-radius: 8px;
       overflow: hidden;
+      cursor: pointer;
     }
     .thumb img {
       width: 100%;
@@ -249,12 +264,21 @@
       padding: 8px 12px;
       color: #6c757d;
       font-style: italic;
+      cursor: pointer;
+    }
+    .redacted:hover {
+      background: #dee2e6;
+      color: var(--brand);
     }
     .redacted-line {
       height: 16px;
       background: #e9ecef;
       border-radius: 8px;
       margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .redacted-line:hover {
+      background: #dee2e6;
     }
     .redacted-line.short {
       width: 60%;
@@ -276,6 +300,11 @@
       padding: 6px 12px;
       font-size: 14px;
       color: #6c757d;
+      cursor: pointer;
+    }
+    .chip:hover {
+      background: #dee2e6;
+      color: var(--brand);
     }
 
     /* Action Buttons - DISABLED */
@@ -377,6 +406,40 @@
     }
     .toast.show {
       opacity: 1;
+    }
+
+    /* Section Hints */
+    .section-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+      font-style: italic;
+      text-align: center;
+      display: none;
+    }
+    .section:hover .section-hint {
+      display: block;
+    }
+
+    /* Clickable CTA Box */
+    .cta-box {
+      text-align: center;
+      margin-top: 20px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 2px solid transparent;
+    }
+    .cta-box:hover {
+      background: rgba(255, 84, 120, 0.05);
+      border-color: rgba(255, 84, 120, 0.2);
+      transform: translateY(-2px);
+    }
+    .cta-box p {
+      margin: 0 0 12px 0;
+      font-weight: 600;
     }
 
     /* Logout Modal Styles */
@@ -483,8 +546,8 @@
 <div class="grid">
   <!-- Left Column: Images -->
   <section class="card">
-    <!-- REAL Profile Picture (Unblurred) - FIXED VERSION -->
-    <div class="hero">
+    <!-- REAL Profile Picture (Unblurred) - CLICKABLE -->
+    <div class="hero" onclick="redirectToCompleteProfile()">
       {% with primary_image=profile.images.all|first %}
         {% if primary_image and not primary_image.is_private %}
           <img src="{{ primary_image.image.url }}" alt="Main profile photo of {{ profile.user.username }}" loading="lazy">
@@ -499,10 +562,11 @@
           <span>{{ profile.location }}</span>
         </div>
       </div>
+      <div class="section-hint">Click to add more photos</div>
     </div>
     
-    <!-- Additional Photos - PLACEHOLDER (Blurred) -->
-    <div class="section">
+    <!-- Additional Photos - PLACEHOLDER (Blurred) - CLICKABLE -->
+    <div class="section" onclick="redirectToCompleteProfile()">
       <h3><span class="material-icons">photo_library</span>Photos</h3>
       <div class="thumbs">
         {% for i in "1234" %}
@@ -514,10 +578,11 @@
         </div>
         {% endfor %}
       </div>
+      <div class="section-hint">Click to unlock all photos</div>
     </div>
 
-    <!-- Private Photos Section - PLACEHOLDER -->
-    <div class="section private-section">
+    <!-- Private Photos Section - PLACEHOLDER - CLICKABLE -->
+    <div class="section private-section" onclick="redirectToCompleteProfile()">
       <h3><span class="material-icons">lock</span>Private Photos</h3>
       <div class="thumbs">
         {% for i in "123" %}
@@ -536,55 +601,61 @@
       <p class="muted" style="margin-top:8px">
         Complete your profile to request access to private photos
       </p>
+      <div class="section-hint">Click to unlock private photos</div>
     </div>
   </section>
 
-  <!-- Right Column: Limited REAL Data + Redacted Content -->
+  <!-- Right Column: Limited REAL Data + Redacted Content - ALL CLICKABLE -->
   <section class="card">
-    <!-- REAL Data: Username, Location, Age -->
-    <div class="section">
+    <!-- REAL Data: Username, Location, Age - CLICKABLE -->
+    <div class="section" onclick="redirectToCompleteProfile()">
       <h3><span class="material-icons">person</span>Basics</h3>
       <dl>
         <dt>Username</dt><dd>{{ profile.user.username }}</dd>
         <dt>Location</dt><dd>{{ profile.location }}</dd>
         <dt>Age</dt><dd>{{ profile.age }}</dd>
-        <dt>Tagline</dt><dd class="redacted">Complete profile to view</dd>
+        <dt>Tagline</dt><dd class="redacted" onclick="redirectToCompleteProfile()">Complete profile to view</dd>
       </dl>
+      <div class="section-hint">Click to edit your basic information</div>
     </div>
 
-    <!-- REDACTED: About Me -->
-    <div class="section">
+    <!-- REDACTED: About Me - CLICKABLE -->
+    <div class="section" onclick="redirectToCompleteProfile()">
       <h3><span class="material-icons">chat</span>About Me</h3>
-      <div class="redacted">
+      <div class="redacted" onclick="redirectToCompleteProfile()">
         {% if profile.about %}
           Complete your profile to view this user's bio and learn more about them
         {% else %}
           This user hasn't added a bio yet
         {% endif %}
       </div>
+      <div class="section-hint">Click to add your bio</div>
     </div>
 
-    <!-- REDACTED: Looking For -->
-    <div class="section">
+    <!-- REDACTED: Looking For - CLICKABLE -->
+    <div class="section" onclick="redirectToCompleteProfile()">
       <h3><span class="material-icons">search</span>Looking For</h3>
-      <div class="redacted-line short"></div>
-      <div class="redacted-line medium"></div>
-      <div class="redacted-line short"></div>
+      <div class="redacted-line short" onclick="redirectToCompleteProfile()"></div>
+      <div class="redacted-line medium" onclick="redirectToCompleteProfile()"></div>
+      <div class="redacted-line short" onclick="redirectToCompleteProfile()"></div>
+      <div class="section-hint">Click to set your preferences</div>
     </div>
 
-    <!-- REDACTED: Interests -->
-    <div class="section">
+    <!-- REDACTED: Interests - CLICKABLE -->
+    <div class="section" onclick="redirectToCompleteProfile()">
       <h3><span class="material-icons">favorite</span>Interests</h3>
       <div class="chips">
-        <span class="chip">Complete profile to view</span>
+        <span class="chip" onclick="redirectToCompleteProfile()">Complete profile to view</span>
       </div>
+      <div class="section-hint">Click to add your interests</div>
     </div>
 
-    <!-- REDACTED: Lifestyle -->
-    <div class="section">
+    <!-- REDACTED: Lifestyle - CLICKABLE -->
+    <div class="section" onclick="redirectToCompleteProfile()">
       <h3><span class="material-icons">self_improvement</span>Lifestyle</h3>
-      <div class="redacted-line short"></div>
-      <div class="redacted-line medium"></div>
+      <div class="redacted-line short" onclick="redirectToCompleteProfile()"></div>
+      <div class="redacted-line medium" onclick="redirectToCompleteProfile()"></div>
+      <div class="section-hint">Click to complete lifestyle info</div>
     </div>
 
     <!-- Action Buttons - DISABLED -->
@@ -603,13 +674,14 @@
       </button>
     </div>
 
-    <!-- Complete Profile CTA -->
-    <div style="text-align: center; margin-top: 20px; padding: 16px; background: #f8f9fa; border-radius: 12px;">
-      <p style="margin: 0 0 12px 0; font-weight: 600;">Ready to connect?</p>
+    <!-- Complete Profile CTA - CLICKABLE -->
+    <div class="cta-box" onclick="redirectToCompleteProfile()">
+      <p>Ready to connect?</p>
       <a href="{% url 'create_profile' %}" class="btn-complete" style="font-size: 14px; padding: 10px 20px;">
         <span class="material-icons">person_add</span>
         Complete My Profile
       </a>
+      <div class="section-hint">Click anywhere in this box to complete your profile</div>
     </div>
   </section>
 </div>
@@ -641,6 +713,11 @@ function showToast(message) {
   }, 3000);
 }
 
+// Redirect to complete profile
+function redirectToCompleteProfile() {
+  window.location.href = "{% url 'create_profile' %}";
+}
+
 // Navigation functions for preview mode
 function navigateToPrevious() {
   showToast('Returning to browse preview');
@@ -660,6 +737,19 @@ document.querySelectorAll('.btn[disabled]').forEach(btn => {
     e.preventDefault();
     showToast('Complete your profile to unlock messaging and liking');
   });
+});
+
+// Add keyboard accessibility for clickable sections
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const focused = document.activeElement;
+    if (focused.classList.contains('section') || 
+        focused.classList.contains('redacted') ||
+        focused.classList.contains('chip') ||
+        focused.classList.contains('cta-box')) {
+      redirectToCompleteProfile();
+    }
+  }
 });
 </script>
 {% endblock %}

@@ -5,6 +5,20 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>{% block title %}GR8DATE{% endblock %}</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="{% block meta_description %}GR8Date - Australia's only completely free dating website. Connect with genuine people in your community without hidden costs or subscriptions.{% endblock %}">
+  <meta name="keywords" content="{% block meta_keywords %}free dating, australia dating, online dating, relationship, singles, dating app{% endblock %}">
+
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content="{% block og_title %}GR8DATE{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}GR8Date - Australia's only completely free dating website. Connect with genuine people in your community without hidden costs or subscriptions.{% endblock %}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+
+  <!-- Structured Data Block -->
+  {% block structured_data %}{% endblock %}
+  {% block extra_head %}{% endblock %}
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   

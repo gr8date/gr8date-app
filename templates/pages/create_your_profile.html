@@ -1,3 +1,5 @@
+[file name]: create_your_profile.html
+[file content begin]
 {% extends "base_header_preview.html" %}
 
 {% block title %}GR8DATE • Create Your Profile{% endblock %}
@@ -316,7 +318,7 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
     </button>
     <button class="tab-button disabled" data-tab="preferences" id="preferences-tab-btn">
       <span class="material-icons" style="font-size:18px">flash_on</span>
-      Preferences
+      Lifestyle & Compatibility
     </button>
     <button class="tab-button disabled" data-tab="profile-content" id="profile-tab-btn">
       <span class="material-icons" style="font-size:18px">edit</span>
@@ -356,8 +358,8 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
 
           <!-- Age - COMPLETELY INDEPENDENT MANUAL ENTRY -->
           <div class="field field-required">
-            <label for="age">Display Age</label>
-            <input type="number" id="age" name="age" min="18" max="80" placeholder="Your preferred age" required
+            <label for="age">Your Displayed Age</label>
+            <input type="number" id="age" name="age" min="18" max="80" placeholder="Your age" required
                    oninput="validateBasicInfo()">
             <small class="badge-note">This is the age that will be displayed on your profile</small>
           </div>
@@ -403,7 +405,7 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
           <div class="save-main">
             <button type="button" class="btn btn-primary" id="continue-to-preferences" onclick="switchToTab('preferences')" disabled>
               <span class="material-icons">arrow_forward</span>
-              Continue to Preferences
+              Continue to Lifestyle & Compatibility
             </button>
           </div>
           <div id="basic-info-errors" class="error-message"></div>
@@ -411,72 +413,143 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
       </section>
     </div>
 
-    <!-- PREFERENCES SECTION - ALL FIELDS REQUIRED -->
+    <!-- LIFESTYLE & COMPATIBILITY SECTION - ALL FIELDS REQUIRED -->
     <div class="settings-section" id="preferences-tab">
       <section class="card">
         <div class="section-header" style="display:flex;align-items:center;margin-bottom:8px">
-          <h3 style="margin:0">⚡ Lifestyle & Preferences</h3>
+          <h3 style="margin:0">⚡ Lifestyle & Compatibility</h3>
         </div>
         
         <div class="grid-2">
-          <!-- Lifestyle Preferences - ALL REQUIRED -->
+          <!-- Physical Attributes -->
           <div class="field field-required">
-            <label>Smoking</label>
-            <select name="smoking" required onchange="validatePreferences()">
-              <option value="">Select preference</option>
-              <option value="no">No</option>
-              <option value="occasionally">Occasionally</option>
-              <option value="yes">Yes</option>
+            <label for="height">Height</label>
+            <select id="height" name="height" required onchange="validatePreferences()">
+              <option value="">Select height</option>
+              <option value="4_0">4'0" (122 cm)</option>
+              <option value="4_1">4'1" (124 cm)</option>
+              <option value="4_2">4'2" (127 cm)</option>
+              <option value="4_3">4'3" (130 cm)</option>
+              <option value="4_4">4'4" (132 cm)</option>
+              <option value="4_5">4'5" (135 cm)</option>
+              <option value="4_6">4'6" (137 cm)</option>
+              <option value="4_7">4'7" (140 cm)</option>
+              <option value="4_8">4'8" (142 cm)</option>
+              <option value="4_9">4'9" (145 cm)</option>
+              <option value="4_10">4'10" (147 cm)</option>
+              <option value="4_11">4'11" (150 cm)</option>
+              <option value="5_0">5'0" (152 cm)</option>
+              <option value="5_1">5'1" (155 cm)</option>
+              <option value="5_2">5'2" (157 cm)</option>
+              <option value="5_3">5'3" (160 cm)</option>
+              <option value="5_4">5'4" (163 cm)</option>
+              <option value="5_5">5'5" (165 cm)</option>
+              <option value="5_6">5'6" (168 cm)</option>
+              <option value="5_7">5'7" (170 cm)</option>
+              <option value="5_8">5'8" (173 cm)</option>
+              <option value="5_9">5'9" (175 cm)</option>
+              <option value="5_10">5'10" (178 cm)</option>
+              <option value="5_11">5'11" (180 cm)</option>
+              <option value="6_0">6'0" (183 cm)</option>
+              <option value="6_1">6'1" (185 cm)</option>
+              <option value="6_2">6'2" (188 cm)</option>
+              <option value="6_3">6'3" (191 cm)</option>
+              <option value="6_4">6'4" (193 cm)</option>
+              <option value="6_5_plus">6'5"+ (196 cm+)</option>
             </select>
           </div>
+
           <div class="field field-required">
-            <label>Drinking</label>
-            <select name="drinking" required onchange="validatePreferences()">
-              <option value="">Select preference</option>
-              <option value="no">No</option>
-              <option value="socially">Socially</option>
-              <option value="often">Often</option>
+            <label for="body_type">Body Type</label>
+            <select id="body_type" name="body_type" required onchange="validatePreferences()">
+              <option value="">Select body type</option>
+              <option value="slim">Slim</option>
+              <option value="athletic">Athletic</option>
+              <option value="average">Average</option>
+              <option value="curvy">Curvy</option>
+              <option value="stocky">Stocky</option>
             </select>
           </div>
+
+          <!-- Relationship & Family -->
           <div class="field field-required">
-            <label>Exercise</label>
-            <select name="exercise" required onchange="validatePreferences()">
-              <option value="">Select frequency</option>
-              <option value="never">Never</option>
-              <option value="sometimes">Sometimes</option>
-              <option value="regularly">Regularly</option>
-            </select>
-          </div>
-          <div class="field field-required">
-            <label>Pets</label>
-            <select name="pets" required onchange="validatePreferences()">
-              <option value="">Select preference</option>
-              <option value="no_pets">No pets</option>
-              <option value="cat">Cat</option>
-              <option value="dog">Dog</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-          <div class="field field-required">
-            <label>Diet</label>
-            <select name="diet" required onchange="validatePreferences()">
-              <option value="">Select diet</option>
-              <option value="anything">Anything</option>
-              <option value="vegetarian">Vegetarian</option>
-              <option value="vegan">Vegan</option>
-              <option value="halal">Halal</option>
-              <option value="kosher">Kosher</option>
-              <option value="pescatarian">Pescatarian</option>
-            </select>
-          </div>
-          <div class="field field-required">
-            <label>Children</label>
-            <select name="children" required onchange="validatePreferences()">
+            <label for="relationship_status">Relationship Status</label>
+            <select id="relationship_status" name="relationship_status" required onchange="validatePreferences()">
               <option value="">Select status</option>
-              <option value="yes">Have children</option>
+              <option value="single">Single</option>
+              <option value="divorced">Divorced</option>
+              <option value="separated">Separated</option>
+              <option value="widowed">Widowed</option>
+            </select>
+          </div>
+
+          <div class="field field-required">
+            <label for="children">Do you have children?</label>
+            <select id="children" name="children" required onchange="validatePreferences()">
+              <option value="">Select</option>
               <option value="none">No children</option>
+              <option value="yes_live_with_me">Yes, live with me</option>
+              <option value="yes_not_with_me">Yes, don't live with me</option>
+            </select>
+          </div>
+
+          <div class="field field-required">
+            <label for="want_children">Want children?</label>
+            <select id="want_children" name="want_children" required onchange="validatePreferences()">
+              <option value="">Select</option>
               <option value="want">Want children</option>
               <option value="dont_want">Don't want children</option>
+              <option value="not_sure">Not sure</option>
+              <option value="open">Open to it</option>
+            </select>
+          </div>
+
+          <div class="field field-required">
+            <label for="ethnicity">Ethnicity</label>
+            <select id="ethnicity" name="ethnicity" required onchange="validatePreferences()">
+              <option value="">Select ethnicity</option>
+              <option value="asian">Asian</option>
+              <option value="black">Black</option>
+              <option value="caucasian">Caucasian</option>
+              <option value="hispanic">Hispanic</option>
+              <option value="mixed">Mixed</option>
+              <option value="middle_eastern">Middle Eastern</option>
+              <option value="native">Native/Indigenous</option>
+              <option value="pacific_islander">Pacific Islander</option>
+              <option value="prefer_not_say">Prefer not to say</option>
+            </select>
+          </div>
+
+          <!-- Lifestyle Habits -->
+          <div class="field field-required">
+            <label for="smoking">Smoking</label>
+            <select id="smoking" name="smoking" required onchange="validatePreferences()">
+              <option value="">Select</option>
+              <option value="non_smoker">Non-smoker</option>
+              <option value="social_smoker">Social smoker</option>
+              <option value="light_smoker">Light smoker</option>
+              <option value="regular_smoker">Regular smoker</option>
+            </select>
+          </div>
+
+          <div class="field field-required">
+            <label for="drinking">Drinking</label>
+            <select id="drinking" name="drinking" required onchange="validatePreferences()">
+              <option value="">Select</option>
+              <option value="non_drinker">Non-drinker</option>
+              <option value="social_drinker">Social drinker</option>
+              <option value="regular_drinker">Regular drinker</option>
+            </select>
+          </div>
+
+          <div class="field field-required">
+            <label for="exercise">Exercise</label>
+            <select id="exercise" name="exercise" required onchange="validatePreferences()">
+              <option value="">Select frequency</option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Several times a week</option>
+              <option value="occasionally">Occasionally</option>
+              <option value="never">Never</option>
             </select>
           </div>
 
@@ -527,42 +600,42 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
               <option value="any">Any</option>
             </select>
           </div>
+        </div>
 
-          <!-- My Interests Tags - AT LEAST ONE REQUIRED -->
-          <div class="field field-required" style="grid-column:1/-1">
-            <label>My Interests (select at least one)</label>
-            <div class="tag-options" id="interests-container">
-              <label class="tag-option"><input type="checkbox" name="my_interests" value="hiking" onchange="validatePreferences()"><span>Hiking</span></label>
-              <label class="tag-option"><input type="checkbox" name="my_interests" value="beach" onchange="validatePreferences()"><span>Beach</span></label>
-              <label class="tag-option"><input type="checkbox" name="my_interests" value="dogs" onchange="validatePreferences()"><span>Dogs</span></label>
-              <label class="tag-option"><input type="checkbox" name="my_interests" value="books" onchange="validatePreferences()"><span>Books</span></label>
-              <label class="tag-option"><input type="checkbox" name="my_interests" value="music" onchange="validatePreferences()"><span>Music</span></label>
-              <label class="tag-option"><input type="checkbox" name="my_interests" value="travel" onchange="validatePreferences()"><span>Travel</span></label>
-              <label class="tag-option"><input type="checkbox" name="my_interests" value="movies" onchange="validatePreferences()"><span>Movies</span></label>
-              <label class="tag-option"><input type="checkbox" name="my_interests" value="gaming" onchange="validatePreferences()"><span>Gaming</span></label>
-              <label class="tag-option"><input type="checkbox" name="my_interests" value="cooking" onchange="validatePreferences()"><span>Cooking</span></label>
-              <label class="tag-option"><input type="checkbox" name="my_interests" value="fitness" onchange="validatePreferences()"><span>Fitness</span></label>
-              <label class="tag-option"><input type="checkbox" name="my_interests" value="art" onchange="validatePreferences()"><span>Art</span></label>
-              <label class="tag-option"><input type="checkbox" name="my_interests" value="technology" onchange="validatePreferences()"><span>Technology</span></label>
-            </div>
-            <div id="interests-error" class="error-message"></div>
+        <!-- Important Qualities - AT LEAST ONE REQUIRED -->
+        <div class="field field-required" style="grid-column:1/-1">
+          <label>Important to Me in a Partner (select at least one)</label>
+          <div class="tag-options" id="important-qualities-container">
+            <label class="tag-option"><input type="checkbox" name="important_qualities" value="honest" onchange="validatePreferences()"><span>Honesty</span></label>
+            <label class="tag-option"><input type="checkbox" name="important_qualities" value="good_communication" onchange="validatePreferences()"><span>Good Communication</span></label>
+            <label class="tag-option"><input type="checkbox" name="important_qualities" value="sense_of_humour" onchange="validatePreferences()"><span>Sense of Humour</span></label>
+            <label class="tag-option"><input type="checkbox" name="important_qualities" value="ambition" onchange="validatePreferences()"><span>Ambition</span></label>
+            <label class="tag-option"><input type="checkbox" name="important_qualities" value="kindness" onchange="validatePreferences()"><span>Kindness</span></label>
+            <label class="tag-option"><input type="checkbox" name="important_qualities" value="loyalty" onchange="validatePreferences()"><span>Loyalty</span></label>
+            <label class="tag-option"><input type="checkbox" name="important_qualities" value="adventurous" onchange="validatePreferences()"><span>Adventurous Spirit</span></label>
+            <label class="tag-option"><input type="checkbox" name="important_qualities" value="family_oriented" onchange="validatePreferences()"><span>Family Oriented</span></label>
           </div>
+          <div id="important-qualities-error" class="error-message"></div>
+        </div>
 
-          <!-- Must-Have Tags - AT LEAST ONE REQUIRED -->
-          <div class="field field-required" style="grid-column:1/-1">
-            <label>Must-Have Qualities (select at least one)</label>
-            <div class="tag-options" id="must-have-container">
-              <label class="tag-option"><input type="checkbox" name="must_have_tags" value="honest" onchange="validatePreferences()"><span>Honest</span></label>
-              <label class="tag-option"><input type="checkbox" name="must_have_tags" value="kind" onchange="validatePreferences()"><span>Kind</span></label>
-              <label class="tag-option"><input type="checkbox" name="must_have_tags" value="ambitious" onchange="validatePreferences()"><span>Ambitious</span></label>
-              <label class="tag-option"><input type="checkbox" name="must_have_tags" value="humorous" onchange="validatePreferences()"><span>Humorous</span></label>
-              <label class="tag-option"><input type="checkbox" name="must_have_tags" value="adventurous" onchange="validatePreferences()"><span>Adventurous</span></label>
-              <label class="tag-option"><input type="checkbox" name="must_have_tags" value="loyal" onchange="validatePreferences()"><span>Loyal</span></label>
-              <label class="tag-option"><input type="checkbox" name="must_have_tags" value="compassionate" onchange="validatePreferences()"><span>Compassionate</span></label>
-              <label class="tag-option"><input type="checkbox" name="must_have_tags" value="confident" onchange="validatePreferences()"><span>Confident</span></label>
-            </div>
-            <div id="must-have-error" class="error-message"></div>
+        <!-- Interests & Hobbies - AT LEAST ONE REQUIRED -->
+        <div class="field field-required" style="grid-column:1/-1">
+          <label>My Interests & Hobbies (select at least one)</label>
+          <div class="tag-options" id="interests-container">
+            <label class="tag-option"><input type="checkbox" name="my_interests" value="dining_out" onchange="validatePreferences()"><span>Dining Out</span></label>
+            <label class="tag-option"><input type="checkbox" name="my_interests" value="travel" onchange="validatePreferences()"><span>Travel</span></label>
+            <label class="tag-option"><input type="checkbox" name="my_interests" value="fitness" onchange="validatePreferences()"><span>Fitness</span></label>
+            <label class="tag-option"><input type="checkbox" name="my_interests" value="movies" onchange="validatePreferences()"><span>Movies & Cinema</span></label>
+            <label class="tag-option"><input type="checkbox" name="my_interests" value="music" onchange="validatePreferences()"><span>Live Music</span></label>
+            <label class="tag-option"><input type="checkbox" name="my_interests" value="cooking" onchange="validatePreferences()"><span>Cooking</span></label>
+            <label class="tag-option"><input type="checkbox" name="my_interests" value="beach" onchange="validatePreferences()"><span>Beach</span></label>
+            <label class="tag-option"><input type="checkbox" name="my_interests" value="hiking" onchange="validatePreferences()"><span>Hiking & Nature</span></label>
+            <label class="tag-option"><input type="checkbox" name="my_interests" value="sports" onchange="validatePreferences()"><span>Sports</span></label>
+            <label class="tag-option"><input type="checkbox" name="my_interests" value="art_culture" onchange="validatePreferences()"><span>Art & Culture</span></label>
+            <label class="tag-option"><input type="checkbox" name="my_interests" value="gaming" onchange="validatePreferences()"><span>Gaming</span></label>
+            <label class="tag-option"><input type="checkbox" name="my_interests" value="reading" onchange="validatePreferences()"><span>Reading</span></label>
           </div>
+          <div id="interests-error" class="error-message"></div>
         </div>
 
         <!-- Continue button -->
@@ -630,17 +703,17 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
         <!-- Text Content Fields - ALL REQUIRED -->
         <div class="grid-2" style="margin-top:20px">
           <div class="field field-required">
+            <label for="location">Your Location</label>
+            <input type="text" id="location" name="location" placeholder="Suburb, City - e.g. Bondi, Sydney" required
+                   oninput="validateProfileContent()">
+            <small class="badge-note">Be specific - this helps find matches nearby</small>
+          </div>
+
+          <div class="field field-required">
             <label>Headline</label>
             <input name="headline" placeholder="Short tagline about yourself" required
                    oninput="validateProfileContent()">
             <small class="badge-note">A catchy phrase that represents you</small>
-          </div>
-
-          <div class="field field-required">
-            <label>Location</label>
-            <input name="location" placeholder="City / Suburb" required
-                   oninput="validateProfileContent()">
-            <small class="badge-note">Where you're located</small>
           </div>
 
           <div class="field field-required" style="grid-column:1/-1">
@@ -661,7 +734,7 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
           <div class="save-main">
             <button type="button" class="btn btn-muted" onclick="switchToTab('preferences')">
               <span class="material-icons">arrow_back</span>
-              Back to Preferences
+              Back to Lifestyle & Compatibility
             </button>
             <button type="submit" class="btn btn-primary" id="submit-profile" disabled>
               <span class="material-icons">rocket_launch</span>
@@ -811,7 +884,7 @@ function validateBasicInfo(showErrors = false) {
 // STRICT Preferences Validation  
 function validatePreferences(showErrors = false) {
     const errors = [];
-    const requiredSelects = ['smoking', 'drinking', 'exercise', 'pets', 'diet', 'children', 'prefAgeMin', 'prefAgeMax', 'prefDistance', 'prefIntent'];
+    const requiredSelects = ['height', 'body_type', 'relationship_status', 'children', 'want_children', 'ethnicity', 'smoking', 'drinking', 'exercise', 'prefAgeMin', 'prefAgeMax', 'prefDistance', 'prefIntent'];
     let allValid = true;
     
     // Check dropdowns
@@ -828,6 +901,18 @@ function validatePreferences(showErrors = false) {
         }
     });
     
+    // Check important qualities (at least one)
+    const importantQualities = document.querySelectorAll('input[name="important_qualities"]:checked');
+    if (importantQualities.length === 0) {
+        allValid = false;
+        if (showErrors) {
+            document.getElementById('important-qualities-container').style.borderColor = '#dc2626';
+            errors.push('Select at least one important quality');
+        }
+    } else {
+        document.getElementById('important-qualities-container').style.borderColor = '';
+    }
+    
     // Check interests (at least one)
     const interests = document.querySelectorAll('input[name="my_interests"]:checked');
     if (interests.length === 0) {
@@ -838,18 +923,6 @@ function validatePreferences(showErrors = false) {
         }
     } else {
         document.getElementById('interests-container').style.borderColor = '';
-    }
-    
-    // Check must-have tags (at least one)
-    const mustHaves = document.querySelectorAll('input[name="must_have_tags"]:checked');
-    if (mustHaves.length === 0) {
-        allValid = false;
-        if (showErrors) {
-            document.getElementById('must-have-container').style.borderColor = '#dc2626';
-            errors.push('Select at least one must-have quality');
-        }
-    } else {
-        document.getElementById('must-have-container').style.borderColor = '';
     }
     
     // FIXED: Enable button when all fields are valid
@@ -870,7 +943,7 @@ function validatePreferences(showErrors = false) {
 // STRICT Profile Content Validation
 function validateProfileContent(showErrors = false) {
     const errors = [];
-    const requiredFields = ['headline', 'location', 'about'];
+    const requiredFields = ['location', 'headline', 'about'];
     let allValid = true;
     
     // Check text fields
@@ -1390,3 +1463,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
+[file content end]

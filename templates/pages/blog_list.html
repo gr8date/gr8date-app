@@ -1,9 +1,45 @@
+<!-- templates/pages/blog_list.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>GR8Date Blog</title>
+  
+  <!-- ✅ ENHANCED Blog List Meta Tags -->
+  <title>GR8Date Blog - Free Dating Advice, Tips & Relationship Guidance</title>
+  <meta name="description" content="Get expert dating advice and relationship tips from GR8Date Blog. Learn how to navigate online dating, create great profiles, and build meaningful connections.">
+  <meta name="keywords" content="dating blog, relationship advice, online dating tips, free dating advice, Australian dating">
+
+  <!-- ✅ ENHANCED Open Graph -->
+  <meta property="og:title" content="GR8Date Blog - Free Dating Advice & Tips">
+  <meta property="og:description" content="Expert dating advice and relationship tips from Australia's free dating platform.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}/static/images/gr8date-logo-desktop.59efa8369812.svg">
+
+  <!-- ✅ ENHANCED Structured Data for Blog Listing -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "GR8Date Blog",
+    "description": "Free dating advice and relationship tips from Australia's completely free dating platform",
+    "url": "{{ request.build_absolute_uri }}",
+    "publisher": {
+      "@type": "Organization",
+      "name": "GR8Date",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "{{ request.scheme }}://{{ request.get_host }}/static/images/gr8date-logo-desktop.59efa8369812.svg"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "{{ request.build_absolute_uri }}"
+    }
+  }
+  </script>
+
   <link rel="stylesheet" href="/static/css/site.css">
   <style>
     .blog-wrap{max-width:1100px;margin:0 auto;padding:1.25rem}
@@ -25,7 +61,7 @@
 <body>
   <header class="gd-header">
     <div class="gd-wrap">
-      <a class="gd-brand" href="/"><img alt="GR8Date Logo" class="logo-img" src="/static/images/gr8date-logo-desktop.59efa8369812.svg"/></a>
+      <a class="gd-brand" href="/"><img alt="GR8Date Logo - Free Australian Dating" class="logo-img" src="/static/images/gr8date-logo-desktop.59efa8369812.svg"/></a>
       <nav class="gd-nav"><a class="gd-login" href="/login/">Login</a><a class="gd-cta" href="/join/">Join Free Now</a></nav>
     </div>
   </header>
@@ -35,19 +71,28 @@
 
     <section class="blog-grid">
       {% for post in page_obj.object_list %}
-        <article class="blog-card">
+        <article class="blog-card" itemscope itemtype="https://schema.org/BlogPosting">
           <a href="/blog/{{ post.slug }}/">
             {% if post.hero_image %}
-              <img class="blog-thumb" src="{{ post.hero_image.url }}" alt="{{ post.title }}" onerror="this.onerror=null;this.src='/static/images/images/image1.jpg';"/>
+              <img class="blog-thumb" 
+                   src="{{ post.hero_image.url }}" 
+                   alt="{{ post.get_image_alt_text }}" 
+                   onerror="this.onerror=null;this.src='/static/images/images/image1.jpg';" 
+                   itemprop="image"
+                   loading="lazy"/>
             {% else %}
-              <img class="blog-thumb" src="/static/images/images/image1.jpg" alt="{{ post.title }}"/>
+              <img class="blog-thumb" 
+                   src="/static/images/images/image1.jpg" 
+                   alt="{{ post.title }} - GR8Date Blog" 
+                   itemprop="image"
+                   loading="lazy"/>
             {% endif %}
           </a>
           <div class="blog-body">
-            <a class="blog-title" href="/blog/{{ post.slug }}/">{{ post.title }}</a>
-            <div class="blog-date">{{ post.published_at|date:"d M Y" }}</div>
-            <p class="blog-excerpt">
-              {{ post.excerpt|default:post.content|default:""|striptags|truncatewords:26 }}
+            <a class="blog-title" href="/blog/{{ post.slug }}/" itemprop="headline">{{ post.title }}</a>
+            <div class="blog-date" itemprop="datePublished" content="{{ post.published_at|date:'c' }}">{{ post.published_at|date:"d M Y" }}</div>
+            <p class="blog-excerpt" itemprop="description">
+              {{ post.display_excerpt|striptags|truncatewords:26 }}
             </p>
             <div class="blog-actions"><a class="btn-read" href="/blog/{{ post.slug }}/">Read more</a></div>
           </div>

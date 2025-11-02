@@ -1,9 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="/static/css/site.css"><meta charset="UTF-8" />
+  <link rel="stylesheet" href="/static/css/site.css">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About Us – GR8Date</title>
+  
+  <!-- About Us Meta Tags -->
+  <title>About GR8Date - Australia's 100% Free Dating Platform Story</title>
+  <meta name="description" content="Learn about GR8Date's mission to provide completely free online dating in Australia. Our story of creating a platform without hidden costs or subscriptions.">
+  <meta name="keywords" content="about GR8Date, free dating Australia, our story, dating platform mission">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="About GR8Date - Australia's 100% Free Dating Platform">
+  <meta property="og:description" content="Learn about our mission to provide completely free online dating in Australia without hidden costs.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+
+  <!-- Structured Data for About Page -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "About GR8Date",
+    "description": "Australia's only completely free dating website",
+    "publisher": {
+      "@type": "Organization",
+      "name": "GR8Date",
+      "description": "Free dating platform for Australian singles"
+    }
+  }
+  </script>
+
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
   <style>
     body { margin:0; padding:0; font-family: Arial, sans-serif; background:#fff; color:#333; }
@@ -119,7 +146,7 @@
 <header class="gd-header">
   <div class="gd-wrap">
     <a class="gd-brand" href="/">
-      <img alt="GR8Date Logo" class="logo-img" src="/static/images/gr8date-logo-desktop.59efa8369812.svg"/>
+      <img alt="GR8Date Logo - Free Australian Dating Service" class="logo-img" src="/static/images/gr8date-logo-desktop.59efa8369812.svg"/>
     </a>
     <nav class="gd-nav">
       <a class="gd-login" href="/login/">Login</a>

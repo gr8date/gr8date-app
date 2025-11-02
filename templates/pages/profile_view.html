@@ -146,16 +146,19 @@
     </section>
 
     <!-- Right Column: Details -->
-    <section class="card">
+    <section class="card">  
       <div class="section">
-        <h3><span class="material-icons">person</span>Basics</h3>
-        <dl>
-          <dt>Username</dt><dd>{{ profile.user.username }}</dd>
-          <dt>Location</dt><dd>{% if profile.location %}{{ profile.location }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-          <dt>Tagline</dt><dd>{% if profile.headline %}{{ profile.headline }}{% else %}<span class="data-placeholder">No tagline yet</span>{% endif %}</dd>
-        </dl>
-      </div>
-
+       <h3><span class="material-icons">person</span>Basics</h3>
+      <dl>
+      <dt>Username</dt><dd>{{ profile.user.username }}</dd>
+      
+      <!-- ADD AGE DISPLAY HERE -->
+      <dt>Age</dt><dd>{% if profile.age %}{{ profile.age }} years old{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+      
+      <dt>Location</dt><dd>{% if profile.location %}{{ profile.location }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+      <dt>Tagline</dt><dd>{% if profile.headline %}{{ profile.headline }}{% else %}<span class="data-placeholder">No tagline yet</span>{% endif %}</dd>
+    </dl>
+  </div>
       <div class="section">
         <h3><span class="material-icons">chat</span>About Me</h3>
         <p>{% if profile.about %}{{ profile.about|linebreaks }}{% else %}<span class="data-placeholder">This user hasn't written about themselves yet.</span>{% endif %}</p>
