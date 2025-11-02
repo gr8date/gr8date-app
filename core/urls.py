@@ -17,9 +17,14 @@ sitemaps = {
 }
 
 urlpatterns = [
-    # Home
-    path("", TemplateView.as_view(template_name="pages/index.html"), name="home"),
+    # ========================
+    # ALLAUTH URLs - MUST COME FIRST
+    # ========================
+    path("accounts/", include("allauth.urls")),
     
+    # ========================
+    # REDIRECTS for Allauth (must come after allauth include)
+    # ========================
     # ✅ REDIRECT: Allauth signup to styled join page
     path("accounts/signup/", RedirectView.as_view(url='/join/', permanent=False)),
     
@@ -27,7 +32,12 @@ urlpatterns = [
     path("accounts/password/reset/", RedirectView.as_view(url='/password-reset/', permanent=False)),
     
     # ========================
-    # CUSTOM ADMIN URLS - MOVED BACK HERE (ABOVE STANDARD ADMIN)
+    # HOME PAGE
+    # ========================
+    path("", TemplateView.as_view(template_name="pages/index.html"), name="home"),
+    
+    # ========================
+    # CUSTOM ADMIN URLS
     # ========================
     path("admin/approvals/", views.admin_profile_approvals, name="admin_profile_approvals"),
     path("admin/approve-profile/<int:profile_id>/", views.admin_approve_profile, name="admin_approve_profile"),
@@ -35,23 +45,26 @@ urlpatterns = [
     path("admin/new-profiles/", views.admin_new_profile, name="admin_new_profiles"),
     path("admin/new-signups/", views.admin_new_signups, name="admin_new_signups"),
     path("admin/send-message/<int:profile_id>/", views.admin_send_message, name="admin_send_message"),
-    # Add any other admin URLs you need here
     
     # ========================
     # STANDARD DJANGO ADMIN
     # ========================
     path("admin/", admin.site.urls),
     
+    # ========================
+    # LEGACY REDIRECTS
+    # ========================
     # Redirect old /login/ to new /accounts/login/
     path('login/', RedirectView.as_view(url='/accounts/login/', permanent=False)),
     
-    # Allauth URLs
-    path("accounts/", include("allauth.urls")),
-    
-    # Your pages (general URLs) - THIS SHOULD HANDLE ALL NON-ADMIN PAGES
+    # ========================
+    # PAGES APP URLs
+    # ========================
     path("", include("pages.urls")),
     
-    # Sitemap
+    # ========================
+    # SITEMAP & SEO
+    # ========================
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     
     # Robots.txt
