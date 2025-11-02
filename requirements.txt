@@ -6,3 +6,5 @@ dj-database-url
 python-dotenv
 Pillow
 django-allauth
+requests>=2.31.0
+requests>=2.31.0
