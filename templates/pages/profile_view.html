@@ -27,9 +27,9 @@
 
 <div class="container">
   <div class="grid">
-    <!-- Left Column: Images -->
-    <section class="card">
-      <!-- Primary profile image display -->
+    <!-- Left Column: Main Content -->
+    <section class="card main-content">
+      <!-- Hero Image -->
       <div class="hero" onclick="openLightbox(0)">
         {% with primary_image=profile.images.all|first %}
           {% if primary_image and not primary_image.is_private %}
@@ -145,89 +145,195 @@
       {% endif %}
     </section>
 
-    <!-- Right Column: Details -->
-    <section class="card">  
-      <div class="section">
-       <h3><span class="material-icons">person</span>Basics</h3>
-      <dl>
-      <dt>Username</dt><dd>{{ profile.user.username }}</dd>
-      
-      <!-- ADD AGE DISPLAY HERE -->
-      <dt>Age</dt><dd>{% if profile.age %}{{ profile.age }} years old{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-      
-      <dt>Location</dt><dd>{% if profile.location %}{{ profile.location }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-      <dt>Tagline</dt><dd>{% if profile.headline %}{{ profile.headline }}{% else %}<span class="data-placeholder">No tagline yet</span>{% endif %}</dd>
-    </dl>
-  </div>
-      <div class="section">
-        <h3><span class="material-icons">chat</span>About Me</h3>
-        <p>{% if profile.about %}{{ profile.about|linebreaks }}{% else %}<span class="data-placeholder">This user hasn't written about themselves yet.</span>{% endif %}</p>
-      </div>
-
-      <div class="section">
-        <h3><span class="material-icons">search</span>Looking For</h3>
-        <dl>
-          <dt>Gender</dt><dd>{% if profile.looking_for and profile.looking_for != "any" %}{{ profile.looking_for|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-          <dt>Age Range</dt><dd>{% if profile.preferred_age_min and profile.preferred_age_max %}{{ profile.preferred_age_min }}–{{ profile.preferred_age_max }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-          <dt>Intent</dt><dd>{% if profile.preferred_intent and profile.preferred_intent != "any" %}{{ profile.preferred_intent|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-          <dt>Distance</dt><dd>{% if profile.preferred_distance and profile.preferred_distance != "any" %}{{ profile.preferred_distance|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-        </dl>
-      </div>
-
-      <!-- Interests display -->
-      <div class="section">
-        <h3><span class="material-icons">favorite</span>Interests</h3>
-        <div class="chips">
-          {% if profile.my_interests %}
-            {% with interests=profile.my_interests.split %}
-              {% for interest in interests %}
-                <span class="chip">{{ interest.strip|title }}</span>
-              {% endfor %}
-            {% endwith %}
-          {% else %}
-            <span class="chip data-placeholder">No interests added yet</span>
-          {% endif %}
+    <!-- Right Column: Profile Details -->
+    <section class="card profile-details">
+      <!-- Quick Info Card -->
+      <div class="quick-info-card">
+        <h2>{{ profile.user.username }}{% if profile.age %}, {{ profile.age }}{% endif %}</h2>
+        <div class="location">{% if profile.location %}{{ profile.location }}{% else %}Location not set{% endif %}</div>
+        <div class="tagline">{% if profile.headline %}{{ profile.headline }}{% else %}No tagline yet{% endif %}</div>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="btn btn-primary" onclick="showQuickMessage({{ profile.user.id }}, '{{ profile.user.username }}')">
+            <span class="material-icons">chat</span>
+            Message
+          </button>
+          
+          <button class="btn {% if is_liked %}btn-liked{% else %}btn-secondary{% endif %}" 
+                  id="likeBtn" 
+                  onclick="toggleLike({{ profile.user.id }})">
+            <span class="material-icons">favorite</span>
+            <span id="likeText">{% if is_liked %}Liked{% else %}Like{% endif %}</span>
+          </button>
+          
+          <button class="btn {% if is_blocked %}btn-blocked{% else %}btn-danger{% endif %}" 
+                  id="blockBtn" 
+                  onclick="toggleBlock({{ profile.user.id }})">
+            <span class="material-icons" id="blockIcon">block</span>
+            <span id="blockText">{% if is_blocked %}Blocked{% else %}Block{% endif %}</span>
+          </button>
         </div>
       </div>
 
-      <div class="section">
-        <h3><span class="material-icons">self_improvement</span>Lifestyle</h3>
-        <dl>
-          <dt>Gender</dt><dd>{% if profile.my_gender and profile.my_gender != "prefer_not" %}{{ profile.my_gender|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-          <dt>Children</dt><dd>{% if profile.children and profile.children != "prefer_not" %}{{ profile.children|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-          <dt>Smoking</dt><dd>{% if profile.smoking and profile.smoking != "prefer_not" %}{{ profile.smoking|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-          <dt>Drinking</dt><dd>{% if profile.drinking and profile.drinking != "prefer_not" %}{{ profile.drinking|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-          <dt>Exercise</dt><dd>{% if profile.exercise and profile.exercise != "prefer_not" %}{{ profile.exercise|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-          <dt>Pets</dt><dd>{% if profile.pets and profile.pets != "prefer_not" %}{{ profile.pets|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-          <dt>Diet</dt><dd>{% if profile.diet and profile.diet != "prefer_not" %}{{ profile.diet|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-        </dl>
-      </div>
+      <!-- Collapsible Sections -->
+      <div class="accordion">
+        <!-- About Me (Expanded by default) -->
+        <div class="accordion-section active">
+          <div class="accordion-header">
+            <span>About Me</span>
+            <span class="material-icons">expand_more</span>
+          </div>
+          <div class="accordion-content">
+            <p>{% if profile.about %}{{ profile.about|linebreaks }}{% else %}<span class="data-placeholder">This user hasn't written about themselves yet.</span>{% endif %}</p>
+          </div>
+        </div>
 
-      <!-- Action Buttons -->
-      <div class="cta">
-        <button class="btn btn--primary" onclick="showQuickMessage({{ profile.user.id }}, '{{ profile.user.username }}')">
-          <span class="material-icons">chat</span>
-          Message
-        </button>
-        
-        <button class="btn {% if is_liked %}btn--liked{% else %}btn--secondary{% endif %}" 
-                id="likeBtn" 
-                onclick="toggleLike({{ profile.user.id }})">
-          <span class="material-icons">favorite</span>
-          <span id="likeText">{% if is_liked %}Liked{% else %}Like{% endif %}</span>
-        </button>
-        
-        <button class="btn {% if is_blocked %}btn--blocked{% else %}btn--danger{% endif %}" 
-                id="blockBtn" 
-                onclick="toggleBlock({{ profile.user.id }})">
-          <span class="material-icons" id="blockIcon">block</span>
-          <span id="blockText">{% if is_blocked %}Blocked{% else %}Block{% endif %}</span>
-        </button>
+        <!-- Looking For -->
+        <div class="accordion-section">
+          <div class="accordion-header">
+            <span>Looking For</span>
+            <span class="material-icons">expand_more</span>
+          </div>
+          <div class="accordion-content">
+            <dl class="details-list">
+              <dt>Gender</dt>
+              <dd>{% if profile.looking_for and profile.looking_for != "any" %}{{ profile.looking_for|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+              
+              <dt>Age Range</dt>
+              <dd>{% if profile.preferred_age_min and profile.preferred_age_max %}{{ profile.preferred_age_min }}–{{ profile.preferred_age_max }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+              
+              <dt>Intent</dt>
+              <dd>{% if profile.preferred_intent and profile.preferred_intent != "any" %}{{ profile.preferred_intent|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+              
+              <dt>Distance</dt>
+              <dd>{% if profile.preferred_distance and profile.preferred_distance != "any" %}{{ profile.preferred_distance|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Physical Attributes -->
+        <div class="accordion-section">
+          <div class="accordion-header">
+            <span>Physical Attributes</span>
+            <span class="material-icons">expand_more</span>
+          </div>
+          <div class="accordion-content">
+            <dl class="details-list">
+              <dt>Height</dt>
+              <dd>{% if profile.height %}{{ profile.height|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+              
+              <dt>Body Type</dt>
+              <dd>{% if profile.body_type %}{{ profile.body_type|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+              
+              <dt>Ethnicity</dt>
+              <dd>{% if profile.ethnicity %}{{ profile.ethnicity|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Relationship & Family -->
+        <div class="accordion-section">
+          <div class="accordion-header">
+            <span>Relationship & Family</span>
+            <span class="material-icons">expand_more</span>
+          </div>
+          <div class="accordion-content">
+            <dl class="details-list">
+              <dt>Relationship Status</dt>
+              <dd>{% if profile.relationship_status %}{{ profile.relationship_status|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+              
+              <dt>Children</dt>
+              <dd>{% if profile.children %}{{ profile.children|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+              
+              <dt>Want Children</dt>
+              <dd>{% if profile.want_children %}{{ profile.want_children|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Interests -->
+        {% if profile.my_interests %}
+        <div class="accordion-section">
+          <div class="accordion-header">
+            <span>Interests</span>
+            <span class="material-icons">expand_more</span>
+          </div>
+          <div class="accordion-content">
+            <div class="chips">
+              {% with interests=profile.my_interests.split %}
+                {% for interest in interests %}
+                  <span class="chip">{{ interest.strip|title }}</span>
+                {% endfor %}
+              {% endwith %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Important Qualities -->
+        {% if profile.important_qualities %}
+        <div class="accordion-section">
+          <div class="accordion-header">
+            <span>Important Qualities</span>
+            <span class="material-icons">expand_more</span>
+          </div>
+          <div class="accordion-content">
+            <div class="chips">
+              {% with qualities=profile.important_qualities.split %}
+                {% for quality in qualities %}
+                  <span class="chip">{{ quality.strip|title }}</span>
+                {% endfor %}
+              {% endwith %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Lifestyle -->
+        <div class="accordion-section">
+          <div class="accordion-header">
+            <span>Lifestyle</span>
+            <span class="material-icons">expand_more</span>
+          </div>
+          <div class="accordion-content">
+            <dl class="details-list">
+              <dt>Gender</dt>
+              <dd>{% if profile.my_gender and profile.my_gender != "prefer_not" %}{{ profile.my_gender|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+              
+              <dt>Smoking</dt>
+              <dd>{% if profile.smoking and profile.smoking != "prefer_not" %}{{ profile.smoking|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+              
+              <dt>Drinking</dt>
+              <dd>{% if profile.drinking and profile.drinking != "prefer_not" %}{{ profile.drinking|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+              
+              <dt>Exercise</dt>
+              <dd>{% if profile.exercise and profile.exercise != "prefer_not" %}{{ profile.exercise|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+            </dl>
+          </div>
+        </div>
       </div>
     </section>
   </div>
 </div>
 
+<!-- Fixed Bottom Navigation - Mobile Only -->
+<div class="bottom-nav">
+  <div class="nav-buttons">
+    {% if previous_profile_id %}
+    <a class="nav-btn" href="{% url 'profile_detail' previous_profile_id %}">
+      <span class="material-icons">chevron_left</span>Previous
+    </a>
+    {% endif %}
+    {% if next_profile_id %}
+    <a class="nav-btn nav-btn-primary" href="{% url 'profile_detail' next_profile_id %}">
+      Next<span class="material-icons">chevron_right</span>
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Rest of your existing modals and lightbox -->
 <!-- Lightbox -->
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" onclick="closeLightbox()">
@@ -275,31 +381,15 @@
 <!-- Toast Notification -->
 <div id="toast" class="toast"></div>
 
-<!-- Fixed Bottom Navigation - Mobile Only -->
-<div class="bottom-nav">
-  <div class="nav-buttons">
-    {% if previous_profile_id %}
-    <a class="nav-btn" href="{% url 'profile_detail' previous_profile_id %}">
-      <span class="material-icons">chevron_left</span>Previous
-    </a>
-    {% endif %}
-    {% if next_profile_id %}
-    <a class="nav-btn nav-btn--primary" href="{% url 'profile_detail' next_profile_id %}">
-      Next<span class="material-icons">chevron_right</span>
-    </a>
-    {% endif %}
-  </div>
-</div>
-
 <style>
   :root {
+    --brand: #ff5478;
+    --brand-900: #e23c61;
+    --ink: #0f172a;
+    --muted: #64748b;
     --bg: #f6f7fb;
     --card: #fff;
     --border: #eaeef5;
-    --text: #0f172a;
-    --muted: #64748b;
-    --brand: #ff5478;
-    --brand-900: #e23c61;
     --shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
     --radius: 16px;
   }
@@ -313,7 +403,7 @@
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: var(--bg);
-    color: var(--text);
+    color: var(--ink);
     line-height: 1.5;
   }
   
@@ -321,25 +411,70 @@
     height: 20px;
   }
   
+  /* Desktop Navigation */
+  .desktop-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto 20px auto;
+    max-width: 1200px;
+    padding: 0 16px;
+  }
+
+  @media (max-width: 768px) {
+    .desktop-nav {
+      display: none;
+    }
+  }
+
+  .desktop-nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow);
+  }
+
+  .desktop-nav-btn:hover {
+    background: var(--bg);
+    transform: translateY(-1px);
+  }
+
+  .nav-spacer {
+    width: 120px;
+  }
+
+  /* IMPROVED LAYOUT STYLES */
   .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px 16px 80px 16px;
+    padding: 20px 16px 100px 16px;
   }
-  
+
   .grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.2fr 0.8fr;
     gap: 20px;
   }
-  
+
   @media (max-width: 768px) {
     .grid {
       grid-template-columns: 1fr;
       gap: 16px;
     }
+    
+    .container {
+      padding: 20px 16px 140px 16px;
+    }
   }
-  
+
   .card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -347,7 +482,228 @@
     padding: 20px;
     box-shadow: var(--shadow);
   }
+
+  /* Quick Info Card */
+  .quick-info-card {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .quick-info-card h2 {
+    font-size: 24px;
+    margin: 0 0 8px 0;
+    color: var(--ink);
+  }
+
+  .location {
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-size: 16px;
+  }
+
+  .tagline {
+    font-style: italic;
+    margin-bottom: 20px;
+    color: var(--ink);
+    font-size: 16px;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  @media (max-width: 480px) {
+    .action-buttons {
+      flex-direction: column;
+    }
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    flex: 1;
+    transition: all 0.2s ease;
+    font-size: 14px;
+  }
   
+  .btn-primary {
+    background: var(--brand);
+    color: white;
+  }
+  
+  .btn-secondary {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  
+  .btn-danger {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  }
+  
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .btn-liked {
+    background: var(--brand);
+    color: white;
+  }
+  
+  .btn-blocked {
+    background: #dc2626;
+    color: white;
+  }
+
+  /* Accordion Styles */
+  .accordion {
+    margin-bottom: 16px;
+  }
+
+  .accordion-section {
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .accordion-header {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    transition: background-color 0.2s ease;
+  }
+
+  .accordion-header:hover {
+    background: var(--bg);
+  }
+
+  .accordion-header .material-icons {
+    font-size: 20px;
+    color: var(--muted);
+    transition: transform 0.3s ease;
+  }
+
+  .accordion-content {
+    padding: 0 16px;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .accordion-section.active .accordion-content {
+    padding: 0 16px 20px;
+    max-height: 1000px;
+  }
+
+  .accordion-section.active .accordion-header .material-icons {
+    transform: rotate(180deg);
+  }
+
+  /* Details List */
+  .details-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 16px;
+  }
+
+  .details-list dt {
+    font-weight: 600;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .details-list dd {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .data-placeholder {
+    color: #94a3b8;
+    font-style: italic;
+  }
+
+  /* Chips */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .chip {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  /* Bottom Navigation */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid var(--border);
+    padding: 12px 16px;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  }
+
+  @media (max-width: 768px) {
+    .bottom-nav {
+      display: block;
+    }
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    flex: 1;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .nav-btn-primary {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+  }
+
+  /* Keep your existing hero, photo, and private section styles */
   .hero {
     position: relative;
     border-radius: 12px;
@@ -468,10 +824,6 @@
     gap: 2px;
   }
   
-  .private-badge .material-icons {
-    font-size: 12px;
-  }
-  
   .request-access-btn {
     margin-top: 8px;
     padding: 6px 12px;
@@ -516,110 +868,19 @@
     font-size: 14px;
   }
   
-  .access-banner.granted .banner-title {
-    color: #2E7D32;
-  }
-  
-  .access-banner.superuser .banner-title {
-    color: #E65100;
-  }
-  
-  .banner-subtitle {
-    font-size: 14px;
-    color: #666;
-  }
-  
   .muted {
     color: var(--muted);
     font-size: 14px;
   }
   
-  .private-description {
-    margin-top: 8px;
-  }
-  
-  dl {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 8px 16px;
-  }
-  
-  dt {
-    font-weight: 600;
+  .empty-state {
+    text-align: center;
+    padding: 20px;
     color: var(--muted);
+    font-style: italic;
   }
-  
-  dd {
-    margin: 0;
-  }
-  
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  
-  .chip {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 6px 12px;
-    font-size: 14px;
-  }
-  
-  .cta {
-    display: flex;
-    gap: 12px;
-    margin-top: 24px;
-  }
-  
-  .btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 16px;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    flex: 1;
-    transition: all 0.2s ease;
-    font-size: 14px;
-  }
-  
-  .btn--primary {
-    background: var(--brand);
-    color: white;
-  }
-  
-  .btn--secondary {
-    background: var(--bg);
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
-  
-  .btn--danger {
-    background: #fee2e2;
-    color: #dc2626;
-    border: 1px solid #fecaca;
-  }
-  
-  .btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  .btn--liked {
-    background: var(--brand);
-    color: white;
-  }
-  
-  .btn--blocked {
-    background: #dc2626;
-    color: white;
-  }
-  
+
+  /* Keep your existing lightbox and modal styles */
   .lightbox {
     position: fixed;
     top: 0;
@@ -776,107 +1037,22 @@
   .toast.show {
     opacity: 1;
   }
-  
-  .empty-state {
-    text-align: center;
-    padding: 20px;
-    color: var(--muted);
-    font-style: italic;
-  }
-  
-  .data-placeholder {
-    color: #94a3b8;
-    font-style: italic;
-  }
-
-  /* Desktop Navigation */
-  .desktop-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 0 auto 20px auto;
-    max-width: 1200px;
-    padding: 0 16px;
-  }
-
-  @media (max-width: 768px) {
-    .desktop-nav {
-      display: none;
-    }
-  }
-
-  .desktop-nav-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 20px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    font-weight: 600;
-    text-decoration: none;
-    color: var(--text);
-    transition: all 0.2s ease;
-    box-shadow: var(--shadow);
-  }
-
-  .desktop-nav-btn:hover {
-    background: var(--bg);
-    transform: translateY(-1px);
-  }
-
-  .nav-spacer {
-    width: 120px;
-  }
-
-  /* Bottom Navigation - Mobile Only */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    border-top: 1px solid var(--border);
-    padding: 8px 16px;
-    display: none;
-    z-index: 1000;
-  }
-
-  @media (max-width: 768px) {
-    .bottom-nav {
-      display: block;
-    }
-  }
-
-  .nav-buttons {
-    display: flex;
-    gap: 8px;
-  }
-
-  .nav-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 12px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    flex: 1;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 14px;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .nav-btn--primary {
-    background: var(--brand);
-    color: white;
-    border-color: var(--brand);
-  }
 </style>
 
 <script>
+  // Accordion functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const accordionHeaders = document.querySelectorAll('.accordion-header');
+    
+    accordionHeaders.forEach(header => {
+      header.addEventListener('click', function() {
+        const section = this.parentElement;
+        section.classList.toggle('active');
+      });
+    });
+  });
+
+  // LIGHTBOX FUNCTIONALITY
   // Collect images for lightbox
   const images = [];
 
@@ -966,23 +1142,6 @@
     openLightbox(startIndex);
   }
 
-  // Real-time countdown for private access
-  function updateAccessCountdown() {
-      const countdownElement = document.getElementById('accessCountdown');
-      if (!countdownElement) return;
-      
-      const text = countdownElement.textContent;
-      if (text.includes('hour') || text.includes('minute')) {
-          countdownElement.textContent = text;
-      }
-  }
-
-  // Update countdown every minute if access is granted
-  {% if has_private_access and not user.is_superuser %}
-  setInterval(updateAccessCountdown, 60000);
-  updateAccessCountdown();
-  {% endif %}
-
   // Keyboard navigation for lightbox
   document.addEventListener('keydown', function(e) {
     if (document.getElementById('lightbox').classList.contains('active')) {
@@ -999,6 +1158,7 @@
     }
   });
 
+  // MESSAGING, LIKING, BLOCKING FUNCTIONS
   // Utility function to get CSRF token
   function getCSRFToken() {
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
@@ -1132,7 +1292,7 @@
     const likeBtn = document.getElementById('likeBtn');
     const likeText = document.getElementById('likeText');
     
-    const isCurrentlyLiked = likeBtn.classList.contains('btn--liked');
+    const isCurrentlyLiked = likeBtn.classList.contains('btn-liked');
     const url = isCurrentlyLiked ? `/unfavorite/${userId}/` : `/like/${userId}/`;
     
     fetch(url, {
@@ -1145,13 +1305,13 @@
     .then(data => {
       if (data.success || data.status === 'success') {
         if (isCurrentlyLiked) {
-          likeBtn.classList.remove('btn--liked');
-          likeBtn.classList.add('btn--secondary');
+          likeBtn.classList.remove('btn-liked');
+          likeBtn.classList.add('btn-secondary');
           likeText.textContent = 'Like';
           showToast('Removed from favorites');
         } else {
-          likeBtn.classList.remove('btn--secondary');
-          likeBtn.classList.add('btn--liked');
+          likeBtn.classList.remove('btn-secondary');
+          likeBtn.classList.add('btn-liked');
           likeText.textContent = 'Liked';
           showToast('Added to favorites!');
         }
@@ -1165,14 +1325,14 @@
     });
   }
 
-  // Block function - Works without backend
+  // Block function
   let currentBlockUserId = null;
   let isCurrentlyBlocked = false;
 
   function toggleBlock(userId) {
     currentBlockUserId = userId;
     const blockBtn = document.getElementById('blockBtn');
-    isCurrentlyBlocked = blockBtn.classList.contains('btn--blocked');
+    isCurrentlyBlocked = blockBtn.classList.contains('btn-blocked');
     
     const modalTitle = document.getElementById('blockModalTitle');
     const modalMessage = document.getElementById('blockModalMessage');
@@ -1210,15 +1370,15 @@
     // Simulate successful block/unblock without API call
     if (isCurrentlyBlocked) {
       // Unblocked
-      blockBtn.classList.remove('btn--blocked');
-      blockBtn.classList.add('btn--danger');
+      blockBtn.classList.remove('btn-blocked');
+      blockBtn.classList.add('btn-danger');
       blockText.textContent = 'Block';
       blockIcon.textContent = 'block';
       showToast('User unblocked successfully');
     } else {
       // Blocked
-      blockBtn.classList.remove('btn--danger');
-      blockBtn.classList.add('btn--blocked');
+      blockBtn.classList.remove('btn-danger');
+      blockBtn.classList.add('btn-blocked');
       blockText.textContent = 'Blocked';
       blockIcon.textContent = 'block';
       showToast('User blocked successfully');
@@ -1245,7 +1405,25 @@
     if (event.key === 'Escape') {
       closeQuickMessage();
       closeBlockModal();
+      closeLightbox();
     }
   });
+
+  // Real-time countdown for private access
+  function updateAccessCountdown() {
+      const countdownElement = document.getElementById('accessCountdown');
+      if (!countdownElement) return;
+      
+      const text = countdownElement.textContent;
+      if (text.includes('hour') || text.includes('minute')) {
+          countdownElement.textContent = text;
+      }
+  }
+
+  // Update countdown every minute if access is granted
+  {% if has_private_access and not user.is_superuser %}
+  setInterval(updateAccessCountdown, 60000);
+  updateAccessCountdown();
+  {% endif %}
 </script>
 {% endblock %}

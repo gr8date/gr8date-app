@@ -90,6 +90,100 @@
     .pager__cur{color:var(--muted);font-size:14px}
     .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 14px;border-radius:10px;display:none}
 
+    /* Preview Mode Specific Styles */
+    .preview-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+      margin: 20px 0 30px 0;
+      border-radius: 12px;
+    }
+    
+    .preview-header h1 {
+      margin: 0 0 8px 0;
+      font-size: 28px;
+    }
+    
+    .preview-header p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 16px;
+    }
+
+    .preview-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 84, 120, 0.9);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      z-index: 2;
+    }
+
+    .preview-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .preview-status .material-icons {
+      font-size: 14px;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+
+    .empty-state .material-icons {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      margin: 0 0 8px 0;
+      color: var(--text);
+    }
+
+    .empty-state p {
+      margin: 0 0 20px 0;
+    }
+
+    .btn-complete {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--brand);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+      box-shadow: 0 4px 12px rgba(255, 84, 120, 0.3);
+    }
+
+    .btn-complete:hover {
+      transform: translateY(-2px);
+      background: var(--brand-900);
+      color: white;
+      box-shadow: 0 6px 20px rgba(255, 84, 120, 0.4);
+    }
+
     /* Logout Confirmation Modal */
     .logout-modal {
       display: none;
@@ -195,8 +289,60 @@
 <div class="spacer"></div>
 <div class="spacer-mobile"></div>
 
-{% block content %}
-{% endblock %}
+<!-- MAIN CONTENT -->
+<div class="shell">
+  <!-- Preview Mode Header -->
+  <div class="preview-header">
+    <h1>Welcome to GR8DATE! 👋</h1>
+    <p>You're in preview mode. Complete your profile to unlock full access and start connecting.</p>
+  </div>
+
+  <h1>Preview Profiles</h1>
+
+  <!-- Profile Grid -->
+  <div class="grid">
+    {% for profile in suggested_profiles %}
+      <a href="{% url 'preview_profile_detail' profile.user.id %}" class="card">
+        <!-- Profile Image -->
+        <div class="card__imgwrap">
+          {% with primary_image=profile.images.all|first %}
+            {% if primary_image and not primary_image.is_private %}
+              <img src="{{ primary_image.image.url }}" alt="{{ profile.user.username }}" loading="lazy">
+            {% else %}
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop" alt="Default profile photo" loading="lazy">
+            {% endif %}
+          {% endwith %}
+          <div class="preview-badge">Preview</div>
+        </div>
+        
+        <!-- Profile Info -->
+        <div class="card__body">
+          <div class="card__title">{{ profile.user.username }}{% if profile.age %}, {{ profile.age }}{% endif %}</div>
+          <div class="card__meta">
+            <span>{% if profile.location %}{{ profile.location }}{% else %}Location not set{% endif %}</span>
+          </div>
+          <p class="card__tagline">{% if profile.headline %}{{ profile.headline|truncatewords:10 }}{% else %}No tagline yet{% endif %}</p>
+          
+          <!-- Preview Status -->
+          <div class="preview-status">
+            <span class="material-icons">lock</span>
+            Complete your profile to connect
+          </div>
+        </div>
+      </a>
+    {% empty %}
+      <div class="empty-state">
+        <span class="material-icons">group</span>
+        <h3>No profiles available</h3>
+        <p>Complete your profile to see more suggestions</p>
+        <a href="{% url 'create_profile' %}" class="btn-complete">
+          <span class="material-icons">person_add</span>
+          Complete My Profile
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
 
 <!-- Logout Confirmation Script -->
 <script>
@@ -236,6 +382,29 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+
+  // Toast notification function
+  function showToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    toast.style.display = 'block';
+    
+    setTimeout(() => {
+      toast.style.display = 'none';
+      document.body.removeChild(toast);
+    }, 3000);
+  }
+
+  // Add click handlers for disabled buttons
+  document.querySelectorAll('.icon-btn.is-disabled').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showToast('Complete your profile to unlock this feature');
+    });
+  });
 });
 </script>
 

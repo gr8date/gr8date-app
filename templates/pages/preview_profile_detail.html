@@ -5,7 +5,7 @@
 
 {% block extra_css %}
 <style>
-    /* Main Content */
+    /* MAIN LAYOUT STYLES */
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -30,21 +30,14 @@
       box-shadow: var(--shadow);
     }
 
-    /* Fixed Desktop Navigation */
-    .desktop-nav-fixed {
-      position: fixed;
-      top: 70px;
-      left: 0;
-      right: 0;
+    /* Desktop Navigation */
+    .desktop-nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 20px;
-      z-index: 999;
-      pointer-events: none;
+      margin-bottom: 20px;
     }
-    .desktop-nav-fixed .desktop-nav-btn {
-      pointer-events: auto;
+    .desktop-nav-btn {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -58,22 +51,93 @@
       text-decoration: none;
       color: inherit;
     }
-    .desktop-nav-fixed .desktop-nav-btn:hover {
+    .desktop-nav-btn:hover {
       background: var(--bg);
       transform: translateY(-1px);
-    }
-    .nav-spacer {
-      width: 120px;
     }
 
     /* Mobile Header */
     @media (max-width: 768px) {
-      .desktop-nav-fixed {
+      .desktop-nav {
         display: none;
       }
     }
 
-    /* Preview Notice Banner */
+    /* LOGOUT MODAL STYLES - ADDED */
+    .logout-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .logout-modal-content {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      max-width: 320px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+    
+    .logout-modal h3 {
+      margin: 0 0 12px 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    
+    .logout-modal p {
+      margin: 0 0 24px 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    
+    .logout-modal-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .logout-btn {
+      flex: 1;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .logout-cancel {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .logout-cancel:hover {
+      background: #e2e8f0;
+    }
+    
+    .logout-confirm {
+      background: var(--brand);
+      color: white;
+      border: 1px solid var(--brand);
+    }
+    
+    .logout-confirm:hover {
+      background: var(--brand-600);
+      transform: translateY(-1px);
+    }
+
+    /* PREVIEW-SPECIFIC STYLES */
     .preview-notice {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
@@ -82,14 +146,17 @@
       margin-bottom: 20px;
       text-align: center;
     }
+    
     .preview-notice h2 {
       margin: 0 0 8px 0;
       font-size: 20px;
     }
+    
     .preview-notice p {
       margin: 0 0 16px 0;
       opacity: 0.9;
     }
+    
     .btn-complete {
       display: inline-flex;
       align-items: center;
@@ -104,9 +171,10 @@
       border: none;
       box-shadow: 0 4px 12px rgba(255, 84, 120, 0.3);
     }
+    
     .btn-complete:hover {
       transform: translateY(-2px);
-      background: var(--brand-900);
+      background: var(--brand-600);
       color: white;
       box-shadow: 0 6px 20px rgba(255, 84, 120, 0.4);
     }
@@ -149,16 +217,6 @@
     .section {
       margin-bottom: 24px;
       cursor: pointer;
-      transition: all 0.2s ease;
-      border: 2px solid transparent;
-      border-radius: 8px;
-      padding: 16px;
-      margin: -8px -8px 8px -8px;
-    }
-    .section:hover {
-      background: rgba(255, 84, 120, 0.05);
-      border-color: rgba(255, 84, 120, 0.2);
-      transform: translateY(-1px);
     }
     .section h3 {
       display: flex;
@@ -183,25 +241,12 @@
       aspect-ratio: 1;
       border-radius: 8px;
       overflow: hidden;
-      cursor: pointer;
     }
     .thumb img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       filter: blur(8px) brightness(0.7);
-    }
-    .blur-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
     }
 
     /* Private Photos */
@@ -243,18 +288,85 @@
       font-size: 14px;
     }
 
-    /* Details List */
-    dl {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 8px 16px;
+    /* Quick Info Card */
+    .quick-info-card {
+      text-align: center;
+      padding: 20px;
+      background: var(--bg);
+      border-radius: 12px;
+      margin-bottom: 20px;
     }
-    dt {
-      font-weight: 600;
+    .quick-info-card h2 {
+      margin: 0 0 8px 0;
+      font-size: 24px;
+    }
+    .location {
       color: var(--muted);
+      margin-bottom: 8px;
     }
-    dd {
-      margin: 0;
+    .tagline {
+      font-style: italic;
+      margin-bottom: 16px;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      flex: 1;
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .btn-primary {
+      background: #e9ecef;
+      color: #6c757d;
+    }
+    .btn-secondary {
+      background: #e9ecef;
+      color: #6c757d;
+    }
+    .btn-danger {
+      background: #e9ecef;
+      color: #6c757d;
+    }
+
+    /* Accordion */
+    .accordion-section {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .accordion-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: var(--bg);
+      cursor: pointer;
+    }
+    .accordion-content {
+      padding: 0 16px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .accordion-section.active .accordion-content {
+      max-height: 500px;
+      padding: 16px;
+    }
+    .accordion-section.active .accordion-header .material-icons {
+      transform: rotate(180deg);
     }
 
     /* Redacted Content */
@@ -307,36 +419,52 @@
       color: var(--brand);
     }
 
-    /* Action Buttons - DISABLED */
-    .cta {
-      display: flex;
-      gap: 12px;
-      margin-top: 24px;
-    }
-    .btn {
+    /* Blurred Photo Overlay */
+    .blur-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 12px 16px;
-      border: none;
+      color: white;
+    }
+
+    /* Section Hints */
+    .section-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+      font-style: italic;
+      text-align: center;
+      display: none;
+    }
+    .section:hover .section-hint {
+      display: block;
+    }
+
+    /* Clickable CTA Box */
+    .cta-box {
+      text-align: center;
+      margin-top: 20px;
+      padding: 20px;
+      background: #f8f9fa;
       border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 2px solid transparent;
+    }
+    .cta-box:hover {
+      background: rgba(255, 84, 120, 0.05);
+      border-color: rgba(255, 84, 120, 0.2);
+      transform: translateY(-2px);
+    }
+    .cta-box p {
+      margin: 0 0 12px 0;
       font-weight: 600;
-      flex: 1;
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    .btn--primary {
-      background: #e9ecef;
-      color: #6c757d;
-    }
-    .btn--secondary {
-      background: #e9ecef;
-      color: #6c757d;
-    }
-    .btn--danger {
-      background: #e9ecef;
-      color: #6c757d;
     }
 
     /* Bottom Navigation - Mobile Only */
@@ -375,17 +503,10 @@
       text-decoration: none;
       color: inherit;
     }
-    .nav-btn--primary {
+    .nav-btn-primary {
       background: var(--brand);
       color: white;
       border-color: var(--brand);
-    }
-
-    /* Ensure action buttons are visible on mobile */
-    @media (max-width: 768px) {
-      .cta {
-        margin-bottom: 80px; /* Space for bottom nav */
-      }
     }
 
     /* Toast Notification */
@@ -408,282 +529,240 @@
       opacity: 1;
     }
 
-    /* Section Hints */
-    .section-hint {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 8px;
-      font-style: italic;
-      text-align: center;
-      display: none;
-    }
-    .section:hover .section-hint {
-      display: block;
-    }
-
-    /* Clickable CTA Box */
-    .cta-box {
-      text-align: center;
-      margin-top: 20px;
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: 2px solid transparent;
-    }
-    .cta-box:hover {
-      background: rgba(255, 84, 120, 0.05);
-      border-color: rgba(255, 84, 120, 0.2);
-      transform: translateY(-2px);
-    }
-    .cta-box p {
-      margin: 0 0 12px 0;
-      font-weight: 600;
-    }
-
-    /* Logout Modal Styles */
-    .logout-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 2000;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .logout-modal-content {
-        background: white;
-        padding: 24px;
-        border-radius: 16px;
-        max-width: 320px;
-        width: 90%;
-        text-align: center;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .logout-modal h3 {
-        margin: 0 0 12px 0;
-        font-size: 20px;
-        font-weight: 700;
-    }
-
-    .logout-modal p {
-        margin: 0 0 24px 0;
-        color: var(--muted);
-        line-height: 1.5;
-    }
-
-    .logout-modal-buttons {
-        display: flex;
-        gap: 12px;
-    }
-
-    .logout-btn {
-        flex: 1;
-        padding: 12px 16px;
-        border: none;
-        border-radius: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-        display: inline-block;
-    }
-
-    .logout-cancel {
-        background: #f1f5f9;
-        color: #475569;
-        border: 1px solid #e2e8f0;
-    }
-
-    .logout-cancel:hover {
-        background: #e2e8f0;
-    }
-
-    .logout-confirm {
-        background: var(--brand);
-        color: white;
-        border: 1px solid var(--brand);
-    }
-
-    .logout-confirm:hover {
-        background: var(--brand-600);
-        transform: translateY(-1px);
+    /* Ensure action buttons are visible on mobile */
+    @media (max-width: 768px) {
+      .action-buttons {
+        margin-bottom: 80px;
+      }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-
 <!-- Toast Notification -->
 <div class="toast" id="toast"></div>
 
-<!-- Fixed Desktop Navigation -->
-<div class="desktop-nav-fixed">
+<!-- Desktop Navigation - Top -->
+<div class="desktop-nav">
   <a class="desktop-nav-btn" href="{% url 'browse_preview' %}" onclick="return navigateToPrevious()">
-      <span class="material-icons">chevron_left</span>Previous
+    <span class="material-icons">chevron_left</span>Previous
   </a>
   <a class="desktop-nav-btn" href="{% url 'browse_preview' %}" onclick="return navigateToNext()">
-      Next<span class="material-icons">chevron_right</span>
+    Next<span class="material-icons">chevron_right</span>
   </a>
 </div>
 
-<!-- Preview Notice -->
-<div class="preview-notice">
-  <h2>Preview Mode</h2>
-  <p>Complete your profile to unlock full features and connect with other members</p>
-  <a href="{% url 'create_profile' %}" class="btn-complete">
-    <span class="material-icons">person_add</span>
-    Complete My Profile
-  </a>
-</div>
+<div class="container">
+  <!-- Preview Notice Banner -->
+  <div class="preview-notice">
+    <h2>Preview Mode</h2>
+    <p>Complete your profile to unlock full features and connect with other members</p>
+    <a href="{% url 'create_profile' %}" class="btn-complete">
+      <span class="material-icons">person_add</span>
+      Complete My Profile
+    </a>
+  </div>
 
-<div class="grid">
-  <!-- Left Column: Images -->
-  <section class="card">
-    <!-- REAL Profile Picture (Unblurred) - CLICKABLE -->
-    <div class="hero" onclick="redirectToCompleteProfile()">
-      {% with primary_image=profile.images.all|first %}
-        {% if primary_image and not primary_image.is_private %}
-          <img src="{{ primary_image.image.url }}" alt="Main profile photo of {{ profile.user.username }}" loading="lazy">
-        {% else %}
-          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1200&auto=format&fit=crop" alt="Default profile photo" loading="lazy">
-        {% endif %}
-      {% endwith %}
-      <div class="hero-overlay">
-        <div class="hero-name">{{ profile.user.username }}</div>
-        <div class="hero-details">
-          <span>{{ profile.age }}</span>
-          <span>{{ profile.location }}</span>
-        </div>
-      </div>
-      <div class="section-hint">Click to add more photos</div>
-    </div>
-    
-    <!-- Additional Photos - PLACEHOLDER (Blurred) - CLICKABLE -->
-    <div class="section" onclick="redirectToCompleteProfile()">
-      <h3><span class="material-icons">photo_library</span>Photos</h3>
-      <div class="thumbs">
-        {% for i in "1234" %}
-        <div class="thumb">
-          <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=600&auto=format&fit=crop" alt="Blurred photo" loading="lazy">
-          <div class="blur-overlay">
-            <span class="material-icons">lock</span>
+  <div class="grid">
+    <!-- Left Column: Main Content -->
+    <section class="card main-content">
+      <!-- Hero Image - CLICKABLE -->
+      <div class="hero" onclick="redirectToCompleteProfile()">
+        {% with primary_image=profile.images.all|first %}
+          {% if primary_image and not primary_image.is_private %}
+            <img src="{{ primary_image.image.url }}" alt="Main profile photo of {{ profile.user.username }}" loading="lazy">
+          {% else %}
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1200&auto=format&fit=crop" alt="Default profile photo" loading="lazy">
+          {% endif %}
+        {% endwith %}
+        <div class="hero-overlay">
+          <div class="hero-name">{{ profile.user.username }}</div>
+          <div class="hero-details">
+            <span>{{ profile.age }}</span>
+            <span>{{ profile.location }}</span>
           </div>
         </div>
-        {% endfor %}
+        <div class="section-hint">Click to add more photos</div>
       </div>
-      <div class="section-hint">Click to unlock all photos</div>
-    </div>
+      
+      <!-- Additional Photos - PLACEHOLDER (Blurred) - CLICKABLE -->
+      <div class="section" onclick="redirectToCompleteProfile()">
+        <h3><span class="material-icons">photo_library</span>Photos</h3>
+        <div class="thumbs">
+          {% for i in "1234" %}
+          <div class="thumb">
+            <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=600&auto=format&fit=crop" alt="Blurred photo" loading="lazy">
+            <div class="blur-overlay">
+              <span class="material-icons">lock</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="section-hint">Click to unlock all photos</div>
+      </div>
 
-    <!-- Private Photos Section - PLACEHOLDER - CLICKABLE -->
-    <div class="section private-section" onclick="redirectToCompleteProfile()">
-      <h3><span class="material-icons">lock</span>Private Photos</h3>
-      <div class="thumbs">
-        {% for i in "123" %}
-        <div class="thumb">
-          <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=600&auto=format&fit=crop" alt="Private photo" loading="lazy" style="filter: blur(8px) brightness(0.8)">
-          <div class="private-overlay">
-            <span class="material-icons">lock</span>
-            <div>Private Photo</div>
-            <button class="request-access-btn" disabled>
-              Complete Profile
-            </button>
+      <!-- Private Photos Section - PLACEHOLDER - CLICKABLE -->
+      <div class="section private-section" onclick="redirectToCompleteProfile()">
+        <h3><span class="material-icons">lock</span>Private Photos</h3>
+        <div class="thumbs">
+          {% for i in "123" %}
+          <div class="thumb">
+            <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=600&auto=format&fit=crop" alt="Private photo" loading="lazy" style="filter: blur(8px) brightness(0.8)">
+            <div class="private-overlay">
+              <span class="material-icons">lock</span>
+              <div>Private Photo</div>
+              <button class="request-access-btn" disabled>
+                Complete Profile
+              </button>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <p class="muted" style="margin-top:8px">
+          Complete your profile to request access to private photos
+        </p>
+        <div class="section-hint">Click to unlock private photos</div>
+      </div>
+    </section>
+
+    <!-- Right Column: Limited REAL Data + Redacted Content - ALL CLICKABLE -->
+    <section class="card profile-details">
+      <!-- Quick Info Card -->
+      <div class="quick-info-card">
+        <h2>{{ profile.user.username }}{% if profile.age %}, {{ profile.age }}{% endif %}</h2>
+        <div class="location">{% if profile.location %}{{ profile.location }}{% else %}Location not set{% endif %}</div>
+        <div class="tagline">{% if profile.headline %}{{ profile.headline }}{% else %}No tagline yet{% endif %}</div>
+        
+        <!-- Action Buttons - DISABLED -->
+        <div class="action-buttons">
+          <button class="btn btn-primary" disabled>
+            <span class="material-icons">chat</span>
+            Message
+          </button>
+          <button class="btn btn-secondary" disabled>
+            <span class="material-icons">favorite</span>
+            Like
+          </button>
+          <button class="btn btn-danger" disabled>
+            <span class="material-icons">block</span>
+            Block
+          </button>
+        </div>
+      </div>
+
+      <!-- Collapsible Sections with Redacted Content -->
+      <div class="accordion">
+        <!-- About Me (Expanded by default) -->
+        <div class="accordion-section active">
+          <div class="accordion-header">
+            <span>About Me</span>
+            <span class="material-icons">expand_more</span>
+          </div>
+          <div class="accordion-content">
+            <div class="redacted" onclick="redirectToCompleteProfile()">
+              {% if profile.about %}
+                Complete your profile to view this user's bio and learn more about them
+              {% else %}
+                This user hasn't added a bio yet
+              {% endif %}
+            </div>
+            <div class="section-hint">Click to add your bio</div>
           </div>
         </div>
-        {% endfor %}
+
+        <!-- Looking For -->
+        <div class="accordion-section">
+          <div class="accordion-header">
+            <span>Looking For</span>
+            <span class="material-icons">expand_more</span>
+          </div>
+          <div class="accordion-content">
+            <div class="redacted-line short" onclick="redirectToCompleteProfile()"></div>
+            <div class="redacted-line medium" onclick="redirectToCompleteProfile()"></div>
+            <div class="redacted-line short" onclick="redirectToCompleteProfile()"></div>
+            <div class="section-hint">Click to set your preferences</div>
+          </div>
+        </div>
+
+        <!-- Physical Attributes -->
+        <div class="accordion-section">
+          <div class="accordion-header">
+            <span>Physical Attributes</span>
+            <span class="material-icons">expand_more</span>
+          </div>
+          <div class="accordion-content">
+            <div class="redacted-line short" onclick="redirectToCompleteProfile()"></div>
+            <div class="redacted-line medium" onclick="redirectToCompleteProfile()"></div>
+            <div class="section-hint">Click to complete physical info</div>
+          </div>
+        </div>
+
+        <!-- Relationship & Family -->
+        <div class="accordion-section">
+          <div class="accordion-header">
+            <span>Relationship & Family</span>
+            <span class="material-icons">expand_more</span>
+          </div>
+          <div class="accordion-content">
+            <div class="redacted-line short" onclick="redirectToCompleteProfile()"></div>
+            <div class="redacted-line medium" onclick="redirectToCompleteProfile()"></div>
+            <div class="section-hint">Click to complete relationship info</div>
+          </div>
+        </div>
+
+        <!-- Interests -->
+        <div class="accordion-section">
+          <div class="accordion-header">
+            <span>Interests</span>
+            <span class="material-icons">expand_more</span>
+          </div>
+          <div class="accordion-content">
+            <div class="chips">
+              <span class="chip redacted-chip" onclick="redirectToCompleteProfile()">Complete profile to view</span>
+            </div>
+            <div class="section-hint">Click to add your interests</div>
+          </div>
+        </div>
+
+        <!-- Important Qualities -->
+        <div class="accordion-section">
+          <div class="accordion-header">
+            <span>Important Qualities</span>
+            <span class="material-icons">expand_more</span>
+          </div>
+          <div class="accordion-content">
+            <div class="chips">
+              <span class="chip redacted-chip" onclick="redirectToCompleteProfile()">Complete profile to view</span>
+            </div>
+            <div class="section-hint">Click to add important qualities</div>
+          </div>
+        </div>
+
+        <!-- Lifestyle -->
+        <div class="accordion-section">
+          <div class="accordion-header">
+            <span>Lifestyle</span>
+            <span class="material-icons">expand_more</span>
+          </div>
+          <div class="accordion-content">
+            <div class="redacted-line short" onclick="redirectToCompleteProfile()"></div>
+            <div class="redacted-line medium" onclick="redirectToCompleteProfile()"></div>
+            <div class="section-hint">Click to complete lifestyle info</div>
+          </div>
+        </div>
       </div>
-      <p class="muted" style="margin-top:8px">
-        Complete your profile to request access to private photos
-      </p>
-      <div class="section-hint">Click to unlock private photos</div>
-    </div>
-  </section>
 
-  <!-- Right Column: Limited REAL Data + Redacted Content - ALL CLICKABLE -->
-  <section class="card">
-    <!-- REAL Data: Username, Location, Age - CLICKABLE -->
-    <div class="section" onclick="redirectToCompleteProfile()">
-      <h3><span class="material-icons">person</span>Basics</h3>
-      <dl>
-        <dt>Username</dt><dd>{{ profile.user.username }}</dd>
-        <dt>Location</dt><dd>{{ profile.location }}</dd>
-        <dt>Age</dt><dd>{{ profile.age }}</dd>
-        <dt>Tagline</dt><dd class="redacted" onclick="redirectToCompleteProfile()">Complete profile to view</dd>
-      </dl>
-      <div class="section-hint">Click to edit your basic information</div>
-    </div>
-
-    <!-- REDACTED: About Me - CLICKABLE -->
-    <div class="section" onclick="redirectToCompleteProfile()">
-      <h3><span class="material-icons">chat</span>About Me</h3>
-      <div class="redacted" onclick="redirectToCompleteProfile()">
-        {% if profile.about %}
-          Complete your profile to view this user's bio and learn more about them
-        {% else %}
-          This user hasn't added a bio yet
-        {% endif %}
+      <!-- Complete Profile CTA - CLICKABLE -->
+      <div class="cta-box" onclick="redirectToCompleteProfile()">
+        <p>Ready to connect?</p>
+        <a href="{% url 'create_profile' %}" class="btn-complete" style="font-size: 14px; padding: 10px 20px;">
+          <span class="material-icons">person_add</span>
+          Complete My Profile
+        </a>
+        <div class="section-hint">Click anywhere in this box to complete your profile</div>
       </div>
-      <div class="section-hint">Click to add your bio</div>
-    </div>
-
-    <!-- REDACTED: Looking For - CLICKABLE -->
-    <div class="section" onclick="redirectToCompleteProfile()">
-      <h3><span class="material-icons">search</span>Looking For</h3>
-      <div class="redacted-line short" onclick="redirectToCompleteProfile()"></div>
-      <div class="redacted-line medium" onclick="redirectToCompleteProfile()"></div>
-      <div class="redacted-line short" onclick="redirectToCompleteProfile()"></div>
-      <div class="section-hint">Click to set your preferences</div>
-    </div>
-
-    <!-- REDACTED: Interests - CLICKABLE -->
-    <div class="section" onclick="redirectToCompleteProfile()">
-      <h3><span class="material-icons">favorite</span>Interests</h3>
-      <div class="chips">
-        <span class="chip" onclick="redirectToCompleteProfile()">Complete profile to view</span>
-      </div>
-      <div class="section-hint">Click to add your interests</div>
-    </div>
-
-    <!-- REDACTED: Lifestyle - CLICKABLE -->
-    <div class="section" onclick="redirectToCompleteProfile()">
-      <h3><span class="material-icons">self_improvement</span>Lifestyle</h3>
-      <div class="redacted-line short" onclick="redirectToCompleteProfile()"></div>
-      <div class="redacted-line medium" onclick="redirectToCompleteProfile()"></div>
-      <div class="section-hint">Click to complete lifestyle info</div>
-    </div>
-
-    <!-- Action Buttons - DISABLED -->
-    <div class="cta">
-      <button class="btn btn--primary" disabled>
-        <span class="material-icons">chat</span>
-        Message
-      </button>
-      <button class="btn btn--secondary" disabled>
-        <span class="material-icons">favorite</span>
-        Like
-      </button>
-      <button class="btn btn--danger" disabled>
-        <span class="material-icons">block</span>
-        Block
-      </button>
-    </div>
-
-    <!-- Complete Profile CTA - CLICKABLE -->
-    <div class="cta-box" onclick="redirectToCompleteProfile()">
-      <p>Ready to connect?</p>
-      <a href="{% url 'create_profile' %}" class="btn-complete" style="font-size: 14px; padding: 10px 20px;">
-        <span class="material-icons">person_add</span>
-        Complete My Profile
-      </a>
-      <div class="section-hint">Click anywhere in this box to complete your profile</div>
-    </div>
-  </section>
+    </section>
+  </div>
 </div>
 
 <!-- Fixed Bottom Navigation - Mobile Only -->
@@ -692,64 +771,122 @@
     <a class="nav-btn" href="{% url 'browse_preview' %}" onclick="return navigateToPrevious()">
       <span class="material-icons">chevron_left</span>Previous
     </a>
-    <a class="nav-btn nav-btn--primary" href="{% url 'browse_preview' %}" onclick="return navigateToNext()">
+    <a class="nav-btn nav-btn-primary" href="{% url 'browse_preview' %}" onclick="return navigateToNext()">
       Next<span class="material-icons">chevron_right</span>
     </a>
   </div>
 </div>
 
+<!-- LOGOUT MODAL - ADDED -->
+<div id="logoutModal" class="logout-modal">
+  <div class="logout-modal-content">
+    <h3>Log Out?</h3>
+    <p>Are you sure you want to log out? You'll need to log in again to access your account.</p>
+    <div class="logout-modal-buttons">
+      <button class="logout-btn logout-cancel" id="logoutCancel">Cancel</button>
+      <a href="{% url 'account_logout' %}" class="logout-btn logout-confirm" id="logoutConfirm">Log Out</a>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// Toast notification function
-function showToast(message) {
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.classList.add('show');
-  
-  setTimeout(() => {
-    toast.classList.remove('show');
-  }, 3000);
-}
-
-// Redirect to complete profile
-function redirectToCompleteProfile() {
-  window.location.href = "{% url 'create_profile' %}";
-}
-
-// Navigation functions for preview mode
-function navigateToPrevious() {
-  showToast('Returning to browse preview');
-  // Let the link work normally
-  return true;
-}
-
-function navigateToNext() {
-  showToast('Returning to browse preview');
-  // Let the link work normally
-  return true;
-}
-
-// Prevent clicks on disabled buttons
-document.querySelectorAll('.btn[disabled]').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    showToast('Complete your profile to unlock messaging and liking');
+  // Accordion functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const accordionHeaders = document.querySelectorAll('.accordion-header');
+    
+    accordionHeaders.forEach(header => {
+      header.addEventListener('click', function() {
+        const section = this.parentElement;
+        section.classList.toggle('active');
+      });
+    });
   });
-});
 
-// Add keyboard accessibility for clickable sections
-document.addEventListener('keydown', function(event) {
-  if (event.key === 'Enter') {
-    const focused = document.activeElement;
-    if (focused.classList.contains('section') || 
-        focused.classList.contains('redacted') ||
-        focused.classList.contains('chip') ||
-        focused.classList.contains('cta-box')) {
-      redirectToCompleteProfile();
+  // LOGOUT FUNCTIONALITY - ADDED
+  document.addEventListener('DOMContentLoaded', function() {
+    const logoutBtn = document.getElementById('logout-btn');
+    const logoutModal = document.getElementById('logoutModal');
+    const logoutCancel = document.getElementById('logoutCancel');
+
+    if (logoutBtn && logoutModal) {
+      // Open modal when logout button is clicked
+      logoutBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        logoutModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      });
+
+      // Close modal when cancel button is clicked
+      logoutCancel.addEventListener('click', function() {
+        logoutModal.style.display = 'none';
+        document.body.style.overflow = '';
+      });
+
+      // Close modal when clicking outside
+      logoutModal.addEventListener('click', function(e) {
+        if (e.target === logoutModal) {
+          logoutModal.style.display = 'none';
+          document.body.style.overflow = '';
+        }
+      });
+
+      // Close with ESC key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && logoutModal.style.display === 'flex') {
+          logoutModal.style.display = 'none';
+          document.body.style.overflow = '';
+        }
+      });
     }
+  });
+
+  // Preview-specific functions
+  function redirectToCompleteProfile() {
+    window.location.href = "{% url 'create_profile' %}";
   }
-});
+
+  function navigateToPrevious() {
+    showToast('Returning to browse preview');
+    return true;
+  }
+
+  function navigateToNext() {
+    showToast('Returning to browse preview');
+    return true;
+  }
+
+  // Toast notification function
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+
+  // Prevent clicks on disabled buttons
+  document.querySelectorAll('.btn[disabled]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showToast('Complete your profile to unlock messaging and liking');
+    });
+  });
+
+  // Add keyboard accessibility for clickable sections
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      const focused = document.activeElement;
+      if (focused.classList.contains('section') || 
+          focused.classList.contains('redacted') ||
+          focused.classList.contains('chip') ||
+          focused.classList.contains('cta-box')) {
+        redirectToCompleteProfile();
+      }
+    }
+  });
 </script>
 {% endblock %}

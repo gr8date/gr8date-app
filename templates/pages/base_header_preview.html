@@ -30,24 +30,11 @@
     .brand .date{color:var(--brand)}
     .top-icons{display:flex; gap:10px; align-items:center}
     
-    /* Icon with label container */
-    .icon-with-label {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-    }
-    
-    .icon-label {
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--muted);
-      line-height: 1;
-      text-align: center;
-      max-width: 50px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    /* Mobile header layout */
+    @media (max-width: 768px) {
+      .nav{flex-direction:column;gap:8px;padding:8px 12px;min-height:auto}
+      .brand{margin-right:0;order:1;text-align:center;width:100%}
+      .top-icons{order:2;justify-content:center;flex-wrap:wrap;gap:8px;width:100%}
     }
     
     .icon-btn{
@@ -80,78 +67,13 @@
 
     .spacer{height:56px;}
     
-    /* Mobile header layout */
+    /* Mobile spacer adjustment */
     @media (max-width: 768px) {
-      .nav{flex-direction:column;gap:8px;padding:8px 12px;min-height:auto}
-      .brand{margin-right:0;order:1;text-align:center;width:100%}
-      .top-icons{order:2;justify-content:center;flex-wrap:wrap;gap:8px;width:100%}
       .spacer{height:96px} /* Increased for stacked header */
-      
-      /* Mobile icon labels - smaller and more compact */
-      .icon-with-label {
-        gap: 1px;
-      }
-      
-      .icon-label {
-        font-size: 9px;
-        max-width: 44px;
-      }
-      
-      .icon-btn {
-        width: 36px;
-        height: 36px;
-      }
-      
-      .icon-btn .material-icons {
-        font-size: 20px;
-      }
     }
 
     /* Content Styles */
     .container{max-width:1100px;margin:0 auto;padding:16px}
-    
-    /* Logout Modal Styles */
-    .logout-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 10001;
-      align-items: center;
-      justify-content: center;
-    }
-    .logout-modal-content {
-      background: white;
-      border-radius: 16px;
-      width: 90vw;
-      max-width: 400px;
-      padding: 24px;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    .logout-btn {
-      padding: 12px 24px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      min-width: 100px;
-    }
-    .logout-confirm {
-      background: #ff5478;
-      color: white;
-      text-decoration: none;
-      display: inline-block;
-    }
-    .logout-cancel {
-      background: #f1f5f9;
-      color: #64748b;
-      border: 1px solid #e2e8f0;
-    }
     
     {% block extra_css %}{% endblock %}
   </style>
@@ -165,56 +87,31 @@
 
     <div class="top-icons" aria-label="Header actions">
       <!-- Active Icons -->
-      <div class="icon-with-label">
-        <a class="icon-btn" href="{% url 'browse_preview' %}" title="Browse">
-          <span class="material-icons rot-90">u_turn_left</span>
-        </a>
-        <span class="icon-label">Browse</span>
-      </div>
+      <a class="icon-btn" href="{% url 'browse_preview' %}" title="Browse">
+        <span class="material-icons rot-90">u_turn_left</span>
+      </a>
       
       <!-- Disabled Icons -->
-      <div class="icon-with-label">
-        <span class="icon-btn preview-disabled" title="Search - Complete profile to enable">
-          <span class="material-icons">search</span>
-        </span>
-        <span class="icon-label">Search</span>
-      </div>
-      
-      <div class="icon-with-label">
-        <span class="icon-btn preview-disabled" title="Messages - Complete profile to enable">
-          <span class="material-icons">mail</span>
-        </span>
-        <span class="icon-label">Messages</span>
-      </div>
-      
-      <div class="icon-with-label">
-        <span class="icon-btn preview-disabled" title="Matches - Complete profile to enable">
-          <span class="material-icons">groups</span>
-        </span>
-        <span class="icon-label">Matches</span>
-      </div>
-      
-      <div class="icon-with-label">
-        <span class="icon-btn preview-disabled" title="Hot Dates - Complete profile to enable">
-          <span class="material-icons">local_fire_department</span>
-        </span>
-        <span class="icon-label">Hot Dates</span>
-      </div>
-      
-      <div class="icon-with-label">
-        <span class="icon-btn preview-disabled" title="My Profile - Complete profile to enable">
-          <span class="material-icons">person</span>
-        </span>
-        <span class="icon-label">Profile</span>
-      </div>
+      <span class="icon-btn preview-disabled" title="Search - Complete profile to enable">
+        <span class="material-icons">search</span>
+      </span>
+      <span class="icon-btn preview-disabled" title="Messages - Complete profile to enable">
+        <span class="material-icons">mail</span>
+      </span>
+      <span class="icon-btn preview-disabled" title="Matches - Complete profile to enable">
+        <span class="material-icons">groups</span>
+      </span>
+      <span class="icon-btn preview-disabled" title="Hot Dates - Complete profile to enable">
+        <span class="material-icons">local_fire_department</span>
+      </span>
+      <span class="icon-btn preview-disabled" title="My Profile - Complete profile to enable">
+        <span class="material-icons">person</span>
+      </span>
       
       <!-- Active Icon -->
-      <div class="icon-with-label">
-        <a class="icon-btn" href="#" id="logout-btn" title="Logout">
-          <span class="material-icons">logout</span>
-        </a>
-        <span class="icon-label">Logout</span>
-      </div>
+      <a class="icon-btn" href="#" id="logout-btn" title="Logout">
+        <span class="material-icons">logout</span>
+      </a>
     </div>
   </div>
 </header>

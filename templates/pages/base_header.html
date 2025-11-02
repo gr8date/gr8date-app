@@ -44,24 +44,11 @@
     .brand .date{color:var(--brand)}
     .top-icons{display:flex; gap:10px; align-items:center}
     
-    /* Icon with label container */
-    .icon-with-label {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-    }
-    
-    .icon-label {
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--muted);
-      line-height: 1;
-      text-align: center;
-      max-width: 50px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    /* Mobile header layout */
+    @media (max-width: 768px) {
+      .nav{flex-direction:column;gap:8px;padding:8px 12px;min-height:auto}
+      .brand{margin-right:0;order:1;text-align:center;width:100%}
+      .top-icons{order:2;justify-content:center;flex-wrap:wrap;gap:8px;width:100%}
     }
     
     .icon-btn{
@@ -84,31 +71,9 @@
 
     .spacer{height:56px;}
     
-    /* Mobile header layout */
+    /* Mobile spacer adjustment */
     @media (max-width: 768px) {
-      .nav{flex-direction:column;gap:8px;padding:8px 12px;min-height:auto}
-      .brand{margin-right:0;order:1;text-align:center;width:100%}
-      .top-icons{order:2;justify-content:center;flex-wrap:wrap;gap:8px;width:100%}
       .spacer{height:96px} /* Increased for stacked header */
-      
-      /* Mobile icon labels - smaller and more compact */
-      .icon-with-label {
-        gap: 1px;
-      }
-      
-      .icon-label {
-        font-size: 9px;
-        max-width: 44px;
-      }
-      
-      .icon-btn {
-        width: 36px;
-        height: 36px;
-      }
-      
-      .icon-btn .material-icons {
-        font-size: 20px;
-      }
     }
 
     /* Content Styles */
@@ -212,63 +177,21 @@
     <div class="brand"><span>GR8</span><span class="date">DATE</span></div>
 
     <div class="top-icons" aria-label="Header actions">
-      <!-- Dashboard -->
-      <div class="icon-with-label">
-        <a class="icon-btn" href="{% url 'dashboard' %}" title="dashboard">
-          <span class="material-icons rot-90">u_turn_left</span>
-        </a>
-        <span class="icon-label">Browse</span>
-      </div>
-      
-      <!-- Search -->
-      <div class="icon-with-label">
-        <a class="icon-btn js-open-search" href="#" title="Search">
-          <span class="material-icons">search</span>
-        </a>
-        <span class="icon-label">Search</span>
-      </div>
-      
-      <!-- Messages -->
-      <div class="icon-with-label">
-        <a class="icon-btn" href="{% url 'messages_list' %}" title="Messages">
-          <span class="material-icons">mail</span>
-          <span class="badge" id="message-badge" style="display: none;"></span>
-        </a>
-        <span class="icon-label">Messages</span>
-      </div>
-      
-      <!-- Matches -->
-      <div class="icon-with-label">
-        <a class="icon-btn" href="{% url 'matches_list' %}" title="Matches">
-          <span class="material-icons">groups</span>
-        </a>
-        <span class="icon-label">Matches</span>
-      </div>
-      
-      <!-- Hot Dates -->
-      <div class="icon-with-label">
-        <a class="icon-btn" href="{% url 'hotdate_list' %}" title="Hot Dates">
-          <span class="material-icons">local_fire_department</span>
-          <span class="badge flash" id="hotdate-badge" style="display: none;"></span>
-        </a>
-        <span class="icon-label">Hot Dates</span>
-      </div>
-      
-      <!-- Profile -->
-      <div class="icon-with-label">
-        <a class="icon-btn" href="{% url 'profile_edit' %}" title="My Profile">
-          <span class="material-icons">person</span>
-        </a>
-        <span class="icon-label">Profile</span>
-      </div>
-      
-      <!-- Logout -->
-      <div class="icon-with-label">
-        <a class="icon-btn" href="#" id="logout-btn" title="Logout">
-          <span class="material-icons">logout</span>
-        </a>
-        <span class="icon-label">Logout</span>
-      </div>
+      <a class="icon-btn" href="{% url 'dashboard' %}" title="Dashboard">
+        <span class="material-icons rot-90">u_turn_left</span>
+      </a>
+      <a class="icon-btn js-open-search" href="#" title="Search"><span class="material-icons">search</span></a>
+      <a class="icon-btn" href="{% url 'messages_list' %}" title="Messages">
+        <span class="material-icons">mail</span>
+        <span class="badge" id="message-badge" style="display: none;"></span>
+      </a>
+      <a class="icon-btn" href="{% url 'matches_list' %}" title="Matches"><span class="material-icons">groups</span></a>
+      <a class="icon-btn" href="{% url 'hotdate_list' %}" title="Hot Dates">
+        <span class="material-icons">local_fire_department</span>
+        <span class="badge flash" id="hotdate-badge" style="display: none;"></span>
+      </a>
+      <a class="icon-btn" href="{% url 'profile_edit' %}" title="My Profile"><span class="material-icons">person</span></a>
+      <a class="icon-btn" href="#" id="logout-btn" title="Logout"><span class="material-icons">logout</span></a>
     </div>
   </div>
 </header>
