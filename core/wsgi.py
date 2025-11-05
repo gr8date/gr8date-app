@@ -1,16 +1,13 @@
-"""
-WSGI config for core project.
-
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/4.2/howto/deployment/wsgi/
-"""
-
+# core/wsgi.py
 import os
-
 from django.core.wsgi import get_wsgi_application
+from whitenoise import WhiteNoise
+from django.conf import settings
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
 application = get_wsgi_application()
+
+# Serve media files through WhiteNoise in production
+if not settings.DEBUG:
+    application = WhiteNoise(application, root=settings.MEDIA_ROOT, prefix=settings.MEDIA_URL)

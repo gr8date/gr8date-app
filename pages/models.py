@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import date
-from datetime import timedelta  # ADDED
+from datetime import timedelta
 
 from django.conf import settings
 from django.db import models
@@ -28,7 +28,6 @@ class Blog(models.Model):
     excerpt = models.TextField(blank=True)
     hero_image = models.ImageField(upload_to="blog/", blank=True, null=True)
     
-    # ADD THIS FIELD:
     position = models.IntegerField(default=0, help_text="Higher numbers appear first")
     
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
@@ -37,7 +36,7 @@ class Blog(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ["-position", "-published_at"]  # This needs the position field
+        ordering = ["-position", "-published_at"]
 
     def __str__(self):
         return self.title
@@ -45,6 +44,31 @@ class Blog(models.Model):
     @property
     def is_published(self):
         return self.status == self.Status.PUBLISHED and self.published_at is not None
+
+
+# ---------------------------------------------------------------------
+# Email Reminder System
+# ---------------------------------------------------------------------
+
+class EmailReminderLog(models.Model):
+    """Track email reminders sent to users"""
+    class ReminderType(models.TextChoices):
+        EMAIL_VERIFICATION = 'email_verification', 'Email Verification'
+        PROFILE_COMPLETION = 'profile_completion', 'Profile Completion'
+        PROFILE_APPROVAL = 'profile_approval', 'Profile Approval'
+        INACTIVITY = 'inactivity', 'Inactivity'
+
+    profile = models.ForeignKey('Profile', on_delete=models.CASCADE, related_name="email_reminders")
+    reminder_type = models.CharField(max_length=30, choices=ReminderType.choices)
+    sent_at = models.DateTimeField(auto_now_add=True)
+    was_successful = models.BooleanField(default=True)
+    error_message = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ['-sent_at']
+
+    def __str__(self):
+        return f"{self.reminder_type} reminder to {self.profile.user.username} at {self.sent_at}"
 
 # ---------------------------------------------------------------------
 # Profiles
@@ -70,12 +94,12 @@ class Profile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # ✅ FIXED: Email Verification Fields (consistent naming)
+    # Email Verification Fields
     email_verified = models.BooleanField(default=False)
-    email_verification_token = models.CharField(max_length=100, blank=True)  # RENAMED
-    email_verification_sent_at = models.DateTimeField(null=True, blank=True)  # RENAMED
+    email_verification_token = models.CharField(max_length=100, blank=True)
+    email_verification_sent_at = models.DateTimeField(null=True, blank=True)
 
-    # ✅ ADDED: Approval Status Field
+    # Approval Status Field
     approval_status = models.CharField(
         max_length=20,
         choices=[
@@ -86,7 +110,7 @@ class Profile(models.Model):
         default='pending_review'
     )
     
-    # ✅ ADDED: Admin Approval Tracking
+    # Admin Approval Tracking
     approved_at = models.DateTimeField(null=True, blank=True)
     approved_by = models.ForeignKey(
         User,
@@ -96,11 +120,84 @@ class Profile(models.Model):
         related_name='approved_profiles'
     )
 
+    # Reminder Tracking Fields
+    email_verification_reminder_count = models.PositiveIntegerField(default=0)
+    email_verification_last_reminder_sent = models.DateTimeField(null=True, blank=True)
+    
+    profile_completion_reminder_count = models.PositiveIntegerField(default=0)
+    profile_completion_last_reminder_sent = models.DateTimeField(null=True, blank=True)
+    
+    profile_approval_reminder_count = models.PositiveIntegerField(default=0)
+    profile_approval_last_reminder_sent = models.DateTimeField(null=True, blank=True)
+    
+    inactivity_reminder_count = models.PositiveIntegerField(default=0)
+    inactivity_last_reminder_sent = models.DateTimeField(null=True, blank=True)
+    last_activity_date = models.DateTimeField(null=True, blank=True)
+    
+    marked_for_deletion = models.BooleanField(default=False)
+    marked_for_deletion_at = models.DateTimeField(null=True, blank=True)
+
     # Basics
     date_of_birth = models.DateField(blank=True, null=True)
     headline = models.CharField(max_length=120, blank=True)
     location = models.CharField(max_length=120, blank=True)
     about = models.TextField(blank=True)
+
+    # === ADDED MISSING FIELDS ===
+    body_type = models.CharField(
+        max_length=20, 
+        blank=True, 
+        null=True,
+        choices=[
+            ('slim', 'Slim'),
+            ('athletic', 'Athletic'),
+            ('average', 'Average'),
+            ('curvy', 'Curvy'),
+            ('stocky', 'Stocky'),
+        ]
+    )
+    
+    ethnicity = models.CharField(
+        max_length=30, 
+        blank=True, 
+        null=True,
+        choices=[
+            ('asian', 'Asian'),
+            ('black', 'Black'),
+            ('caucasian', 'Caucasian'),
+            ('hispanic', 'Hispanic'),
+            ('mixed', 'Mixed'),
+            ('middle_eastern', 'Middle Eastern'),
+            ('native', 'Native/Indigenous'),
+            ('pacific_islander', 'Pacific Islander'),
+            ('prefer_not_say', 'Prefer not to say'),
+        ]
+    )
+    
+    relationship_status = models.CharField(
+        max_length=20, 
+        blank=True, 
+        null=True,
+        choices=[
+            ('single', 'Single'),
+            ('divorced', 'Divorced'),
+            ('separated', 'Separated'),
+            ('widowed', 'Widowed'),
+        ]
+    )
+    
+    want_children = models.CharField(
+        max_length=20, 
+        blank=True, 
+        null=True,
+        choices=[
+            ('want', 'Want children'),
+            ('dont_want', "Don't want children"),
+            ('not_sure', 'Not sure'),
+            ('open', 'Open to it'),
+        ]
+    )
+    # === END OF ADDED FIELDS ===
 
     class Gender(models.TextChoices):
         FEMALE = "female", "Female"
@@ -246,17 +343,22 @@ class Profile(models.Model):
 
 
 # ---------------------------------------------------------------------
-# Profile Images
+# Profile Images - FIXED VERSION
 # ---------------------------------------------------------------------
 
 class ProfileImage(models.Model):
+    class ImageType(models.TextChoices):
+        PROFILE = 'profile', 'Profile Image'
+        ADDITIONAL = 'additional', 'Additional Image'
+        PRIVATE = 'private', 'Private Image'
+    
     profile = models.ForeignKey(
         Profile,
         related_name="images",
         on_delete=models.CASCADE,
     )
     image = models.ImageField(upload_to="profiles/")
-    is_private = models.BooleanField(default=False)
+    image_type = models.CharField(max_length=20, choices=ImageType.choices, default=ImageType.PROFILE)
     is_primary = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -272,6 +374,16 @@ class ProfileImage(models.Model):
     def __str__(self) -> str:
         return f"Image #{self.pk} for Profile #{self.profile_id}"
 
+    @property
+    def is_private(self) -> bool:
+        """Convenience property to check if image is private"""
+        return self.image_type == self.ImageType.PRIVATE
+
+    @property
+    def is_public(self) -> bool:
+        """Convenience property to check if image is public"""
+        return self.image_type in [self.ImageType.PROFILE, self.ImageType.ADDITIONAL]
+
 
 # ---------------------------------------------------------------------
 # Messages
@@ -286,19 +398,19 @@ class Thread(models.Model):
     class Meta:
         unique_together = (("user_a", "user_b"),)
         indexes = [models.Index(fields=["user_a", "user_b"])]
-        ordering = ['-updated_at']  # ADD THIS LINE TOO
+        ordering = ['-updated_at']
     
     def __str__(self) -> str:
         return f"Thread({self.user_a_id}, {self.user_b_id})"
     
-    def get_other_user(self, current_user):  # ADD THIS METHOD
+    def get_other_user(self, current_user):
         """Return the other user in the conversation"""
         if self.user_a == current_user:
             return self.user_b
         return self.user_a
     
     @property
-    def last_message(self):  # ADD THIS METHOD
+    def last_message(self):
         """Return the last message in the thread"""
         return self.messages.order_by('-created_at').first()
     
@@ -371,7 +483,7 @@ class Block(models.Model):
 class Like(models.Model):
     liker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='likes_given')
     liked_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='likes_received')
-    active = models.BooleanField(default=True)  # Added this field
+    active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
@@ -390,6 +502,7 @@ class PrivateAccessRequest(models.Model):
         PENDING = "pending", "Pending"
         APPROVED = "approved", "Approved"
         DENIED = "denied", "Denied"
+        EXPIRED = "expired", "Expired"
     
     requester = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="access_requests_made")
     target_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="access_requests_received")
@@ -408,11 +521,31 @@ class PrivateAccessRequest(models.Model):
         return f"Access request from {self.requester} to {self.target_user} ({self.status})"
 
     def is_active(self):
-        return self.status == self.Status.APPROVED
+        """Check if access is currently active (approved and not expired)"""
+        if self.status != self.Status.APPROVED:
+            return False
+        
+        if not self.reviewed_at:
+            return False
+            
+        # Access expires after 72 hours
+        expiry_time = self.reviewed_at + timedelta(hours=72)
+        return timezone.now() < expiry_time
+
+    def is_expired(self):
+        """Check if approved access has expired"""
+        if self.status != self.Status.APPROVED:
+            return False
+            
+        if not self.reviewed_at:
+            return False
+            
+        expiry_time = self.reviewed_at + timedelta(hours=72)
+        return timezone.now() >= expiry_time
 
 
 # ---------------------------------------------------------------------
-# NEW: Admin Messages Model
+# Admin Messages Model
 # ---------------------------------------------------------------------
 
 class AdminMessage(models.Model):
@@ -447,6 +580,11 @@ class UserActivity(models.Model):
         LIKE = 'like', 'Like'
         BLOCK = 'block', 'Block'
         ADMIN_MESSAGE_SENT = 'admin_message_sent', 'Admin Message Sent'
+        UPLOAD_PHOTO = 'upload_photo', 'Upload Photo'
+        DELETE_PHOTO = 'delete_photo', 'Delete Photo'
+        REQUEST_PRIVATE_ACCESS = 'request_private_access', 'Request Private Access'
+        APPROVE_PRIVATE_ACCESS = 'approve_private_access', 'Approve Private Access'
+        DENY_PRIVATE_ACCESS = 'deny_private_access', 'Deny Private Access'
     
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     action = models.CharField(max_length=50, choices=ActionType.choices)
@@ -485,7 +623,7 @@ def log_user_activity(user, action, request=None, target_object=None, **extra_da
 
 
 # ---------------------------------------------------------------------
-# Hot Dates (ADDED FROM OLDER VERSION)
+# Hot Dates
 # ---------------------------------------------------------------------
 
 class HotDate(models.Model):
@@ -503,7 +641,7 @@ class HotDate(models.Model):
     
     # Host and basic info
     host = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="hosted_hotdates")
-    title = models.CharField(max_length=100, blank=True)  # Auto-generated from activity + vibe
+    title = models.CharField(max_length=100, blank=True)
     
     # Date details
     activity = models.CharField(max_length=50)

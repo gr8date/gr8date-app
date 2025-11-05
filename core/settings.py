@@ -1,4 +1,3 @@
-
 # core/settings.py
 import os
 from pathlib import Path
@@ -101,7 +100,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'blog',
+    #'blog',
 ]
 
 MIDDLEWARE = [
@@ -164,7 +163,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Media files
+# Media files - CLEAN AND CONSISTENT (FIXED)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -204,13 +203,6 @@ if not DEBUG:
 ACCOUNT_FORMS = {
     'login': 'pages.forms.CustomLoginForm',
 }
-
-# Serve media files from static during deployment
-if not DEBUG:
-    # In production, serve media from static
-    MEDIA_URL = '/static/media/'
-else:
-    MEDIA_URL = '/media/'
 
 # ⭐⭐⭐ ADD THIS SECTION AT THE BOTTOM ⭐⭐⭐
 # UPDATE SITE DOMAIN FOR SITEMAP - THIS IS WHAT FIXES example.com

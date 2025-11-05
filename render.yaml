@@ -4,7 +4,7 @@ services:
     env: python
     plan: free
     buildCommand: "./build.sh"
-    startCommand: "gunicorn core.wsgi:application"
+    startCommand: "python -m gunicorn core.wsgi:application"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -14,11 +14,21 @@ services:
         generateValue: true
       - key: DEBUG
         value: false
-      - key: PYTHON_VERSION
-        value: 3.11.0
+      - key: AWS_ACCESS_KEY_ID
+        value: your-aws-access-key
+      - key: AWS_SECRET_ACCESS_KEY
+        value: your-aws-secret-key
+      - key: AWS_STORAGE_BUCKET_NAME
+        value: your-bucket-name
+      - key: AWS_S3_REGION_NAME
+        value: ap-southeast-2
+    disk:
+      name: media
+      mountPath: /opt/render/project/src/media
+      sizeGB: 1
 
-  - type: database
-    name: gr8date-db
+databases:
+  - name: gr8date-db
     plan: free
-    engine: postgresql
-    version: "14"
+    databaseName: gr8date
+    user: gr8date

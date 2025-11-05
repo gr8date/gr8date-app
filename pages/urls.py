@@ -85,10 +85,10 @@ urlpatterns = [
     path('unblock/<int:user_id>/', views.unblock_user, name='unblock_user'),
 
     # Images
-    path('upload-profile-image/', views.upload_profile_image, name='upload_profile_image'),
-    path('delete-image/<int:image_id>/', views.delete_image, name='delete_image'),
+    # ✅ FIXED (USE EXISTING FUNCTION):
+    path('delete-image/<int:image_id>/', views.delete_image_api, name='delete_image'),    
     
-    # Create Profile
+# Create Profile
     path('create-profile/', views.create_profile, name='create_profile'),
     path('check-username/', views.check_username, name='check_username'),
     

@@ -69,7 +69,7 @@
 <header class="gd-header">
   <div class="gd-wrap">
     <a class="gd-brand" href="/">
-      <img alt="GR8Date Logo" class="logo-img" src="/static/images/gr8date-logo-desktop.59efa8369812.svg"/>
+      <img alt="GR8DATE Logo" class="logo-img" src="/static/images/gr8date-logo-desktop.59efa8369812.svg"/>
     </a>
     <nav class="gd-nav">
       <a class="gd-login" href="/accounts/login/">Login</a>
@@ -87,7 +87,9 @@
       {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
     {% endif %}
 
-    <!-- FIXED FORM: Added redirect_field_value for Allauth -->
+    <!-- BLOCK ALLAUTH OVERRIDE -->
+    {% block content %}
+    <!-- FIXED FORM: Added hidden remember field for Allauth -->
     <form action="{% url 'account_login' %}" method="post" novalidate>
       {% csrf_token %}
       
@@ -105,6 +107,9 @@
         <button type="button" id="togglePass" class="toggle-btn" aria-pressed="false" aria-controls="pass" aria-label="Show password">Show</button>
       </div>
 
+      <!-- CRITICAL FIX: Hidden remember field required by Allauth -->
+      <input type="hidden" name="remember" value="true">
+
       <div class="row">
         <div class="forgot"><a href="{% url 'account_reset_password' %}">Forgot password?</a></div>
       </div>
@@ -114,8 +119,10 @@
 
     <div class="divider">or</div>
 
-    <p class="alt">New to GR8DATE? <a href="/join/">Create an account</a></p>
+    <!-- FIXED: Changed href to point to your custom join page -->
+    <p class="alt">New to GR8DATE? <a href="{% url 'join' %}">Create an account</a></p>
     <p class="note">By logging in you agree to our <a href="/terms/">Terms</a> and <a href="/privacy/">Privacy</a>.</p>
+    {% endblock %}
   </div>
 </main>
 

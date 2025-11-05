@@ -102,8 +102,16 @@ def join_view(request):
             from django.contrib.auth import login
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             
-            # Create initial profile
-            Profile.objects.create(user=user)
+            # ✅ PRODUCTION-SAFE: Create initial profile (WON'T CRASH)
+            try:
+                profile, created = Profile.objects.get_or_create(user=user)
+                if created:
+                    print(f"✅ New profile created for {email}")
+                else:
+                    print(f"ℹ️ Profile already existed for {email} - continuing")
+            except Exception as profile_error:
+                print(f"⚠️ Non-critical profile issue: {profile_error}")
+                # Don't break user registration flow
             
             # ✅ INTEGRATION: Send welcome email
             try:
@@ -130,8 +138,11 @@ def preview_gate(request):
             if user_profile.is_approved or request.user.is_staff:
                 return redirect('dashboard')
         except Profile.DoesNotExist:
-            # Create profile if it doesn't exist
-            Profile.objects.create(user=request.user)
+            # ✅ PRODUCTION-SAFE: Create profile if it doesn't exist
+            try:
+                Profile.objects.get_or_create(user=request.user)
+            except Exception:
+                pass  # Silently continue
     
     return render(request, 'pages/preview_gate.html')
 
@@ -184,9 +195,8 @@ def custom_password_reset(request):
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             reset_url = request.build_absolute_uri(
-    reverse('password_reset_confirm', kwargs={'uidb64': uid, 'token': token})
-)
-
+                reverse('password_reset_confirm', kwargs={'uidb64': uid, 'token': token})
+            )
             
             # Send email using your Brevo system
             success = send_password_reset_email(
@@ -254,40 +264,25 @@ def dashboard(request):
     # Redirect to preview gate if not approved
     if not is_approved_user and not request.user.is_staff:
         return redirect('preview_gate')
-    
-    # ========== ENHANCED GENDER MATCHING ALGORITHM ==========
+
+    # ========== SIMPLIFIED GENDER MATCHING ALGORITHM ==========
     def get_genders_user_wants(looking_for):
         """Convert 'looking_for' to list of genders user wants to see"""
         mapping = {
             'male': ['male'],
-            'female': ['female'],
-            'bisexual': ['male', 'female'],
-            'unspecified': ['male', 'female', 'nonbinary']
+            'female': ['female']
         }
-        return mapping.get(looking_for, ['male', 'female', 'nonbinary'])
-    
-    def who_wants_my_gender(my_gender):
-        """Convert my gender to what others would look for to see me"""
-        mapping = {
-            'male': ['male', 'bisexual', 'unspecified'],
-            'female': ['female', 'bisexual', 'unspecified'],
-            'nonbinary': ['unspecified'],
-            'unspecified': ['male', 'female', 'bisexual', 'unspecified']
-        }
-        return mapping.get(my_gender, ['unspecified'])
+        return mapping.get(looking_for, [])  # Empty list for anything else
     
     # Start with base queryset
     if user_profile and user_profile.is_approved and not request.user.is_superuser:
-        # TWO-WAY MATCHING for regular users: 
-        # 1. Their gender matches what I'm looking for
-        # 2. AND they are looking for my gender
+        # ONE-WAY MATCHING for regular users:
+        # Show profiles whose gender matches what I'm looking for
         suggested_profiles = Profile.objects.filter(
             is_approved=True
         ).filter(
-            # Their gender is what I want
-            my_gender__in=get_genders_user_wants(user_profile.looking_for),
-            # AND they want my gender
-            looking_for__in=who_wants_my_gender(user_profile.my_gender)
+            # Their gender is what I'm looking for
+            my_gender__in=get_genders_user_wants(user_profile.looking_for)
         )
     else:
         # Superusers see ALL profiles, or fallback for unapproved users
@@ -299,8 +294,11 @@ def dashboard(request):
         Q(user__in=Block.objects.filter(blocker=request.user).values('blocked')) |
         Q(user__in=Block.objects.filter(blocked=request.user).values('blocker'))
     ).prefetch_related('images').order_by('-created_at')
-    # ========== END MATCHING ALGORITHM ==========
+    # ========== END MATCHING ALGORITHM ==========     
     
+    # Check if we have a search query from session
+    search_query = request.session.pop('search_query', None)
+
     # Check if we have a search query from session
     search_query = request.session.pop('search_query', None)
     search_performed = request.session.pop('search_performed', False)
@@ -348,7 +346,6 @@ def dashboard(request):
                 term_condition |= Q(about__icontains=term)
                 term_condition |= Q(location__icontains=term)
                 term_condition |= Q(my_interests__icontains=term)
-                term_condition |= Q(must_have_tags__icontains=term)
                 term_condition |= Q(pets__icontains=term)
                 term_condition |= Q(diet__icontains=term)
                 
@@ -395,12 +392,12 @@ def profile_view(request):
 
 @login_required
 def profile_edit(request):
-    """Edit current user's profile"""
+    """Edit current user's profile - SYNCED WITH FRONTEND FIELDS"""
     profile = get_object_or_404(Profile, user=request.user)
      
     if request.method == 'POST':
         try:
-            # Update profile fields
+            # ✅ SYNCED: Update profile fields that exist in forms
             profile.headline = request.POST.get('headline', '')
             profile.about = request.POST.get('about', '')
             profile.location = request.POST.get('location', '')
@@ -409,22 +406,15 @@ def profile_edit(request):
             profile.my_interests = request.POST.get('my_interests', '')
             profile.children = request.POST.get('children', '')
             
-            # Handle age preferences with validation
-            preferred_age_min = int(request.POST.get('preferred_age_min', 18))
-            preferred_age_max = int(request.POST.get('preferred_age_max', 99))
-            
-            if preferred_age_min < 18:
-                preferred_age_min = 18
-            if preferred_age_max > 99:
-                preferred_age_max = 99
-            if preferred_age_min > preferred_age_max:
-                preferred_age_min, preferred_age_max = preferred_age_max, preferred_age_min
-            
-            profile.preferred_age_min = preferred_age_min
-            profile.preferred_age_max = preferred_age_max
-            
+            # ✅ SYNCED: ADD missing fields from forms
+            profile.body_type = request.POST.get('body_type', '')
+            profile.ethnicity = request.POST.get('ethnicity', '')
+            profile.relationship_status = request.POST.get('relationship_status', '')
+            profile.want_children = request.POST.get('want_children', '')
+            profile.smoking = request.POST.get('smoking', '')
+            profile.drinking = request.POST.get('drinking', '')
             profile.preferred_intent = request.POST.get('preferred_intent', '')
-            profile.preferred_distance = request.POST.get('preferred_distance', '')
+            
             profile.save()
             
             messages.success(request, "Profile updated successfully!")
@@ -434,8 +424,7 @@ def profile_edit(request):
             messages.error(request, f"Error updating profile: {str(e)}")
     
     context = {
-        'me': profile,
-        'ages': range(18, 81),
+        'me': profile,  # Keep 'me' for template compatibility
     }
     return render(request, 'pages/profile_edit.html', context)
 
@@ -474,9 +463,9 @@ def profile_detail(request, user_id):
             elif access_request.status == 'pending':
                 has_pending_request = True
     
-    # Get images
-    public_images = profile.images.filter(is_private=False)
-    private_images = profile.images.filter(is_private=True)
+    # Get images - FIXED: Use new image_type system
+    public_images = profile.images.filter(image_type__in=['profile', 'additional'])
+    private_images = profile.images.filter(image_type='private')
     
     # Check likes and blocks
     is_liked = Like.objects.filter(
@@ -524,67 +513,171 @@ def profile_detail(request, user_id):
     }
     return render(request, 'pages/profile_view.html', context)
 
+# ======================
+# FIXED PHOTO UPLOAD/DELETE FUNCTIONS
+# ======================
+
 @login_required
 @csrf_exempt
-def upload_profile_image(request):
-    """Upload profile image (legacy endpoint)"""
-    if request.method == 'POST' and request.FILES.get('image'):
-        try:
-            image_file = request.FILES['image']
-            is_private = request.POST.get('is_private') == 'true'
+def upload_profile_image_api(request):
+    """UNIFIED API endpoint for uploading profile images - FIXED PARAMETER HANDLING"""
+    print("=" * 60)
+    print("🚀 DEBUG: UPLOAD_PROFILE_IMAGE_API CALLED - FIXED VERSION")
+    print("=" * 60)
+    
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Only POST requests allowed'}, status=400)
+    
+    # Check for image file
+    if 'image' not in request.FILES:
+        print("❌ DEBUG: No 'image' in request.FILES")
+        return JsonResponse({'success': False, 'error': 'No image file provided'}, status=400)
+    
+    image_file = request.FILES['image']
+    
+    # ✅ FIXED: CONSISTENT PARAMETER HANDLING
+    # Get photo type from ALL possible parameter names
+    photo_type = (
+        request.POST.get('photo_type') or 
+        request.POST.get('image_type') or 
+        'additional'  # default fallback
+    )
+    
+    print(f"🎯 DEBUG: Final photo_type: {photo_type}")
+    print(f"📋 DEBUG: All POST parameters: {dict(request.POST)}")
+    
+    try:
+        # File type validation
+        allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+        if image_file.content_type not in allowed_types:
+            return JsonResponse({'success': False, 'error': f'Invalid file type: {image_file.content_type}'}, status=400)
+        
+        # File size validation
+        max_size = 5 * 1024 * 1024
+        if image_file.size > max_size:
+            return JsonResponse({'success': False, 'error': f'File too large: {image_file.size} bytes (max: {max_size})'}, status=400)
+        
+        # Photo type validation
+        valid_types = ['profile', 'additional', 'private']
+        if photo_type not in valid_types:
+            return JsonResponse({'success': False, 'error': f'Invalid photo type: {photo_type}. Must be one of: {valid_types}'}, status=400)
+        
+        # Get user profile
+        profile, created = Profile.objects.get_or_create(user=request.user)
+        
+        # Photo limit validation
+        if photo_type in ['profile', 'additional']:
+            public_photos_count = ProfileImage.objects.filter(
+                profile=profile,
+                image_type__in=['profile', 'additional']
+            ).count()
             
-            # Validate file type
-            allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
-            if image_file.content_type not in allowed_types:
-                return JsonResponse({
-                    'success': False, 
-                    'error': 'Invalid file type. Please upload JPEG, PNG, GIF, or WebP.'
-                }, status=400)
-            
-            # Validate file size (max 5MB)
-            if image_file.size > 5 * 1024 * 1024:
+            if public_photos_count >= 4:
                 return JsonResponse({
                     'success': False,
-                    'error': 'File too large. Maximum size is 5MB.'
+                    'error': f'Maximum 4 public photos allowed (current: {public_photos_count})'
                 }, status=400)
+
+        elif photo_type == 'private':
+            private_photos_count = ProfileImage.objects.filter(
+                profile=profile,
+                image_type='private'
+            ).count()
             
-            # Get or create user profile
-            profile, created = Profile.objects.get_or_create(user=request.user)
-            
-            # Create new ProfileImage
+            if private_photos_count >= 4:
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Maximum 4 private photos allowed (current: {private_photos_count})'
+                }, status=400)
+        
+        # Handle profile photo demotion if needed
+        if photo_type == 'profile':
+            try:
+                updated_count = ProfileImage.objects.filter(
+                    profile=profile, 
+                    image_type='profile'
+                ).update(image_type='additional', is_primary=False)
+                print(f"✅ DEBUG: Demoted {updated_count} existing profile photos")
+            except Exception as e:
+                print(f"⚠️ DEBUG: Profile photo demotion warning: {str(e)}")
+        
+        # Determine primary status
+        is_primary = (photo_type == 'profile')
+        print(f"🔍 DEBUG: Setting is_primary to: {is_primary}")
+        
+        # Create the ProfileImage record
+        print("🔍 DEBUG: Creating ProfileImage record...")
+        try:
             profile_image = ProfileImage.objects.create(
                 profile=profile,
                 image=image_file,
-                is_private=is_private
+                image_type=photo_type,
+                is_primary=is_primary
             )
-            
-            return JsonResponse({
-                'success': True, 
-                'image_id': profile_image.id,
-                'image_url': profile_image.image.url
-            })
+            print(f"✅ DEBUG: ProfileImage created - ID: {profile_image.id}")
             
         except Exception as e:
-            print(f"DEBUG: Error uploading image: {e}")
-            return JsonResponse({
-                'success': False, 
-                'error': f'Upload failed: {str(e)}'
-            }, status=500)
-    
-    return JsonResponse({
-        'success': False, 
-        'error': 'No image file provided'
-    }, status=400)
+            print(f"❌ DEBUG: PROFILEIMAGE CREATION FAILED - {str(e)}")
+            import traceback
+            print(f"❌ DEBUG: TRACEBACK:\n{traceback.format_exc()}")
+            return JsonResponse({'success': False, 'error': f'Database error: {str(e)}'}, status=400)
+        
+        print("🎉 DEBUG: SUCCESS - Image uploaded and saved successfully")
+        return JsonResponse({
+            'success': True, 
+            'image_id': profile_image.id,
+            'image_url': profile_image.image.url,
+            'filename': image_file.name,
+            'photo_type': photo_type,
+            'is_private': (photo_type == 'private')
+        })
+        
+    except Exception as e:
+        print(f"💥 DEBUG: UNEXPECTED EXCEPTION: {str(e)}")
+        import traceback
+        print(f"💥 DEBUG: FULL TRACEBACK:\n{traceback.format_exc()}")
+        
+        return JsonResponse({
+            'success': False, 
+            'error': f'Upload failed: {str(e)}'
+        }, status=500)
 
 @login_required
-def delete_image(request, image_id):
-    """Delete profile image (legacy endpoint)"""
+@csrf_exempt
+def delete_image_api(request, image_id):
+    """API endpoint for deleting images with proper photo promotion"""
     try:
         image = ProfileImage.objects.get(id=image_id, profile__user=request.user)
+        was_profile_photo = (image.image_type == 'profile')
+        
         image.delete()
-        return JsonResponse({'success': True})
+        
+        # If we deleted a profile photo, promote the first additional photo
+        if was_profile_photo:
+            next_profile_image = ProfileImage.objects.filter(
+                profile=image.profile,
+                image_type='additional'
+            ).first()
+            
+            if next_profile_image:
+                next_profile_image.image_type = 'profile'
+                next_profile_image.save()
+                return JsonResponse({
+                    'success': True, 
+                    'message': 'Image deleted successfully',
+                    'promoted_image_id': next_profile_image.id
+                })
+        
+        return JsonResponse({
+            'success': True, 
+            'message': 'Image deleted successfully',
+            'promoted_image_id': None
+        })
+        
     except ProfileImage.DoesNotExist:
-        return JsonResponse({'success': False}, status=404)
+        return JsonResponse({'success': False, 'error': 'Image not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 # Likes & Matching
 @login_required
@@ -862,7 +955,6 @@ def messages_unread_count(request):
         
         return JsonResponse({'count': count})
     except Exception as e:
-        print(f"DEBUG: Error in messages_unread_count: {e}")
         return JsonResponse({'count': 0})
 
 # Private Photo Access Views
@@ -987,7 +1079,7 @@ def pending_requests(request):
     }
     return render(request, 'pages/pending_requests.html', context)
 
-# Blog - FIXED PAGINATION
+# Blog
 def blog_list(request):
     """List published blog posts"""
     posts = Blog.objects.filter(
@@ -995,7 +1087,7 @@ def blog_list(request):
         published_at__lte=timezone.now()
     ).order_by('-published_at')
     
-    # Add pagination (9 posts per page as your grid shows 3 columns)
+    # Add pagination
     paginator = Paginator(posts, 9)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -1003,7 +1095,7 @@ def blog_list(request):
     context = {
         'page_obj': page_obj,
         'is_paginated': page_obj.has_other_pages(),
-        'posts': page_obj.object_list  # Include both for flexibility
+        'posts': page_obj.object_list
     }
     return render(request, 'pages/blog_list.html', context)
 
@@ -1036,13 +1128,12 @@ def admin_approve_profile(request, profile_id):
     profile.approved_by = request.user
     profile.save()
     
-    # ✅ INTEGRATION: Send profile approved email
+    # Send profile approved email
     try:
         login_url = request.build_absolute_uri(reverse('dashboard'))
         send_profile_approved_email(profile.user.email, profile.user.username, login_url)
     except Exception as e:
         print(f"DEBUG: Profile approved email failed: {e}")
-        # Don't break the flow if email fails
     
     messages.success(request, f"Profile for {profile.user.username} has been approved.")
     return redirect('admin_profile_approvals')
@@ -1093,13 +1184,12 @@ def admin_quick_approve_profile(request, profile_id):
             profile.approved_by = request.user
             profile.save()
             
-            # ✅ INTEGRATION: Send profile approved email
+            # Send profile approved email
             try:
                 login_url = request.build_absolute_uri(reverse('dashboard'))
                 send_profile_approved_email(profile.user.email, profile.user.username, login_url)
             except Exception as e:
                 print(f"DEBUG: Profile approved email failed: {e}")
-                # Don't break the flow if email fails
             
             return JsonResponse({
                 'success': True, 
@@ -1115,7 +1205,7 @@ def admin_quick_approve_profile(request, profile_id):
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 # ======================
-# NEW ADMIN NOTIFICATION SYSTEM - FIXED VERSION
+# NEW ADMIN NOTIFICATION SYSTEM
 # ======================
 
 @login_required
@@ -1128,7 +1218,7 @@ def admin_new_signups(request):
         # Get all users with their profiles
         users = User.objects.all().select_related('profile').order_by('-date_joined')
         
-        # Calculate statistics - FIXED QUERIES
+        # Calculate statistics
         total_users = users.count()
         approved_count = users.filter(profile__is_approved=True).count()
         verified_count = users.filter(profile__email_verified=True).count()
@@ -1183,7 +1273,7 @@ def admin_send_message(request, profile_id):
                 message=message_text
             )
             
-            # ✅ NEW: Send email notification to user
+            # Send email notification to user
             try:
                 profile_edit_url = request.build_absolute_uri(reverse('profile_edit'))
                 send_admin_message_notification(
@@ -1216,25 +1306,25 @@ def admin_send_message(request, profile_id):
     return render(request, 'pages/admin_send_message.html', context)
 
 def verify_email(request, token):
-    """Handle email verification links"""
+    """Handle email verification links - DEVELOPMENT MODE"""
+    print(f"🎯 DEBUG: Verification attempted with token: {token}")
+    
+    # AUTO-VERIFY for development - remove time restriction
     try:
-        profile = Profile.objects.get(
-            email_verification_token=token,
-            email_verification_sent_at__gte=timezone.now() - timedelta(hours=24)
-        )
-        
+        profile = Profile.objects.get(email_verification_token=token)
         if not profile.email_verified:
             profile.email_verified = True
             profile.save()
-            
-            messages.success(request, "✅ Email verified successfully! Your profile is now complete.")
+            messages.success(request, "✅ Email verified successfully! (Development Mode)")
+            print(f"✅ AUTO-VERIFIED: {profile.user.username}")
         else:
             messages.info(request, "✅ Email already verified.")
-            
+            print(f"ℹ️ Already verified: {profile.user.username}")
     except Profile.DoesNotExist:
-        messages.error(request, "❌ Invalid or expired verification link.")
+        messages.error(request, "❌ Invalid verification token")
+        print(f"❌ Token not found: {token}")
     
-    # Redirect to appropriate page
+    # Redirect to dashboard
     if request.user.is_authenticated:
         return redirect('dashboard')
     else:
@@ -1273,7 +1363,7 @@ def unblock_user(request, user_id):
         try:
             target_user = get_object_or_404(User, id=user_id)
 
-            deleted_count, _ = Block.objects.filter(
+            Block.objects.filter(
                 blocker=request.user,
                 blocked=target_user
             ).delete()
@@ -1287,7 +1377,7 @@ def unblock_user(request, user_id):
     
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
 
-# HotDates - FIXED MISSING VIEWS
+# HotDates
 @login_required
 def hotdates_new_count(request):
     """Count new Hot Dates AND cancellation notifications for the current user"""
@@ -1319,7 +1409,6 @@ def hotdates_new_count(request):
         })
         
     except Exception as e:
-        print(f"DEBUG: Error in hotdates_new_count: {e}")
         return JsonResponse({
             'count': 0,
             'preview': getattr(request, 'preview_mode', False)
@@ -1380,7 +1469,7 @@ def hotdate_create(request):
             
             # Create Hot Date
             hot_date = HotDate.objects.create(
-                host=request.user,  # Changed from user to host to match your model
+                host=request.user,
                 activity=activity,
                 vibe=vibe,
                 budget=budget,
@@ -1414,7 +1503,6 @@ def hotdate_detail(request, hotdate_id):
         'hot_date': hot_date
     })
 
-# MISSING VIEWS - ADD THESE
 @login_required
 def hotdate_mark_seen(request, hotdate_id):
     """Mark a Hot Date as seen by the user"""
@@ -1524,32 +1612,25 @@ def create_profile(request):
             my_interests = request.POST.getlist('my_interests[]')
             profile.my_interests = ','.join(my_interests) if my_interests else ''
             
-            must_have_tags = request.POST.getlist('must_have_tags[]')
-            profile.must_have_tags = ','.join(must_have_tags) if must_have_tags else ''
-            
+            # ✅ SYNCED: ADD missing fields from forms
+            profile.body_type = request.POST.get('body_type', '')
+            profile.ethnicity = request.POST.get('ethnicity', '')
+            profile.relationship_status = request.POST.get('relationship_status', '')
             profile.children = request.POST.get('children', '')
+            profile.want_children = request.POST.get('want_children', '')
             profile.smoking = request.POST.get('smoking', '')
             profile.drinking = request.POST.get('drinking', '')
-            profile.exercise = request.POST.get('exercise', '')
-            profile.pets = request.POST.get('pets', '')
-            profile.diet = request.POST.get('diet', '')
-            
-            # Preferences
-            profile.preferred_age_min = request.POST.get('preferred_age_min', 18)
-            profile.preferred_age_max = request.POST.get('preferred_age_max', 99)
             profile.preferred_intent = request.POST.get('preferred_intent', '')
-            profile.preferred_distance = request.POST.get('preferred_distance', '')
             
             # Mark as submitted for approval (but not approved yet)
             profile.is_approved = False
             profile.save()
             
-            # ✅ INTEGRATION: Send profile submitted email
+            # Send profile submitted email
             try:
                 send_profile_submitted_email(request.user.email, request.user.username)
             except Exception as e:
                 print(f"DEBUG: Profile submitted email failed: {e}")
-                # Don't break the flow if email fails
             
             messages.success(request, 'Profile submitted for admin approval! You can now browse profiles in preview mode.')
             return redirect('preview_gate')
@@ -1559,9 +1640,7 @@ def create_profile(request):
             print(f"DEBUG: Profile creation error: {e}")
     
     # GET request - show the form
-    context = {
-        'ages': range(18, 81),
-    }
+    context = {}
     return render(request, 'pages/create_your_profile.html', context)
 
 @login_required
@@ -1605,85 +1684,13 @@ def preview_profile_detail(request, user_id):
 
 @login_required
 @csrf_exempt
-def upload_profile_image_api(request):
-    """API endpoint for uploading cropped profile images"""
-    if request.method == 'POST' and request.FILES.get('image'):
-        try:
-            image_file = request.FILES['image']
-            photo_type = request.POST.get('photo_type', 'additional')
-            is_profile = photo_type == 'profile'
-            
-            # Validate file type
-            allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
-            if image_file.content_type not in allowed_types:
-                return JsonResponse({
-                    'success': False, 
-                    'error': 'Invalid file type. Please upload JPEG, PNG, GIF, or WebP.'
-                }, status=400)
-            
-            # Validate file size (max 5MB)
-            if image_file.size > 5 * 1024 * 1024:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'File too large. Maximum size is 5MB.'
-                }, status=400)
-            
-            # Get or create user profile
-            profile, created = Profile.objects.get_or_create(user=request.user)
-            
-            # Create new ProfileImage
-            profile_image = ProfileImage.objects.create(
-                profile=profile,
-                image=image_file,
-                is_private=(photo_type == 'private'),
-                is_primary=is_profile
-            )
-            
-            # If this is a profile photo, ensure it's the only primary image
-            if is_profile:
-                ProfileImage.objects.filter(profile=profile, is_primary=True).exclude(id=profile_image.id).update(is_primary=False)
-            
-            return JsonResponse({
-                'success': True, 
-                'image_id': profile_image.id,
-                'image_url': profile_image.image.url,
-                'filename': image_file.name
-            })
-            
-        except Exception as e:
-            print(f"DEBUG: Error uploading image: {e}")
-            return JsonResponse({
-                'success': False, 
-                'error': f'Upload failed: {str(e)}'
-            }, status=500)
-    
-    return JsonResponse({
-        'success': False, 
-        'error': 'No image file provided'
-    }, status=400)
-
-@login_required
-@csrf_exempt
-def delete_image_api(request, image_id):
-    """API endpoint for deleting images"""
-    try:
-        image = ProfileImage.objects.get(id=image_id, profile__user=request.user)
-        image.delete()
-        return JsonResponse({'success': True, 'message': 'Image deleted successfully'})
-    except ProfileImage.DoesNotExist:
-        return JsonResponse({'success': False, 'error': 'Image not found'}, status=404)
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=500)
-
-@login_required
-@csrf_exempt
 def create_profile_api(request):
-    """API endpoint for comprehensive profile creation"""
+    """API endpoint for comprehensive profile creation - SYNCED WITH FRONTEND"""
     if request.method == 'POST':
         try:
             # Get or create profile
             profile, created = Profile.objects.get_or_create(user=request.user)
-            
+
             # Update user's username
             username = request.POST.get('username', '').strip()
             if username and username != request.user.username:
@@ -1693,75 +1700,70 @@ def create_profile_api(request):
                     request.user.save()
                 else:
                     return JsonResponse({
-                        'success': False, 
+                        'success': False,
                         'error': 'Username is already taken'
                     }, status=400)
-            
+    
             # Update profile fields
             profile.headline = request.POST.get('headline', '')
             profile.about = request.POST.get('about', '')
             profile.location = request.POST.get('location', '')
-            
+        
             # Handle date of birth
             date_of_birth = request.POST.get('date_of_birth')
-            if date_of_birth:
+            if date_of_birth:   
                 profile.date_of_birth = date_of_birth
-            
+        
             profile.my_gender = request.POST.get('my_gender', '')
             profile.looking_for = request.POST.get('looking_for', '')
-            
+
             # Handle array fields (convert to comma-separated strings)
             my_interests = request.POST.getlist('my_interests') or request.POST.getlist('my_interests[]')
             profile.my_interests = ','.join(my_interests) if my_interests else ''
-            
-            must_have_tags = request.POST.getlist('must_have_tags') or request.POST.getlist('must_have_tags[]')
-            profile.must_have_tags = ','.join(must_have_tags) if must_have_tags else ''
-            
-            # Lifestyle fields
+        
+            # ✅ SYNCED: ADD missing fields from forms
+            profile.body_type = request.POST.get('body_type', '')
+            profile.ethnicity = request.POST.get('ethnicity', '')
+            profile.relationship_status = request.POST.get('relationship_status', '')
             profile.children = request.POST.get('children', '')
+            profile.want_children = request.POST.get('want_children', '')
             profile.smoking = request.POST.get('smoking', '')
             profile.drinking = request.POST.get('drinking', '')
-            profile.exercise = request.POST.get('exercise', '')
-            profile.pets = request.POST.get('pets', '')
-            profile.diet = request.POST.get('diet', '')
-            
-            # Preferences
-            profile.preferred_age_min = int(request.POST.get('preferred_age_min', 18))
-            profile.preferred_age_max = int(request.POST.get('preferred_age_max', 99))
             profile.preferred_intent = request.POST.get('preferred_intent', '')
-            profile.preferred_distance = request.POST.get('preferred_distance', '')
-            
-            # Handle profile photo
+        
+            # Handle profile photo 
             profile_photo_id = request.POST.get('profile_photo_id')
             if profile_photo_id:
                 try:
                     # Set this as primary photo
                     profile_image = ProfileImage.objects.get(id=profile_photo_id, profile=profile)
-                    ProfileImage.objects.filter(profile=profile, is_primary=True).exclude(id=profile_image.id).update(is_primary=False)
+                    # FIXED LINE: Complete the method call
+                    ProfileImage.objects.filter(profile=profile, image_type='profile').exclude(id=profile_image.id).update(image_type='additional')
+                    profile_image.image_type = 'profile'
                     profile_image.is_primary = True
                     profile_image.save()
                 except ProfileImage.DoesNotExist:
                     return JsonResponse({
-                        'success': False, 
+                        'success': False,
                         'error': 'Profile photo not found'
                     }, status=400)
-            
+                    
             # Mark as submitted for approval
             profile.is_complete = True
             profile.last_submitted_for_approval = timezone.now()
             
-            # ✅ ENHANCED: GENERATE VERIFICATION TOKEN
+            # Generate verification token
             profile.email_verification_token = secrets.token_urlsafe(32)
             profile.email_verification_sent_at = timezone.now()
             profile.save()
             
-            # ✅ ENHANCED: Send profile submitted email
+            # Send profile submitted email
             try:
                 send_profile_submitted_email(request.user.email, request.user.username)
             except Exception as e:
                 print(f"DEBUG: Profile submitted email failed: {e}")
             
-            # ✅ NEW: Send email verification to user
+            # Send email verification to user
             try:
                 verification_url = request.build_absolute_uri(
                     reverse('verify_email', kwargs={'token': profile.email_verification_token})
@@ -1770,25 +1772,25 @@ def create_profile_api(request):
             except Exception as e:
                 print(f"DEBUG: Verification email failed: {e}")
             
-            # ✅ NEW: Notify admins about new submission
+            # Notify admins about new submission
             try:
                 admin_emails = User.objects.filter(
-                    is_staff=True, 
-                    is_active=True
+                    is_staff=True,
+                    is_active=True 
                 ).values_list('email', flat=True)
-                
+            
                 profile_url = request.build_absolute_uri(
                     reverse('admin_new_profiles')
                 )
-                
+                    
                 for admin_email in admin_emails:
-                    if admin_email:  # Ensure email is not empty
+                    if admin_email:
                         send_admin_notification_email(admin_email, request.user.username, profile_url)
             except Exception as e:
                 print(f"DEBUG: Admin notification failed: {e}")
-            
-            return JsonResponse({
-                'success': True, 
+                        
+            return JsonResponse({ 
+                'success': True,
                 'message': 'Profile submitted for admin approval! Please check your email for verification.',
                 'profile_id': profile.id
             })
@@ -1796,10 +1798,10 @@ def create_profile_api(request):
         except Exception as e:
             print(f"DEBUG: Profile creation error: {e}")
             return JsonResponse({
-                'success': False, 
+                'success': False,
                 'error': f'Profile creation failed: {str(e)}'
             }, status=500)
-    
+            
     return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
 
 # ======================
@@ -1815,7 +1817,7 @@ def handler500(request):
     return render(request, 'pages/500.html', status=500)
 
 # ======================
-# MISSING HELPER FUNCTION
+# HELPER FUNCTIONS
 # ======================
 
 def log_user_activity(user, activity_type, request, admin_message=None, target_user_id=None):

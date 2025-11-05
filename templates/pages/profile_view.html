@@ -197,17 +197,19 @@
           </div>
           <div class="accordion-content">
             <dl class="details-list">
-              <dt>Gender</dt>
-              <dd>{% if profile.looking_for and profile.looking_for != "any" %}{{ profile.looking_for|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-              
-              <dt>Age Range</dt>
-              <dd>{% if profile.preferred_age_min and profile.preferred_age_max %}{{ profile.preferred_age_min }}–{{ profile.preferred_age_max }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
+              <dt>Interested In</dt>
+              <dd>
+                {% if profile.looking_for and profile.looking_for != "unspecified" %}
+                  {% if profile.looking_for == "male" %}Men
+                  {% elif profile.looking_for == "female" %}Women
+                  {% else %}{{ profile.looking_for|title }}{% endif %}
+                {% else %}
+                  <span class="data-placeholder">Not specified</span>
+                {% endif %}
+              </dd>
               
               <dt>Intent</dt>
               <dd>{% if profile.preferred_intent and profile.preferred_intent != "any" %}{{ profile.preferred_intent|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-              
-              <dt>Distance</dt>
-              <dd>{% if profile.preferred_distance and profile.preferred_distance != "any" %}{{ profile.preferred_distance|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
             </dl>
           </div>
         </div>
@@ -220,9 +222,6 @@
           </div>
           <div class="accordion-content">
             <dl class="details-list">
-              <dt>Height</dt>
-              <dd>{% if profile.height %}{{ profile.height|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-              
               <dt>Body Type</dt>
               <dd>{% if profile.body_type %}{{ profile.body_type|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
               
@@ -271,25 +270,6 @@
         </div>
         {% endif %}
 
-        <!-- Important Qualities -->
-        {% if profile.important_qualities %}
-        <div class="accordion-section">
-          <div class="accordion-header">
-            <span>Important Qualities</span>
-            <span class="material-icons">expand_more</span>
-          </div>
-          <div class="accordion-content">
-            <div class="chips">
-              {% with qualities=profile.important_qualities.split %}
-                {% for quality in qualities %}
-                  <span class="chip">{{ quality.strip|title }}</span>
-                {% endfor %}
-              {% endwith %}
-            </div>
-          </div>
-        </div>
-        {% endif %}
-
         <!-- Lifestyle -->
         <div class="accordion-section">
           <div class="accordion-header">
@@ -298,17 +278,11 @@
           </div>
           <div class="accordion-content">
             <dl class="details-list">
-              <dt>Gender</dt>
-              <dd>{% if profile.my_gender and profile.my_gender != "prefer_not" %}{{ profile.my_gender|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-              
               <dt>Smoking</dt>
               <dd>{% if profile.smoking and profile.smoking != "prefer_not" %}{{ profile.smoking|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
               
               <dt>Drinking</dt>
               <dd>{% if profile.drinking and profile.drinking != "prefer_not" %}{{ profile.drinking|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
-              
-              <dt>Exercise</dt>
-              <dd>{% if profile.exercise and profile.exercise != "prefer_not" %}{{ profile.exercise|title }}{% else %}<span class="data-placeholder">Not specified</span>{% endif %}</dd>
             </dl>
           </div>
         </div>

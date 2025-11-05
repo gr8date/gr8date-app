@@ -1,5 +1,3 @@
-[file name]: profile_edit.html
-[file content begin]
 {% extends "base_header.html" %}
 
 {% block title %}GR8DATE • Edit Profile{% endblock %}
@@ -22,29 +20,90 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
 .btn-primary:hover{background:var(--brand-900);border-color:var(--brand-900)}
 .btn-muted{background:#f2f4f7;border:1px solid var(--border);color:#111}
 
-/* PROPER BUTTON TABS */
+/* SIMPLIFIED TAB SYSTEM */
 .mobile-tabs{display:flex;background:#f8f9fa;padding:8px;border-radius:12px;margin-bottom:20px;border:1px solid var(--border)}
 .tab-button{flex:1;padding:12px 16px;border:none;background:transparent;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
 .tab-button.active{background:white;box-shadow:0 2px 8px rgba(0,0,0,.1);border:1px solid var(--border);color:var(--brand)}
 .tab-button:not(.active):hover{background:rgba(255,255,255,0.7)}
-.settings-section{display:none}
-.settings-section.active{display:block}
+.tab-content{display:none}
+.tab-content.active{display:block}
 
 /* Badges & Status */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;margin-left:8px}
 .badge-instant{background:#dcfce7;color:#166534}
 .badge-pending{background:#fef3c7;color:#92400e}
 
-/* UPDATED PHOTO STYLES */
+/* PHOTO STYLES */
 .photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.photo-item{position:relative;width:100%;aspect-ratio:1/1;border-radius:10px;overflow:hidden;border:2px dashed #ccc;display:flex;align-items:center;justify-content:center;background:#f0f0f0;cursor:pointer}
+.photo-item{position:relative;width:100%;aspect-ratio:1/1;border-radius:10px;overflow:hidden;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;background:#f0f0f0}
 .photo-item img{width:100%;height:100%;object-fit:cover}
-.btn-delete{position:absolute;top:5px;right:5px;width:20px;height:20px;background:#ff4444;color:white;border:none;border-radius:50%;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center}
-.add-photo-btn{background:#e8f4ff;border:2px dashed #667eea;color:#667eea;font-weight:bold;font-size:1.5rem}
-.private-photo{filter:blur(5px)}
 .photo-count{font-size:12px;color:#64748b;margin-top:6px}
 
-/* Tag options styles */
+/* DELETE BUTTON STYLES */
+.btn-delete {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+}
+.btn-delete:hover {
+    background: #cc0000;
+    transform: scale(1.1);
+}
+
+/* UPLOAD TRIGGER */
+.photo-upload-trigger {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px;
+    border: 2px dashed #667eea;
+    border-radius: 12px;
+    background: #f8faff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 100%;
+    min-height: 120px;
+}
+.photo-upload-trigger:hover {
+    background: #f0f4ff;
+    border-color: #5a6fd8;
+}
+.upload-icon {
+    font-size: 32px;
+    color: #667eea;
+}
+.upload-text {
+    text-align: center;
+}
+.upload-text h4 {
+    margin: 0 0 4px 0;
+    color: #334155;
+    font-size: 16px;
+}
+.upload-text p {
+    margin: 0;
+    font-size: 14px;
+    color: #64748b;
+}
+
+/* TAG OPTIONS STYLES */
 .tag-options{display:flex;flex-wrap:wrap;gap:8px;border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--bg-muted);min-height:60px}
 .tag-option{display:flex;align-items:center;padding:6px 12px;background:white;border:2px solid #e9ecef;border-radius:20px;cursor:pointer;transition:all 0.3s}
 .tag-option:hover{border-color:#667eea;background:#f0f4ff}
@@ -53,19 +112,23 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
 
 .badge-note{font-size:12px;color:#64748b;margin-top:6px}
 
-/* Save Actions */
+/* SAVE ACTIONS */
 .save-actions{display:flex;flex-direction:column;gap:12px;margin-top:20px;padding:16px;background:#f8f9fa;border-radius:12px;border:1px solid #eaeef5}
 .save-main{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center}
+
+/* ERROR STYLES */
+.error-message{color:#dc2626;font-size:12px;margin-top:4px}
+.success-message{color:#166534;font-size:12px;margin-top:4px}
 </style>
 
 <main class="container">
-  <!-- PROPER BUTTON TABS -->
+  <!-- SIMPLIFIED TAB SYSTEM -->
   <div class="mobile-tabs">
     <button class="tab-button active" data-tab="preferences">
       <span class="material-icons" style="font-size:18px">flash_on</span>
       Lifestyle & Compatibility
     </button>
-    <button class="tab-button" data-tab="profile-content">
+    <button class="tab-button" data-tab="profile">
       <span class="material-icons" style="font-size:18px">edit</span>
       Profile & Photos
     </button>
@@ -80,8 +143,8 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
       <h1 style="margin:0;font-size:22px">Edit My Profile</h1>
     </div>
 
-    <!-- INSTANT UPDATE SECTION -->
-    <div class="settings-section instant-update active" id="preferences-tab">
+    <!-- PREFERENCES TAB CONTENT -->
+    <div class="tab-content active" id="preferences-tab">
       <section class="card">
         <div class="section-header" style="display:flex;align-items:center;margin-bottom:8px">
           <h3 style="margin:0">⚡ Lifestyle & Compatibility</h3>
@@ -93,43 +156,6 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
         
         <div class="grid-2">
           <!-- Physical Attributes -->
-          <div class="field">
-            <label for="height">Height</label>
-            <select id="height" name="height">
-              <option value="">Select height</option>
-              <option value="4_0" {% if me.height == '4_0' %}selected{% endif %}>4'0" (122 cm)</option>
-              <option value="4_1" {% if me.height == '4_1' %}selected{% endif %}>4'1" (124 cm)</option>
-              <option value="4_2" {% if me.height == '4_2' %}selected{% endif %}>4'2" (127 cm)</option>
-              <option value="4_3" {% if me.height == '4_3' %}selected{% endif %}>4'3" (130 cm)</option>
-              <option value="4_4" {% if me.height == '4_4' %}selected{% endif %}>4'4" (132 cm)</option>
-              <option value="4_5" {% if me.height == '4_5' %}selected{% endif %}>4'5" (135 cm)</option>
-              <option value="4_6" {% if me.height == '4_6' %}selected{% endif %}>4'6" (137 cm)</option>
-              <option value="4_7" {% if me.height == '4_7' %}selected{% endif %}>4'7" (140 cm)</option>
-              <option value="4_8" {% if me.height == '4_8' %}selected{% endif %}>4'8" (142 cm)</option>
-              <option value="4_9" {% if me.height == '4_9' %}selected{% endif %}>4'9" (145 cm)</option>
-              <option value="4_10" {% if me.height == '4_10' %}selected{% endif %}>4'10" (147 cm)</option>
-              <option value="4_11" {% if me.height == '4_11' %}selected{% endif %}>4'11" (150 cm)</option>
-              <option value="5_0" {% if me.height == '5_0' %}selected{% endif %}>5'0" (152 cm)</option>
-              <option value="5_1" {% if me.height == '5_1' %}selected{% endif %}>5'1" (155 cm)</option>
-              <option value="5_2" {% if me.height == '5_2' %}selected{% endif %}>5'2" (157 cm)</option>
-              <option value="5_3" {% if me.height == '5_3' %}selected{% endif %}>5'3" (160 cm)</option>
-              <option value="5_4" {% if me.height == '5_4' %}selected{% endif %}>5'4" (163 cm)</option>
-              <option value="5_5" {% if me.height == '5_5' %}selected{% endif %}>5'5" (165 cm)</option>
-              <option value="5_6" {% if me.height == '5_6' %}selected{% endif %}>5'6" (168 cm)</option>
-              <option value="5_7" {% if me.height == '5_7' %}selected{% endif %}>5'7" (170 cm)</option>
-              <option value="5_8" {% if me.height == '5_8' %}selected{% endif %}>5'8" (173 cm)</option>
-              <option value="5_9" {% if me.height == '5_9' %}selected{% endif %}>5'9" (175 cm)</option>
-              <option value="5_10" {% if me.height == '5_10' %}selected{% endif %}>5'10" (178 cm)</option>
-              <option value="5_11" {% if me.height == '5_11' %}selected{% endif %}>5'11" (180 cm)</option>
-              <option value="6_0" {% if me.height == '6_0' %}selected{% endif %}>6'0" (183 cm)</option>
-              <option value="6_1" {% if me.height == '6_1' %}selected{% endif %}>6'1" (185 cm)</option>
-              <option value="6_2" {% if me.height == '6_2' %}selected{% endif %}>6'2" (188 cm)</option>
-              <option value="6_3" {% if me.height == '6_3' %}selected{% endif %}>6'3" (191 cm)</option>
-              <option value="6_4" {% if me.height == '6_4' %}selected{% endif %}>6'4" (193 cm)</option>
-              <option value="6_5_plus" {% if me.height == '6_5_plus' %}selected{% endif %}>6'5"+ (196 cm+)</option>
-            </select>
-          </div>
-
           <div class="field">
             <label for="body_type">Body Type</label>
             <select id="body_type" name="body_type">
@@ -213,55 +239,11 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
             </select>
           </div>
 
-          <div class="field">
-            <label for="exercise">Exercise</label>
-            <select id="exercise" name="exercise">
-              <option value="">Select frequency</option>
-              <option value="daily" {% if me.exercise == 'daily' %}selected{% endif %}>Daily</option>
-              <option value="weekly" {% if me.exercise == 'weekly' %}selected{% endif %}>Several times a week</option>
-              <option value="occasionally" {% if me.exercise == 'occasionally' %}selected{% endif %}>Occasionally</option>
-              <option value="never" {% if me.exercise == 'never' %}selected{% endif %}>Never</option>
-            </select>
-          </div>
-
           <!-- Looking For Preferences -->
           <div class="field">
             <label>I'm looking for</label>
             <input class="read-only" value="{{ me.get_looking_for_display }}" readonly>
             <small class="helper">Cannot be changed after creation</small>
-          </div>
-
-          <!-- Age Range Preference -->
-          <div class="field">
-            <label>Preferred age range</label>
-            <div style="display:flex;gap:8px;align-items:center">
-              <select id="prefAgeMin" name="preferred_age_min">
-                {% for age in ages %}
-                <option value="{{ age }}" {% if me.preferred_age_min == age %}selected{% endif %}>{{ age }}</option>
-                {% endfor %}
-              </select>
-              <span>to</span>
-              <select id="prefAgeMax" name="preferred_age_max">
-                {% for age in ages %}
-                <option value="{{ age }}" {% if me.preferred_age_max == age %}selected{% endif %}>{{ age }}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <small class="badge-note">Tip: choose a range wide enough for good matches.</small>
-          </div>
-
-          <!-- Distance Preference -->
-          <div class="field">
-            <label>Distance</label>
-            <select id="prefDistance" name="preferred_distance">
-              <option value="any" {% if me.preferred_distance == 'any' %}selected{% endif %}>Any</option>
-              <option value="5" {% if me.preferred_distance == '5' %}selected{% endif %}>5 km</option>
-              <option value="10" {% if me.preferred_distance == '10' %}selected{% endif %}>10 km</option>
-              <option value="25" {% if me.preferred_distance == '25' %}selected{% endif %}>25 km</option>
-              <option value="50" {% if me.preferred_distance == '50' %}selected{% endif %}>50 km</option>
-              <option value="100" {% if me.preferred_distance == '100' %}selected{% endif %}>100 km</option>
-              <option value="country" {% if me.preferred_distance == 'country' %}selected{% endif %}>Countrywide</option>
-            </select>
           </div>
 
           <!-- Intent Preference -->
@@ -277,96 +259,56 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
           </div>
         </div>
 
-        <!-- Important Qualities - UPDATED: Better wording -->
-        <div class="field" style="grid-column:1/-1">
-          <label>Important to Me in a Partner</label>
-          <div class="tag-options">
-            <label class="tag-option">
-              <input type="checkbox" name="important_qualities[]" value="honest" {% if 'honest' in me.important_qualities %}checked{% endif %}>
-              <span>Honesty</span>
-            </label>
-            <label class="tag-option">
-              <input type="checkbox" name="important_qualities[]" value="good_communication" {% if 'good_communication' in me.important_qualities %}checked{% endif %}>
-              <span>Good Communication</span>
-            </label>
-            <label class="tag-option">
-              <input type="checkbox" name="important_qualities[]" value="sense_of_humour" {% if 'sense_of_humour' in me.important_qualities %}checked{% endif %}>
-              <span>Sense of Humour</span>
-            </label>
-            <label class="tag-option">
-              <input type="checkbox" name="important_qualities[]" value="ambition" {% if 'ambition' in me.important_qualities %}checked{% endif %}>
-              <span>Ambition</span>
-            </label>
-            <label class="tag-option">
-              <input type="checkbox" name="important_qualities[]" value="kindness" {% if 'kindness' in me.important_qualities %}checked{% endif %}>
-              <span>Kindness</span>
-            </label>
-            <label class="tag-option">
-              <input type="checkbox" name="important_qualities[]" value="loyalty" {% if 'loyalty' in me.important_qualities %}checked{% endif %}>
-              <span>Loyalty</span>
-            </label>
-            <label class="tag-option">
-              <input type="checkbox" name="important_qualities[]" value="adventurous" {% if 'adventurous' in me.important_qualities %}checked{% endif %}>
-              <span>Adventurous Spirit</span>
-            </label>
-            <label class="tag-option">
-              <input type="checkbox" name="important_qualities[]" value="family_oriented" {% if 'family_oriented' in me.important_qualities %}checked{% endif %}>
-              <span>Family Oriented</span>
-            </label>
-          </div>
-          <small class="badge-note">These qualities are important to you in a partner</small>
-        </div>
-
-        <!-- Interests & Hobbies - UPDATED: Better options -->
+        <!-- Interests & Hobbies -->
         <div class="field" style="grid-column:1/-1">
           <label>My Interests & Hobbies</label>
           <div class="tag-options">
             <label class="tag-option">
-              <input type="checkbox" name="my_interests[]" value="dining_out" {% if 'dining_out' in me.my_interests %}checked{% endif %}>
+              <input type="checkbox" name="my_interests" value="dining_out" id="interest_dining" {% if 'dining_out' in me.my_interests %}checked{% endif %}>
               <span>Dining Out</span>
             </label>
             <label class="tag-option">
-              <input type="checkbox" name="my_interests[]" value="travel" {% if 'travel' in me.my_interests %}checked{% endif %}>
+              <input type="checkbox" name="my_interests" value="travel" id="interest_travel" {% if 'travel' in me.my_interests %}checked{% endif %}>
               <span>Travel</span>
             </label>
             <label class="tag-option">
-              <input type="checkbox" name="my_interests[]" value="fitness" {% if 'fitness' in me.my_interests %}checked{% endif %}>
+              <input type="checkbox" name="my_interests" value="fitness" id="interest_fitness" {% if 'fitness' in me.my_interests %}checked{% endif %}>
               <span>Fitness</span>
             </label>
             <label class="tag-option">
-              <input type="checkbox" name="my_interests[]" value="movies" {% if 'movies' in me.my_interests %}checked{% endif %}>
+              <input type="checkbox" name="my_interests" value="movies" id="interest_movies" {% if 'movies' in me.my_interests %}checked{% endif %}>
               <span>Movies & Cinema</span>
             </label>
             <label class="tag-option">
-              <input type="checkbox" name="my_interests[]" value="music" {% if 'music' in me.my_interests %}checked{% endif %}>
+              <input type="checkbox" name="my_interests" value="music" id="interest_music" {% if 'music' in me.my_interests %}checked{% endif %}>
               <span>Live Music</span>
             </label>
             <label class="tag-option">
-              <input type="checkbox" name="my_interests[]" value="cooking" {% if 'cooking' in me.my_interests %}checked{% endif %}>
+              <input type="checkbox" name="my_interests" value="cooking" id="interest_cooking" {% if 'cooking' in me.my_interests %}checked{% endif %}>
               <span>Cooking</span>
             </label>
             <label class="tag-option">
-              <input type="checkbox" name="my_interests[]" value="beach" {% if 'beach' in me.my_interests %}checked{% endif %}>
+              <input type="checkbox" name="my_interests" value="beach" id="interest_beach" {% if 'beach' in me.my_interests %}checked{% endif %}>
               <span>Beach</span>
             </label>
             <label class="tag-option">
-              <input type="checkbox" name="my_interests[]" value="hiking" {% if 'hiking' in me.my_interests %}checked{% endif %}>
+              <input type="checkbox" name="my_interests" value="hiking" id="interest_hiking" {% if 'hiking' in me.my_interests %}checked{% endif %}>
               <span>Hiking & Nature</span>
             </label>
             <label class="tag-option">
-              <input type="checkbox" name="my_interests[]" value="sports" {% if 'sports' in me.my_interests %}checked{% endif %}>
+              <input type="checkbox" name="my_interests" value="sports" id="interest_sports" {% if 'sports' in me.my_interests %}checked{% endif %}>
               <span>Sports</span>
             </label>
             <label class="tag-option">
-              <input type="checkbox" name="my_interests[]" value="art_culture" {% if 'art_culture' in me.my_interests %}checked{% endif %}>
+              <input type="checkbox" name="my_interests" value="art_culture" id="interest_art" {% if 'art_culture' in me.my_interests %}checked{% endif %}>
               <span>Art & Culture</span>
             </label>
             <label class="tag-option">
-              <input type="checkbox" name="my_interests[]" value="gaming" {% if 'gaming' in me.my_interests %}checked{% endif %}>
+              <input type="checkbox" name="my_interests" value="gaming" id="interest_gaming" {% if 'gaming' in me.my_interests %}checked{% endif %}>
               <span>Gaming</span>
             </label>
             <label class="tag-option">
-              <input type="checkbox" name="my_interests[]" value="reading" {% if 'reading' in me.my_interests %}checked{% endif %}>
+              <input type="checkbox" name="my_interests" value="reading" id="interest_reading" {% if 'reading' in me.my_interests %}checked{% endif %}>
               <span>Reading</span>
             </label>
           </div>
@@ -385,8 +327,8 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
       </section>
     </div>
 
-    <!-- ADMIN APPROVAL SECTION -->
-    <div class="settings-section needs-approval" id="profile-content-tab">
+    <!-- PROFILE & PHOTOS TAB CONTENT -->
+    <div class="tab-content" id="profile-tab">
       <section class="card">
         <div class="section-header" style="display:flex;align-items:center;margin-bottom:8px">
           <h3 style="margin:0">⏱ Profile & Photos</h3>
@@ -400,64 +342,78 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
         <div class="field">
           <label>Profile photo</label>
           <div style="display:flex;align-items:center;gap:20px;margin-bottom:10px;">
-            {% with profile_images=me.images.all %}
-              {% with primary_image=profile_images|first %}
-                <div class="photo-item" style="border:2px solid #667eea; width:120px; height:120px;">
-                  {% if primary_image and primary_image.image %}
-                    <img src="{{ primary_image.image.url }}" alt="Current profile photo">
+            <div class="photo-upload-trigger" onclick="addProfilePhoto()" id="profile-photo-container" style="width:120px;height:120px;">
+              {% with profile_images=me.images.all %}
+                {% with first_image=profile_images.0 %}
+                  {% if first_image and first_image.image %}
+                    <div class="photo-item">
+                      <img src="{{ first_image.image.url }}" alt="Current profile photo" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+                      <button type="button" class="btn-delete" onclick="deletePhoto('{{ first_image.id }}', 'profile')">×</button>
+                    </div>
                   {% else %}
-                    <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#667eea;flex-direction:column;gap:8px;">
-                      <span class="material-icons" style="font-size:32px">photo_camera</span>
-                      <span style="font-size:12px">No Photo</span>
+                    <div class="upload-icon">+</div>
+                    <div class="upload-text">
+                      <h4>Add Profile Photo</h4>
+                      <p>Click to upload</p>
                     </div>
                   {% endif %}
-                </div>
+                {% endwith %}
               {% endwith %}
-            {% endwith %}
-            <button type="button" class="btn btn-muted" onclick="uploadPrimaryPhoto()">
+            </div>
+            <button type="button" class="btn btn-muted" onclick="addProfilePhoto()">
               <span class="material-icons">upload</span> 
               {% with profile_images=me.images.all %}
-                {% if profile_images|first %}Change Photo{% else %}Upload Photo{% endif %}
+                {% if profile_images.0 %}Change Photo{% else %}Upload Photo{% endif %}
               {% endwith %}
             </button>
           </div>
           <small class="badge-note">This will replace your current profile photo after review</small>
+          <div id="profile-photo-error" class="error-message"></div>
+          <div id="profile-photo-success" class="success-message"></div>
         </div>
 
         <!-- Additional Photos Section -->
         <div class="field">
           <label>Additional photos (up to 4)</label>
-          <div class="photo-grid">
+          <div class="photo-grid" id="additional-photos-container">
             {% for image in me.images.all %}
-              {% if not image.is_private and not forloop.first %}
+              {% if not image.is_private and not image.is_primary %}
                 <div class="photo-item">
                   <img src="{{ image.image.url }}" alt="Additional photo">
-                  <button type="button" class="btn-delete" onclick="deletePhoto({{ image.id }})">×</button>
+                  <button type="button" class="btn-delete" onclick="deletePhoto('{{ image.id }}', 'additional')">×</button>
                 </div>
               {% endif %}
             {% endfor %}
             
-            {% with public_count=0 %}
-              {% for image in me.images.all %}
-                {% if not image.is_private and not forloop.first %}
-                  {% with public_count=public_count|add:1 %}{% endwith %}
+            {% with public_images=me.images.all %}
+              {% with public_count=0 %}
+                {% for image in public_images %}
+                  {% if not image.is_private and not image.is_primary %}
+                    {% with public_count=public_count|add:1 %}{% endwith %}
+                  {% endif %}
+                {% endfor %}
+                {% if public_count < 4 %}
+                  <div class="photo-upload-trigger" onclick="addAdditionalPhoto()">
+                    <div class="upload-icon">+</div>
+                    <div class="upload-text">
+                      <h4>Add Photo</h4>
+                      <p>Click to upload</p>
+                    </div>
+                  </div>
                 {% endif %}
-              {% endfor %}
-              {% if public_count < 4 %}
-                <div class="photo-item add-photo-btn" onclick="uploadAdditionalPhoto()">
-                  <span>+</span>
-                </div>
-              {% endif %}
+              {% endwith %}
             {% endwith %}
           </div>
           <div class="photo-count">
-            {% with public_count=0 %}
-              {% for image in me.images.all %}
-                {% if not image.is_private and not forloop.first %}
-                  {% with public_count=public_count|add:1 %}{% endwith %}
-                {% endif %}
-              {% endfor %}
-              {{ public_count }}/4 additional photos
+            {% with public_images=me.images.all %}
+              {% with public_count=0 %}
+                {% for image in public_images %}
+                  {% if not image.is_private and not image.is_primary %}
+                    {% with public_count=public_count|add:1 %}{% endwith %}
+                  {% endif %}
+                {% endfor %}
+                {{ public_count }}/4 additional photos
+              {% endwith %}
             {% endwith %}
           </div>
         </div>
@@ -465,58 +421,66 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
         <!-- Private Photos Section -->
         <div class="field">
           <label>Private photos (up to 4, blurred to others)</label>
-          <div class="photo-grid">
+          <div class="photo-grid" id="private-photos-container">
             {% for image in me.images.all %}
               {% if image.is_private %}
                 <div class="photo-item">
                   <img src="{{ image.image.url }}" alt="Private photo">
-                  <button type="button" class="btn-delete" onclick="deletePhoto({{ image.id }})">×</button>
+                  <button type="button" class="btn-delete" onclick="deletePhoto('{{ image.id }}', 'private')">×</button>
                 </div>
               {% endif %}
             {% endfor %}
             
-            {% with private_count=0 %}
-              {% for image in me.images.all %}
-                {% if image.is_private %}
-                  {% with private_count=private_count|add:1 %}{% endwith %}
+            {% with private_images=me.images.all %}
+              {% with private_count=0 %}
+                {% for image in private_images %}
+                  {% if image.is_private %}
+                    {% with private_count=private_count|add:1 %}{% endwith %}
+                  {% endif %}
+                {% endfor %}
+                {% if private_count < 4 %}
+                  <div class="photo-upload-trigger" onclick="addPrivatePhoto()">
+                    <div class="upload-icon">+</div>
+                    <div class="upload-text">
+                      <h4>Add Private Photo</h4>
+                      <p>Click to upload</p>
+                    </div>
+                  </div>
                 {% endif %}
-              {% endfor %}
-              {% if private_count < 4 %}
-                <div class="photo-item add-photo-btn" onclick="uploadPrivatePhoto()">
-                  <span>+</span>
-                </div>
-              {% endif %}
+              {% endwith %}
             {% endwith %}
           </div>
           <div class="photo-count">
-            {% with private_count=0 %}
-              {% for image in me.images.all %}
-                {% if image.is_private %}
-                  {% with private_count=private_count|add:1 %}{% endwith %}
-                {% endif %}
-              {% endfor %}
-              {{ private_count }}/4 private photos
+            {% with private_images=me.images.all %}
+              {% with private_count=0 %}
+                {% for image in private_images %}
+                  {% if image.is_private %}
+                    {% with private_count=private_count|add:1 %}{% endwith %}
+                  {% endif %}
+                {% endfor %}
+                {{ private_count }}/4 private photos
+              {% endwith %}
             {% endwith %}
           </div>
         </div>
 
-        <!-- Text Content Fields with current values -->
+        <!-- Text Content Fields -->
         <div class="grid-2" style="margin-top:20px">
           <div class="field">
-            <label>Headline</label>
-            <input name="headline" placeholder="Short tagline" value="{{ me.headline|default:'' }}">
+            <label for="headline">Headline</label>
+            <input id="headline" name="headline" placeholder="Short tagline" value="{{ me.headline|default:'' }}">
             <small class="badge-note">Will be reviewed before going live</small>
           </div>
 
           <div class="field">
-            <label>Location</label>
-            <input name="location" placeholder="Suburb, City - e.g. Bondi, Sydney" value="{{ me.location|default:'' }}">
+            <label for="location">Location</label>
+            <input id="location" name="location" placeholder="Suburb, City - e.g. Bondi, Sydney" value="{{ me.location|default:'' }}">
             <small class="badge-note">Be specific - this helps find matches nearby</small>
           </div>
 
           <div class="field" style="grid-column:1/-1">
-            <label>About me</label>
-            <textarea name="about" rows="6" placeholder="Tell people about you...">{{ me.about|default:'' }}</textarea>
+            <label for="about">About me</label>
+            <textarea id="about" name="about" rows="6" placeholder="Tell people about you...">{{ me.about|default:'' }}</textarea>
             <small class="badge-note">Will be reviewed before going live</small>
           </div>
         </div>
@@ -536,135 +500,154 @@ body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,Seg
 </main>
 
 <script>
-// Tab switching
+// SIMPLE TAB SYSTEM
 document.addEventListener('DOMContentLoaded', function() {
-  // Tab switching
-  document.querySelectorAll('.tab-button').forEach(button => {
-    button.addEventListener('click', () => {
-      // Update active tab button
-      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-      
-      // Show corresponding section
-      const tabName = button.getAttribute('data-tab');
-      document.querySelectorAll('.settings-section').forEach(section => {
-        section.classList.remove('active');
-      });
-      document.getElementById(tabName + '-tab').classList.add('active');
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab') + '-tab';
+            
+            // Remove active class from all buttons and contents
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Add active class to current button and content
+            this.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        });
     });
-  });
-
-  // Age range dropdown population
-  const minSelect = document.getElementById('prefAgeMin');
-  const maxSelect = document.getElementById('prefAgeMax');
-  
-  if (minSelect && minSelect.options.length <= 1) {
-    // Clear existing options except the first one
-    while (minSelect.options.length > 0) {
-      minSelect.remove(0);
-    }
-    while (maxSelect.options.length > 0) {
-      maxSelect.remove(0);
-    }
-    
-    // Populate age options from 18 to 80
-    for (let age = 18; age <= 80; age++) {
-      const option = document.createElement('option');
-      option.value = age;
-      option.textContent = age;
-      minSelect.appendChild(option.cloneNode(true));
-      maxSelect.appendChild(option);
-    }
-    
-    // Set default values if needed
-    if (!minSelect.value) minSelect.value = 18;
-    if (!maxSelect.value) maxSelect.value = 80;
-  }
 });
 
-// Photo management functions
-function deletePhoto(imageId) {
-  if (confirm('Are you sure you want to delete this photo?')) {
-    fetch(`/delete-image/${imageId}/`, {
-      method: 'POST',
-      headers: {
-        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-      },
-    }).then(response => {
-      if (response.ok) {
-        location.reload();
-      } else {
-        alert('Error deleting photo');
-      }
-    }).catch(error => {
-      console.error('Error:', error);
-      alert('Error deleting photo');
-    });
-  }
+// SIMPLE PHOTO UPLOAD FUNCTIONS
+function addProfilePhoto() {
+    triggerFileInput('profile');
 }
 
-function uploadPrimaryPhoto() {
-  uploadPhoto(false, true); // not private, is primary
+function addAdditionalPhoto() {
+    const additionalCount = document.querySelectorAll('#additional-photos-container .photo-item').length;
+    if (additionalCount >= 4) {
+        alert('Maximum 4 additional photos allowed');
+        return;
+    }
+    triggerFileInput('additional');
 }
 
-function uploadAdditionalPhoto() {
-  uploadPhoto(false, false); // not private, not primary
+function addPrivatePhoto() {
+    const privateCount = document.querySelectorAll('#private-photos-container .photo-item').length;
+    if (privateCount >= 4) {
+        alert('Maximum 4 private photos allowed');
+        return;
+    }
+    triggerFileInput('private');
 }
 
-function uploadPrivatePhoto() {
-  uploadPhoto(true, false); // private, not primary
+function triggerFileInput(photoType) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = function(e) {
+        if (e.target.files && e.target.files[0]) {
+            uploadPhotoDirect(e.target.files[0], photoType);
+        }
+    };
+    input.click();
 }
 
-function uploadPhoto(isPrivate, isPrimary) {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.onchange = function(e) {
-    if (e.target.files[0]) {
-      const formData = new FormData();
-      formData.append('image', e.target.files[0]);
-      formData.append('is_private', isPrivate);
-      formData.append('is_primary', isPrimary);
-      
-      fetch('/upload-profile-image/', {
+function uploadPhotoDirect(file, photoType) {
+    const statusElement = document.getElementById('profile-photo-error');
+    const successElement = document.getElementById('profile-photo-success');
+    
+    statusElement.textContent = '';
+    successElement.textContent = 'Uploading photo...';
+    
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('image_type', photoType);
+
+    fetch('/api/upload-profile-image/', {
         method: 'POST',
         headers: {
-          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'X-CSRFToken': getCSRFToken(),
         },
         body: formData,
-      }).then(response => {
-        if (response.ok) {
-          location.reload();
-        } else {
-          alert('Error uploading image');
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Upload failed with status: ${response.status}`);
         }
-      }).catch(error => {
-        console.error('Error:', error);
-        alert('Error uploading image');
-      });
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            successElement.textContent = 'Photo uploaded successfully! Refreshing...';
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            throw new Error(data.error || 'Upload failed');
+        }
+    })
+    .catch(error => {
+        console.error('Upload error:', error);
+        successElement.textContent = '';
+        statusElement.textContent = `Upload failed: ${error.message}`;
+    });
+}
+
+// Photo deletion function
+function deletePhoto(imageId, photoType) {
+    if (!confirm('Are you sure you want to delete this photo? This action cannot be undone.')) {
+        return;
     }
-  };
-  input.click();
+
+    const deleteBtn = event.target;
+    const originalText = deleteBtn.innerHTML;
+    deleteBtn.disabled = true;
+    deleteBtn.innerHTML = '...';
+    
+    fetch(`/api/delete-image/${imageId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCSRFToken(),
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Delete failed with status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            window.location.reload();
+        } else {
+            throw new Error(data.error || 'Delete failed');
+        }
+    })
+    .catch(error => {
+        console.error('Delete error:', error);
+        deleteBtn.disabled = false;
+        deleteBtn.innerHTML = originalText;
+        alert(`Delete failed: ${error.message}`);
+    });
+}
+
+// Helper function to get CSRF token
+function getCSRFToken() {
+    const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+    return csrfInput ? csrfInput.value : '';
 }
 
 // Form submission handling
 document.getElementById('profileForm').addEventListener('submit', function(e) {
-  const minAge = parseInt(document.getElementById('prefAgeMin').value);
-  const maxAge = parseInt(document.getElementById('prefAgeMax').value);
-  
-  if (minAge > maxAge) {
-    e.preventDefault();
-    alert('Minimum age cannot be greater than maximum age');
-    return false;
-  }
-  
-  // Show loading state
-  const submitButtons = this.querySelectorAll('button[type="submit"]');
-  submitButtons.forEach(button => {
-    button.disabled = true;
-    button.innerHTML = '<span class="material-icons">hourglass_empty</span> Saving...';
-  });
+    const submitButtons = this.querySelectorAll('button[type="submit"]');
+    submitButtons.forEach(button => {
+        button.disabled = true;
+        button.innerHTML = '<span class="material-icons">hourglass_empty</span> Saving...';
+    });
 });
 </script>
 {% endblock %}
-[file content end]
