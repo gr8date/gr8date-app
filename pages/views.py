@@ -148,7 +148,7 @@ def preview_gate(request):
 
 @login_required
 def browse_preview(request):
-    """Preview browsing for unapproved users"""
+    """Preview browsing for unapproved users - LIMITED TO 12 SPECIFIC PROFILES"""
     try:
         user_profile = Profile.objects.get(user=request.user)
         if user_profile.is_approved or request.user.is_staff:
@@ -156,15 +156,14 @@ def browse_preview(request):
     except Profile.DoesNotExist:
         pass
     
-    # Show limited profiles for preview with images prefetched
+    # FIXED: Only show these 12 specific profiles in preview mode
+    fixed_profile_ids = [470, 365, 361, 358, 356, 717, 459, 301, 208, 207, 205, 363]
+    
+    # Get the specific profiles
     profiles = Profile.objects.filter(
+        id__in=fixed_profile_ids,
         is_approved=True
-    ).prefetch_related('images'
-    ).exclude(
-        Q(user=request.user) |
-        Q(user__in=Block.objects.filter(blocker=request.user).values('blocked')) |
-        Q(user__in=Block.objects.filter(blocked=request.user).values('blocker'))
-    ).order_by('-created_at')
+    ).prefetch_related('images').order_by('-created_at')
     
     paginator = Paginator(profiles, 12)
     page_number = request.GET.get('page')
@@ -1671,12 +1670,19 @@ def preview_profile_detail(request, user_id):
     except Profile.DoesNotExist:
         pass
     
+    # FIXED: Only allow preview of the 12 specific profiles
+    fixed_profile_ids = [470, 365, 361, 358, 356, 717, 459, 301, 208, 207, 205, 363]
+    
     # Get the target profile WITH IMAGES PREFETCHED
     profile = get_object_or_404(
         Profile.objects.prefetch_related('images'),
         user_id=user_id, 
         is_approved=True
     )
+    
+    # Security check: Only allow preview of the 12 fixed profiles
+    if profile.id not in fixed_profile_ids:
+        return redirect('preview_gate')
     
     # Only show limited information
     context = {
