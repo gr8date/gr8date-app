@@ -253,7 +253,7 @@ def home(request):
 
 @login_required
 def dashboard(request):
-    """Main dashboard with PROFILE MATCHING based on gender preferences"""
+    """Main dashboard with PROPER TWO-WAY GENDER MATCHING"""
     try:
         user_profile = Profile.objects.get(user=request.user)
         is_approved_user = user_profile.is_approved
@@ -265,24 +265,28 @@ def dashboard(request):
     if not is_approved_user and not request.user.is_staff:
         return redirect('preview_gate')
 
-    # ========== SIMPLIFIED GENDER MATCHING ALGORITHM ==========
+    # ========== FIXED TWO-WAY GENDER MATCHING ALGORITHM ==========
     def get_genders_user_wants(looking_for):
         """Convert 'looking_for' to list of genders user wants to see"""
         mapping = {
             'male': ['male'],
-            'female': ['female']
+            'female': ['female'],
+            'men': ['male'],      # Add variations
+            'women': ['female'],   # Add variations
         }
         return mapping.get(looking_for, [])  # Empty list for anything else
     
     # Start with base queryset
     if user_profile and user_profile.is_approved and not request.user.is_superuser:
-        # ONE-WAY MATCHING for regular users:
-        # Show profiles whose gender matches what I'm looking for
+        # TWO-WAY MATCHING for regular users:
+        # Show profiles whose gender matches what I'm looking for AND who are looking for my gender
         suggested_profiles = Profile.objects.filter(
             is_approved=True
         ).filter(
             # Their gender is what I'm looking for
-            my_gender__in=get_genders_user_wants(user_profile.looking_for)
+            my_gender__in=get_genders_user_wants(user_profile.looking_for),
+            # AND they are looking for my gender
+            looking_for__in=get_genders_user_wants(user_profile.my_gender)
         )
     else:
         # Superusers see ALL profiles, or fallback for unapproved users
