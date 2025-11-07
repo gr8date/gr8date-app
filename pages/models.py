@@ -293,18 +293,9 @@ class Profile(models.Model):
     def primary_image_url(self) -> str | None:
         img = self.primary_image
         try:
-            if img and img.image:
-                image_path = str(img.image)
-                # Check if it's a Cloudinary image (new)
-                if image_path.startswith('v') or 'cloudinary' in image_path:
-                    return f"https://res.cloudinary.com/dbdapu3ny/image/upload/w_400,h_400,c_fill/{image_path}"
-                else:
-                    # Old local image - use direct media URL (bypass Cloudinary storage)
-                    from django.conf import settings
-                    return f"{settings.MEDIA_URL}{image_path}"
-            return None
+            return img.image.url if img else None
         except Exception:
-            return None
+            return None    
 
     # Backwards-compat properties
     @property
