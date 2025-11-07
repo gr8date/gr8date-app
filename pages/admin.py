@@ -121,7 +121,18 @@ def approve_profile(request, profile_id):
         profile.approved_by = request.user
         profile.save()
         
-        messages.success(request, f"Profile approved successfully: {profile.user.username}")
+        # ✅ ADDED: Send approval email for single profile approval
+        from .utils.emails import send_profile_approved_email
+        email_sent = send_profile_approved_email(
+            user_email=profile.user.email,
+            username=profile.user.username,
+            login_url=request.build_absolute_uri(reverse('login'))
+        )
+        
+        if email_sent:
+            messages.success(request, f"Profile approved and notification sent to: {profile.user.username}")
+        else:
+            messages.warning(request, f"Profile approved but failed to send email to: {profile.user.username}")
             
     except Profile.DoesNotExist:
         messages.error(request, "Profile not found")
@@ -172,9 +183,11 @@ def resend_verification(request, profile_id):
         )
         
         from .utils.emails import send_email_verification_email
+        # ✅ FIXED: Correct function signature
         success = send_email_verification_email(
-            profile.user, 
-            verification_url
+            user_email=profile.user.email,
+            username=profile.user.username,
+            verification_url=verification_url
         )
         
         if success:
@@ -308,6 +321,38 @@ class ProfileAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+    
+    # ✅ ADDED: Send approval email when approving from individual profile edit page
+    def save_model(self, request, obj, form, change):
+        """Override save to send approval email when approving from edit page"""
+        # Check if this is an approval action (status changing to approved)
+        was_approved_before = False
+        if obj.pk:  # Existing object
+            try:
+                old_obj = Profile.objects.get(pk=obj.pk)
+                was_approved_before = old_obj.is_approved and old_obj.approval_status == 'approved'
+            except Profile.DoesNotExist:
+                pass
+        
+        # Save the profile first
+        super().save_model(request, obj, form, change)
+        
+        # Check if it was just approved (and wasn't approved before)
+        is_approved_now = obj.is_approved and obj.approval_status == 'approved'
+        
+        if is_approved_now and not was_approved_before:
+            # ✅ Send approval email for individual profile edit approval
+            from .utils.emails import send_profile_approved_email
+            email_sent = send_profile_approved_email(
+                user_email=obj.user.email,
+                username=obj.user.username,
+                login_url=request.build_absolute_uri(reverse('login'))
+            )
+            
+            if email_sent:
+                messages.success(request, f"Profile approved and notification sent to: {obj.user.username}")
+            else:
+                messages.warning(request, f"Profile approved but failed to send email to: {obj.user.username}")
     
     # ✅ PROFILE IMAGES DISPLAY IN ADMIN - Shows ALL images in a gallery
     def profile_images_display(self, obj):
@@ -507,16 +552,28 @@ class ProfileAdmin(admin.ModelAdmin):
             approved_by=request.user
         )
         
+        # ✅ ADDED: Send approval emails for bulk approval
+        from .utils.emails import send_profile_approved_email
+        emailed_count = 0
+        for profile in verified_profiles:
+            email_sent = send_profile_approved_email(
+                user_email=profile.user.email,
+                username=profile.user.username,
+                login_url=request.build_absolute_uri(reverse('login'))
+            )
+            if email_sent:
+                emailed_count += 1
+        
         if unverified_count > 0:
             self.message_user(
                 request, 
-                f'✅ Approved {approved_count} verified profiles. ⚠️ Skipped {unverified_count} unverified profiles.', 
+                f'✅ Approved {approved_count} verified profiles. 📧 Sent {emailed_count} approval emails. ⚠️ Skipped {unverified_count} unverified profiles.', 
                 messages.WARNING
             )
         else:
             self.message_user(
                 request, 
-                f'✅ Approved {approved_count} profiles with verified emails.', 
+                f'✅ Approved {approved_count} profiles. 📧 Sent {emailed_count} approval emails.', 
                 messages.SUCCESS
             )
     
@@ -545,9 +602,21 @@ class ProfileAdmin(admin.ModelAdmin):
             approved_by=request.user
         )
         
+        # ✅ ADDED: Send approval emails for bulk approval (all)
+        from .utils.emails import send_profile_approved_email
+        emailed_count = 0
+        for profile in queryset:
+            email_sent = send_profile_approved_email(
+                user_email=profile.user.email,
+                username=profile.user.username,
+                login_url=request.build_absolute_uri(reverse('login'))
+            )
+            if email_sent:
+                emailed_count += 1
+    
         self.message_user(
             request, 
-            f'✅ Approved {total_count} profiles. 📧 Auto-verified {unverified_count} emails.', 
+            f'✅ Approved {total_count} profiles. 📧 Auto-verified {unverified_count} emails. 📨 Sent {emailed_count} approval emails.', 
             messages.SUCCESS
         )
     
@@ -617,9 +686,11 @@ class ProfileAdmin(admin.ModelAdmin):
                 )
                 
                 from .utils.emails import send_email_verification_email
+                # ✅ FIXED: Correct function signature
                 success = send_email_verification_email(
-                    profile.user, 
-                    verification_url
+                    user_email=profile.user.email,
+                    username=profile.user.username,
+                    verification_url=verification_url
                 )
                 
                 if success:
