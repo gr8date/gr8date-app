@@ -885,6 +885,24 @@ class EmailReminderLogAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
+# ✅ FIXED: Message Admin - uses 'message' field instead of 'content'
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ('sender', 'recipient', 'message_preview', 'created_at', 'is_read')
+    list_filter = ('is_read', 'created_at')
+    search_fields = ('sender__username', 'recipient__username', 'message')
+    list_per_page = 20
+    
+    def message_preview(self, obj):
+        # Use 'message' field instead of 'content'
+        if hasattr(obj, 'message'):
+            return obj.message[:50] + "..." if len(obj.message) > 50 else obj.message
+        elif hasattr(obj, 'content'):
+            return obj.content[:50] + "..." if len(obj.content) > 50 else obj.content
+        else:
+            return "No message content"
+    message_preview.short_description = 'Message'
+
 # ✅ CUSTOM ADMIN URLS FOR QUICK ACTIONS
 def get_admin_urls():
     urls = [
@@ -977,17 +995,6 @@ class AdminMessageAdmin(admin.ModelAdmin):
     list_filter = ('is_resolved', 'created_at')
     search_fields = ('profile__user__username', 'message')
     list_per_page = 20
-
-@admin.register(Message)
-class MessageAdmin(admin.ModelAdmin):
-    list_display = ('sender', 'recipient', 'message_preview', 'created_at', 'is_read')
-    list_filter = ('is_read', 'created_at')
-    search_fields = ('sender__username', 'recipient__username', 'content')
-    list_per_page = 20
-    
-    def message_preview(self, obj):
-        return obj.content[:50] + "..." if len(obj.content) > 50 else obj.content
-    message_preview.short_description = 'Message'
 
 @admin.register(Thread)
 class ThreadAdmin(admin.ModelAdmin):
