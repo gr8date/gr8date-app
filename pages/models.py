@@ -299,8 +299,9 @@ class Profile(models.Model):
                 if image_path.startswith('v') or 'cloudinary' in image_path:
                     return f"https://res.cloudinary.com/dbdapu3ny/image/upload/w_400,h_400,c_fill/{image_path}"
                 else:
-                    # Old local image - use the original URL
-                    return img.image.url
+                    # Old local image - use direct media URL (bypass Cloudinary storage)
+                    from django.conf import settings
+                    return f"{settings.MEDIA_URL}{image_path}"
             return None
         except Exception:
             return None
