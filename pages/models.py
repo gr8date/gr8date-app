@@ -293,7 +293,15 @@ class Profile(models.Model):
     def primary_image_url(self) -> str | None:
         img = self.primary_image
         try:
-            return img.image.url if img else None
+            if img and img.image:
+                image_path = str(img.image)
+                # Check if it's a Cloudinary image (new)
+                if image_path.startswith('v') or 'cloudinary' in image_path:
+                    return f"https://res.cloudinary.com/dbdapu3ny/image/upload/w_400,h_400,c_fill/{image_path}"
+                else:
+                    # Old local image - use the original URL
+                    return img.image.url
+            return None
         except Exception:
             return None
 
