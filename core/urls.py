@@ -4,6 +4,8 @@ from django.urls import path, include
 from django.views.generic import TemplateView, RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve
+import os
 
 # ADD THIS IMPORT - it should NOT cause circular imports now
 from pages import views
@@ -15,6 +17,23 @@ sitemaps = {
     'static': StaticViewSitemap,
     'blog': BlogSitemap,
 }
+
+# Hybrid media serving function
+def hybrid_media_serve(request, path):
+    """
+    Serve media files from local storage if they exist locally,
+    otherwise return 404 (S3 files will be handled by storage backend)
+    """
+    local_file_path = os.path.join(settings.MEDIA_ROOT, path)
+    
+    # If file exists locally, serve it directly
+    if os.path.exists(local_file_path):
+        return serve(request, path, document_root=settings.MEDIA_ROOT)
+    
+    # If file doesn't exist locally but we're using S3, let the template
+    # handle the S3 URL (it will use the storage backend to generate URL)
+    from django.http import Http404
+    raise Http404("File not found")
 
 urlpatterns = [
     # ========================
@@ -93,5 +112,7 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-# ✅ SERVES OLD MEDIA FILES IN PRODUCTION (Hybrid solution)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# ✅ HYBRID MEDIA SERVING - WORKS IN BOTH DEV AND PRODUCTION
+urlpatterns += [
+    path('media/<path:path>', hybrid_media_serve, name='media_serve'),
+]

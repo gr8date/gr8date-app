@@ -160,10 +160,10 @@ USE_I18N = True
 USE_TZ = True
 
 # ======================
-# AWS S3 CONFIGURATION
+# AWS S3 CONFIGURATION - WORKING HYBRID SOLUTION
 # ======================
 
-# AWS Settings (will use environment variables from Render)
+# AWS Settings
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'gr8date-media-2025')
@@ -176,23 +176,22 @@ AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
+# MEDIA SETUP - ALWAYS USE LOCAL URLS FOR HYBRID SERVING
+MEDIA_URL = '/media/'  # ← CRITICAL: Always use local URL
+MEDIA_ROOT = BASE_DIR / 'media'  # ← Local media directory
+
 # Check if AWS credentials are available (production)
 if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
-    # Use S3 for media files (user uploads)
+    # Use S3 for new file storage but serve via local URLs
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 else:
-    # Fallback to local storage for development
+    # Development fallback
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-    MEDIA_URL = '/media/'
 
 # Static files configuration
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# Media files root for local development
-MEDIA_ROOT = BASE_DIR / 'media'
 
 # WhiteNoise configuration for static files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
