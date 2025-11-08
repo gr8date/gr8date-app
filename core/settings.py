@@ -170,8 +170,8 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'gr8date-med
 AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'ap-southeast-2')
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
 AWS_S3_FILE_OVERWRITE = False
-AWS_DEFAULT_ACL = 'private'  # Files are private by default
-AWS_QUERYSTRING_AUTH = True  # Generate signed URLs for private files
+AWS_DEFAULT_ACL = 'public-read'  # ✅ CHANGED: Files are publicly accessible
+AWS_QUERYSTRING_AUTH = False     # ✅ CHANGED: No signed URLs needed
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
