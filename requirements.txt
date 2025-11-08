@@ -7,5 +7,5 @@ python-dotenv
 Pillow
 django-allauth
 requests>=2.31.0
-requests>=2.31.0
-django-cloudinary-storage
+django-storages==1.14.0
+boto3==1.34.0
