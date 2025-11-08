@@ -21,6 +21,7 @@ urlpatterns = [
     # ALLAUTH URLs - MUST COME FIRST
     # ========================
     path("accounts/", include("allauth.urls")),
+    path("accounts/login/", TemplateView.as_view(template_name="account/login.html"), name="login"),
     
     # ========================
     # REDIRECTS for Allauth (must come after allauth include)
