@@ -182,11 +182,15 @@ MEDIA_ROOT = BASE_DIR / 'media'  # ← Local media directory
 
 # Check if AWS credentials are available (production)
 if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
-    # Use our custom S3 storage that respects MEDIA_URL
-    DEFAULT_FILE_STORAGE = 'core.storage_backends.MediaS3Storage'
+    # Use default S3 storage - new images will get S3 URLs
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 else:
     # Development fallback
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
+# MEDIA SETUP - for local files only
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Static files configuration
 STATIC_URL = '/static/'
