@@ -183,7 +183,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Check if AWS credentials are available (production)
 if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
     # Use S3 storage - NEW images get S3 URLs, OLD images use local URLs
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 else:
     # Development fallback
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
