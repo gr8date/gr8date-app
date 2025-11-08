@@ -160,7 +160,7 @@ USE_I18N = True
 USE_TZ = True
 
 # ======================
-# AWS S3 CONFIGURATION - WORKING HYBRID SOLUTION
+# AWS S3 CONFIGURATION - MIXED URL SOLUTION
 # ======================
 
 # AWS Settings
@@ -171,26 +171,22 @@ AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'ap-southeast-2')
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
-AWS_QUERYSTRING_AUTH = False  
+AWS_QUERYSTRING_AUTH = False
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
-# MEDIA SETUP - ALWAYS USE LOCAL URLS FOR HYBRID SERVING
-MEDIA_URL = '/media/'  # ← CRITICAL: Always use local URL
-MEDIA_ROOT = BASE_DIR / 'media'  # ← Local media directory
+# MEDIA SETUP - for local files only (REMOVE DUPLICATE)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Check if AWS credentials are available (production)
 if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
-    # Use default S3 storage - new images will get S3 URLs
+    # Use S3 storage - NEW images get S3 URLs, OLD images use local URLs
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 else:
     # Development fallback
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-
-# MEDIA SETUP - for local files only
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 # Static files configuration
 STATIC_URL = '/static/'
