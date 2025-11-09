@@ -160,7 +160,7 @@ USE_I18N = True
 USE_TZ = True
 
 # ======================
-# AWS S3 CONFIGURATION - MIXED URL SOLUTION
+# AWS S3 CONFIGURATION - PROPER MIGRATION READY
 # ======================
 
 # AWS Settings
@@ -176,14 +176,14 @@ AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
-# MEDIA SETUP - for local files only (REMOVE DUPLICATE)
+# MEDIA SETUP - for local files during migration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Check if AWS credentials are available (production)
 if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
-    # Use S3 storage - NEW images get S3 URLs, OLD images use local URLs
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    # TEMPORARY: Keep local storage until migration is complete
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 else:
     # Development fallback
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
