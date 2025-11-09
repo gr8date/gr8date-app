@@ -45,6 +45,42 @@ from .models import (
 )
 
 # ======================
+# ✅ ADDED: ACTIVITY TRACKING FUNCTION
+# ======================
+
+def track_user_activity(user, action, request=None, additional_data=None):
+    """Track user activity in the database - SAFE: Won't break existing functions"""
+    try:
+        ip_address = None
+        user_agent = None
+        
+        if request:
+            # Get client IP safely
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip_address = x_forwarded_for.split(',')[0]
+            else:
+                ip_address = request.META.get('REMOTE_ADDR')
+            
+            # Get user agent safely
+            user_agent = request.META.get('HTTP_USER_AGENT', '')[:500]  # Limit length
+        
+        # Create activity record - using 'action' field that exists in your model
+        activity = UserActivity.objects.create(
+            user=user,
+            action=action,  # ✅ Using 'action' field that matches your model
+            ip_address=ip_address,
+            user_agent=user_agent,
+            additional_data=additional_data
+        )
+        print(f"✅ Activity tracked: {user.username} - {action}")
+        return True
+    except Exception as e:
+        # ✅ SAFE: Fail silently without breaking the main functionality
+        print(f"⚠️ Activity tracking failed (non-critical): {e}")
+        return False
+
+# ======================
 # PREVIEW USE - START (NEW VIEWS)
 # ======================
 
@@ -101,6 +137,9 @@ def join_view(request):
             # Log the user in immediately
             from django.contrib.auth import login
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            
+            # ✅ ADDED: Track user registration (SAFE: Won't break registration)
+            track_user_activity(user, 'user_registered', request)
             
             # ✅ PRODUCTION-SAFE: Create initial profile (WON'T CRASH)
             try:
@@ -168,6 +207,9 @@ def browse_preview(request):
     paginator = Paginator(profiles, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    
+    # ✅ ADDED: Track preview browsing (SAFE: Won't break preview)
+    track_user_activity(request.user, 'preview_browse', request)
     
     context = {
         'is_approved_user': False,
@@ -253,6 +295,9 @@ def home(request):
 @login_required
 def dashboard(request):
     """Main dashboard with PROPER TWO-WAY GENDER MATCHING"""
+    # ✅ ADDED: Track dashboard view (SAFE: Won't break dashboard)
+    track_user_activity(request.user, 'dashboard_view', request)
+    
     try:
         user_profile = Profile.objects.get(user=request.user)
         is_approved_user = user_profile.is_approved
@@ -379,6 +424,9 @@ def search(request):
     if not query:
         return redirect('dashboard')
     
+    # ✅ ADDED: Track search activity (SAFE: Won't break search)
+    track_user_activity(request.user, 'search_performed', request, {'query': query})
+    
     # Store search query in session for dashboard to use
     request.session['search_query'] = query
     request.session['search_performed'] = True
@@ -389,6 +437,9 @@ def search(request):
 @login_required
 def profile_view(request):
     """View current user's profile"""
+    # ✅ ADDED: Track own profile view (SAFE: Won't break profile view)
+    track_user_activity(request.user, 'profile_self_view', request)
+    
     profile = get_object_or_404(Profile, user=request.user)
     context = {'profile': profile}
     return render(request, 'pages/profile_view.html', context)
@@ -420,6 +471,9 @@ def profile_edit(request):
             
             profile.save()
             
+            # ✅ ADDED: Track profile edit (SAFE: Won't break profile editing)
+            track_user_activity(request.user, 'profile_edited', request)
+            
             messages.success(request, "Profile updated successfully!")
             return redirect('profile_view')
             
@@ -434,6 +488,14 @@ def profile_edit(request):
 @login_required
 def profile_detail(request, user_id):
     """View another user's profile"""
+    # ✅ ADDED: Track profile viewing (SAFE: Won't break profile detail)
+    track_user_activity(
+        request.user, 
+        'profile_view', 
+        request,
+        {'viewed_user_id': user_id}
+    )
+    
     profile = get_object_or_404(
         Profile.objects.prefetch_related('images'),
         user_id=user_id
@@ -619,6 +681,14 @@ def upload_profile_image_api(request):
             )
             print(f"✅ DEBUG: ProfileImage created - ID: {profile_image.id}")
             
+            # ✅ ADDED: Track photo upload (SAFE: Won't break upload functionality)
+            track_user_activity(
+                request.user, 
+                'photo_uploaded', 
+                request,
+                {'photo_type': photo_type, 'image_id': profile_image.id}
+            )
+            
         except Exception as e:
             print(f"❌ DEBUG: PROFILEIMAGE CREATION FAILED - {str(e)}")
             import traceback
@@ -654,6 +724,14 @@ def delete_image_api(request, image_id):
         was_profile_photo = (image.image_type == 'profile')
         
         image.delete()
+        
+        # ✅ ADDED: Track photo deletion (SAFE: Won't break deletion)
+        track_user_activity(
+            request.user, 
+            'photo_deleted', 
+            request,
+            {'was_profile_photo': was_profile_photo, 'image_id': image_id}
+        )
         
         # If we deleted a profile photo, promote the first additional photo
         if was_profile_photo:
@@ -699,8 +777,23 @@ def like_user(request, user_id):
         )
         
         if not created:
+            # ✅ ADDED: Track unlike (SAFE: Won't break like functionality)
+            track_user_activity(
+                request.user, 
+                'user_unlike', 
+                request,
+                {'target_user_id': user_id}
+            )
             like.delete()
             return JsonResponse({'status': 'success', 'action': 'unliked'})
+        
+        # ✅ ADDED: Track like (SAFE: Won't break like functionality)
+        track_user_activity(
+            request.user, 
+            'user_like', 
+            request,
+            {'target_user_id': user_id}
+        )
         
         # Check if it's a match (target user also liked current user)
         is_match = Like.objects.filter(
@@ -738,6 +831,14 @@ def unfavorite_user(request, user_id):
             liked_user=target_user
         ).delete()
         
+        # ✅ ADDED: Track unfavorite (SAFE: Won't break unfavorite functionality)
+        track_user_activity(
+            request.user, 
+            'user_unfavorite', 
+            request,
+            {'target_user_id': user_id}
+        )
+        
         return JsonResponse({'status': 'success', 'action': 'unliked'})
     
     return JsonResponse({'status': 'error'}, status=400)
@@ -749,6 +850,9 @@ def likes_received(request):
         liked_user=request.user
     ).select_related('liker', 'liker__profile').prefetch_related('liker__profile__images')
     
+    # ✅ ADDED: Track likes received view (SAFE: Won't break likes functionality)
+    track_user_activity(request.user, 'likes_received_view', request)
+    
     context = {'likes': likes}
     return render(request, 'pages/likes_received.html', context)
 
@@ -758,6 +862,9 @@ def likes_given(request):
     likes = Like.objects.filter(
         liker=request.user
     ).select_related('liked_user', 'liked_user__profile').prefetch_related('liked_user__profile__images')
+    
+    # ✅ ADDED: Track likes given view (SAFE: Won't break likes functionality)
+    track_user_activity(request.user, 'likes_given_view', request)
     
     context = {'likes': likes}
     return render(request, 'pages/likes_given.html', context)
@@ -784,6 +891,9 @@ def matches_list(request):
     given_user_ids = set(like.liked_user_id for like in likes_given)
     received_user_ids = set(like.liker_id for like in likes_received)
     match_user_ids = given_user_ids & received_user_ids
+    
+    # ✅ ADDED: Track matches view (SAFE: Won't break matches functionality)
+    track_user_activity(request.user, 'matches_viewed', request)
     
     context = {
         'likes_given': likes_given,
@@ -831,6 +941,9 @@ def messages_combined(request):
         status='pending'
     ).select_related('requester', 'requester__profile')
 
+    # ✅ ADDED: Track messages view (SAFE: Won't break messages functionality)
+    track_user_activity(request.user, 'messages_viewed', request)
+
     context = {
         'threads': thread_data,
         'pending_requests_received': pending_requests_received
@@ -860,6 +973,14 @@ def message_thread(request, user_id):
                 text=text
             )
             
+            # ✅ ADDED: Track message sent (SAFE: Won't break messaging)
+            track_user_activity(
+                request.user, 
+                'message_sent', 
+                request,
+                {'recipient_id': user_id, 'message_id': message.id}
+            )
+            
             # Update thread timestamp
             thread.save()
             
@@ -886,6 +1007,14 @@ def message_thread(request, user_id):
     
     # Mark messages as read when viewing thread
     thread.messages.filter(recipient=request.user, is_read=False).update(is_read=True)
+    
+    # ✅ ADDED: Track thread view (SAFE: Won't break thread functionality)
+    track_user_activity(
+        request.user, 
+        'thread_viewed', 
+        request,
+        {'other_user_id': user_id}
+    )
     
     context = {
         'thread': thread,
@@ -917,6 +1046,14 @@ def send_quick_message(request, user_id):
             text=text
         )
         
+        # ✅ ADDED: Track quick message (SAFE: Won't break quick messaging)
+        track_user_activity(
+            request.user, 
+            'quick_message_sent', 
+            request,
+            {'recipient_id': user_id, 'message_id': message.id}
+        )
+        
         # Update thread timestamp
         thread.save()
         
@@ -942,6 +1079,14 @@ def delete_conversation(request, thread_id):
         
         # Delete all messages in the thread
         thread.messages.all().delete()
+        
+        # ✅ ADDED: Track conversation deletion (SAFE: Won't break deletion)
+        track_user_activity(
+            request.user, 
+            'conversation_deleted', 
+            request,
+            {'thread_id': thread_id}
+        )
         
         return JsonResponse({'ok': True})
     
@@ -994,6 +1139,14 @@ def request_private_access(request, user_id):
             target_user=target_user
         )
         
+        # ✅ ADDED: Track private access request (SAFE: Won't break access requests)
+        track_user_activity(
+            request.user, 
+            'private_access_requested', 
+            request,
+            {'target_user_id': user_id}
+        )
+        
         # Send notification message to target user
         message_text = f"🔒 {request.user.username} requested access to your private photos. Go to your pending requests to approve or deny."
         Message.objects.create(
@@ -1021,6 +1174,14 @@ def approve_private_access(request, request_id):
         access_request.reviewed_by = request.user
         access_request.reviewed_at = timezone.now()
         access_request.save()
+        
+        # ✅ ADDED: Track private access approval (SAFE: Won't break approval)
+        track_user_activity(
+            request.user, 
+            'private_access_approved', 
+            request,
+            {'requester_id': access_request.requester.id}
+        )
         
         # Send approval message with 72-hour notice
         approval_message = f"✅ {request.user.username} approved your private photo access request! You can now view their private photos for 72 hours."
@@ -1053,6 +1214,14 @@ def deny_private_access(request, request_id):
         access_request.reviewed_at = timezone.now()
         access_request.save()
         
+        # ✅ ADDED: Track private access denial (SAFE: Won't break denial)
+        track_user_activity(
+            request.user, 
+            'private_access_denied', 
+            request,
+            {'requester_id': access_request.requester.id}
+        )
+        
         # Send denial message
         denial_message = f"❌ {request.user.username} denied your private photo access request."
         Message.objects.create(
@@ -1077,6 +1246,9 @@ def pending_requests(request):
         status='pending'
     ).select_related('requester', 'requester__profile')
     
+    # ✅ ADDED: Track pending requests view (SAFE: Won't break requests)
+    track_user_activity(request.user, 'pending_requests_viewed', request)
+    
     context = {
         'pending_requests': pending_requests_list
     }
@@ -1095,6 +1267,10 @@ def blog_list(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
+    # ✅ ADDED: Track blog list view (SAFE: Won't break blog)
+    if request.user.is_authenticated:
+        track_user_activity(request.user, 'blog_list_viewed', request)
+    
     context = {
         'page_obj': page_obj,
         'is_paginated': page_obj.has_other_pages(),
@@ -1105,6 +1281,16 @@ def blog_list(request):
 def blog_detail(request, slug):
     """View individual blog post"""
     post = get_object_or_404(Blog, slug=slug, status='published')
+    
+    # ✅ ADDED: Track blog detail view (SAFE: Won't break blog)
+    if request.user.is_authenticated:
+        track_user_activity(
+            request.user, 
+            'blog_post_viewed', 
+            request,
+            {'post_slug': slug, 'post_title': post.title}
+        )
+    
     context = {'post': post}
     return render(request, 'pages/blog_detail.html', context)
 
@@ -1116,6 +1302,10 @@ def admin_profile_approvals(request):
         return redirect('dashboard')
     
     pending_profiles = Profile.objects.filter(is_approved=False).select_related('user')
+    
+    # ✅ ADDED: Track admin approvals view (SAFE: Won't break admin)
+    track_user_activity(request.user, 'admin_approvals_viewed', request)
+    
     context = {'pending_profiles': pending_profiles}
     return render(request, 'pages/admin_approvals.html', context)
 
@@ -1130,6 +1320,14 @@ def admin_approve_profile(request, profile_id):
     profile.approved_at = timezone.now()
     profile.approved_by = request.user
     profile.save()
+    
+    # ✅ ADDED: Track admin approval (SAFE: Won't break admin)
+    track_user_activity(
+        request.user, 
+        'admin_profile_approved', 
+        request,
+        {'approved_user_id': profile.user.id}
+    )
     
     # Send profile approved email
     try:
@@ -1151,6 +1349,14 @@ def admin_reject_profile(request, profile_id):
     username = profile.user.username
     profile.delete()
     
+    # ✅ ADDED: Track admin rejection (SAFE: Won't break admin)
+    track_user_activity(
+        request.user, 
+        'admin_profile_rejected', 
+        request,
+        {'rejected_username': username}
+    )
+    
     messages.success(request, f"Profile for {username} has been rejected and deleted.")
     return redirect('admin_profile_approvals')
 
@@ -1165,6 +1371,9 @@ def admin_new_profile(request):
     new_profiles = Profile.objects.filter(
         is_approved=False
     ).select_related('user').prefetch_related('images').order_by('-created_at')
+    
+    # ✅ ADDED: Track admin new profiles view (SAFE: Won't break admin)
+    track_user_activity(request.user, 'admin_new_profiles_viewed', request)
     
     context = {
         'new_profiles': new_profiles,
@@ -1186,6 +1395,14 @@ def admin_quick_approve_profile(request, profile_id):
             profile.approved_at = timezone.now()
             profile.approved_by = request.user
             profile.save()
+            
+            # ✅ ADDED: Track admin quick approval (SAFE: Won't break admin)
+            track_user_activity(
+                request.user, 
+                'admin_quick_approve', 
+                request,
+                {'approved_user_id': profile.user.id}
+            )
             
             # Send profile approved email
             try:
@@ -1230,6 +1447,9 @@ def admin_new_signups(request):
         # Handle users without profiles
         users_without_profiles = users.filter(profile__isnull=True)
         incomplete_count = users_without_profiles.count()
+        
+        # ✅ ADDED: Track admin signups view (SAFE: Won't break admin)
+        track_user_activity(request.user, 'admin_signups_viewed', request)
         
         context = {
             'users': users,
@@ -1276,6 +1496,14 @@ def admin_send_message(request, profile_id):
                 message=message_text
             )
             
+            # ✅ ADDED: Track admin message sent (SAFE: Won't break admin)
+            track_user_activity(
+                request.user, 
+                'admin_message_sent', 
+                request,
+                {'target_user_id': profile.user.id}
+            )
+            
             # Send email notification to user
             try:
                 profile_edit_url = request.build_absolute_uri(reverse('profile_edit'))
@@ -1287,15 +1515,6 @@ def admin_send_message(request, profile_id):
                 )
             except Exception as e:
                 print(f"DEBUG: Admin message notification email failed: {e}")
-            
-            # Log the activity
-            log_user_activity(
-                request.user, 
-                'admin_message_sent', 
-                request, 
-                admin_message,
-                target_user_id=profile.user.id
-            )
             
             messages.success(request, f"Message sent to {profile.user.username}")
             return redirect('admin_new_profiles')
@@ -1318,6 +1537,14 @@ def verify_email(request, token):
         if not profile.email_verified:
             profile.email_verified = True
             profile.save()
+            
+            # ✅ ADDED: Track email verification (SAFE: Won't break verification)
+            track_user_activity(
+                profile.user, 
+                'email_verified', 
+                request
+            )
+            
             messages.success(request, "✅ Email verified successfully! (Development Mode)")
             print(f"✅ AUTO-VERIFIED: {profile.user.username}")
         else:
@@ -1350,6 +1577,14 @@ def block_user(request, user_id):
                 blocked=target_user
             )
 
+            # ✅ ADDED: Track user block (SAFE: Won't break blocking)
+            track_user_activity(
+                request.user, 
+                'user_blocked', 
+                request,
+                {'blocked_user_id': user_id}
+            )
+
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'status': 'success', 'message': 'User blocked successfully'})
             return redirect('profile_detail', user_id=user_id)
@@ -1370,6 +1605,14 @@ def unblock_user(request, user_id):
                 blocker=request.user,
                 blocked=target_user
             ).delete()
+            
+            # ✅ ADDED: Track user unblock (SAFE: Won't break unblocking)
+            track_user_activity(
+                request.user, 
+                'user_unblocked', 
+                request,
+                {'unblocked_user_id': user_id}
+            )
             
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({'status': 'success', 'message': 'User unblocked successfully'})
@@ -1436,6 +1679,9 @@ def hotdate_list(request):
         is_read=False
     ).update(is_read=True)
     
+    # ✅ ADDED: Track hotdate list view (SAFE: Won't break hotdates)
+    track_user_activity(request.user, 'hotdate_list_viewed', request)
+    
     return render(request, 'pages/hotdate_list.html', {
         'hot_dates': hot_dates,
         'viewed_hotdates': viewed_hotdates
@@ -1482,6 +1728,14 @@ def hotdate_create(request):
                 group_size=group_size
             )
             
+            # ✅ ADDED: Track hotdate creation (SAFE: Won't break hotdate creation)
+            track_user_activity(
+                request.user, 
+                'hotdate_created', 
+                request,
+                {'hotdate_id': hot_date.id, 'activity': activity}
+            )
+            
             messages.success(request, "Hot Date created successfully!")
             return redirect('hotdate_list')
             
@@ -1500,6 +1754,14 @@ def hotdate_detail(request, hotdate_id):
     HotDateView.objects.get_or_create(
         user=request.user,
         hot_date=hot_date
+    )
+    
+    # ✅ ADDED: Track hotdate detail view (SAFE: Won't break hotdate detail)
+    track_user_activity(
+        request.user, 
+        'hotdate_viewed', 
+        request,
+        {'hotdate_id': hotdate_id, 'activity': hot_date.activity}
     )
     
     return render(request, 'pages/hotdate_detail.html', {
@@ -1529,6 +1791,14 @@ def hotdate_cancel(request, hotdate_id):
         hot_date.is_cancelled = True
         hot_date.cancelled_at = timezone.now()
         hot_date.save()
+        
+        # ✅ ADDED: Track hotdate cancellation (SAFE: Won't break cancellation)
+        track_user_activity(
+            request.user, 
+            'hotdate_cancelled', 
+            request,
+            {'hotdate_id': hotdate_id, 'activity': hot_date.activity}
+        )
         
         # Send cancellation notifications to users who viewed this Hot Date
         viewers = HotDateView.objects.filter(hot_date=hot_date).exclude(user=request.user)
@@ -1629,6 +1899,9 @@ def create_profile(request):
             profile.is_approved = False
             profile.save()
             
+            # ✅ ADDED: Track profile creation (SAFE: Won't break profile creation)
+            track_user_activity(request.user, 'profile_created', request)
+            
             # Send profile submitted email
             try:
                 send_profile_submitted_email(request.user.email, request.user.username)
@@ -1683,6 +1956,14 @@ def preview_profile_detail(request, user_id):
     # Security check: Only allow preview of the 12 fixed profiles
     if profile.id not in fixed_profile_ids:
         return redirect('preview_gate')
+    
+    # ✅ ADDED: Track preview profile view (SAFE: Won't break preview)
+    track_user_activity(
+        request.user, 
+        'preview_profile_viewed', 
+        request,
+        {'viewed_user_id': user_id}
+    )
     
     # Only show limited information
     context = {
@@ -1767,6 +2048,9 @@ def create_profile_api(request):
             profile.email_verification_sent_at = timezone.now()
             profile.save()
             
+            # ✅ ADDED: Track profile API creation (SAFE: Won't break API)
+            track_user_activity(request.user, 'profile_api_created', request)
+            
             # Send profile submitted email
             try:
                 send_profile_submitted_email(request.user.email, request.user.username)
@@ -1813,6 +2097,40 @@ def create_profile_api(request):
             }, status=500)
             
     return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
+
+# ======================
+# ✅ ADDED: CUSTOM LOGOUT WITH ACTIVITY TRACKING
+# ======================
+
+from django.contrib.auth import logout
+
+@login_required
+def custom_logout(request):
+    """Custom logout with activity tracking - SAFE: Won't break existing logout"""
+    # ✅ Track logout before logging out
+    track_user_activity(request.user, 'user_logout', request)
+    
+    logout(request)
+    messages.success(request, "You have been logged out successfully.")
+    return redirect('home')
+
+# ======================
+# ✅ ADDED: TEST ACTIVITY TRACKING VIEW
+# ======================
+
+@login_required
+def test_activity_tracking(request):
+    """Temporary view to test activity tracking - SAFE: Can be removed later"""
+    if request.user.is_authenticated:
+        # Create test activities
+        track_user_activity(request.user, 'login', request)
+        track_user_activity(request.user, 'profile_view', request, {'test': True})
+        track_user_activity(request.user, 'test_action', request)
+        
+        from django.contrib import messages
+        messages.success(request, "Test activities created! Check UserActivity admin.")
+        return redirect('admin:pages_useractivity_changelist')
+    return redirect('login')
 
 # ======================
 # ERROR HANDLING
