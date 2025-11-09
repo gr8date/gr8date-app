@@ -903,7 +903,7 @@ class MessageAdmin(admin.ModelAdmin):
             return "No message content"
     message_preview.short_description = 'Message'
 
-# ✅ ENHANCED USER ACTIVITY ADMIN WITH BOT DETECTION
+# ✅ FIXED: UserActivityAdmin without problematic JSON field filters
 @admin.register(UserActivity)
 class UserActivityAdmin(admin.ModelAdmin):
     list_display = [
@@ -916,11 +916,10 @@ class UserActivityAdmin(admin.ModelAdmin):
         'path_display'
     ]
     
+    # ✅ FIXED: Removed problematic extra_data filters
     list_filter = [
         'action',
         'timestamp',
-        'extra_data__is_bot',
-        'extra_data__bot_category',
     ]
     
     search_fields = [
@@ -929,12 +928,13 @@ class UserActivityAdmin(admin.ModelAdmin):
         'ip_address',
         'path',
         'user_agent',
-        'extra_data__path'
     ]
     
     readonly_fields = [
-        'timestamp',
-        'all_extra_data_display'
+        'user', 'action', 'timestamp', 'ip_address', 'user_agent', 'path',
+        'target_object_id', 'target_content_type', 'extra_data',
+        'is_bot_display', 'bot_category_display', 'bot_type_display', 
+        'path_display', 'all_extra_data_display'
     ]
     
     fieldsets = (
@@ -942,20 +942,24 @@ class UserActivityAdmin(admin.ModelAdmin):
             'fields': ('user', 'action', 'timestamp')
         }),
         ('Request Details', {
-            'fields': ('ip_address', 'user_agent', 'path_display')
+            'fields': ('ip_address', 'user_agent', 'path')
         }),
         ('Bot Detection', {
             'fields': ('is_bot_display', 'bot_category_display', 'bot_type_display')
         }),
+        ('Target Object', {
+            'fields': ('target_content_type', 'target_object_id'),
+            'classes': ('collapse',)
+        }),
         ('Additional Data', {
-            'fields': ('all_extra_data_display',),
+            'fields': ('all_extra_data_display', 'extra_data'),
             'classes': ('collapse',)
         }),
     )
     
     def is_bot_display(self, obj):
         """Display bot status from extra_data"""
-        is_bot = obj.extra_data.get('is_bot', False)
+        is_bot = obj.extra_data.get('is_bot', False) if obj.extra_data else False
         color = '#dc3545' if is_bot else '#28a745'
         icon = '🤖' if is_bot else '👤'
         return format_html(
@@ -963,10 +967,12 @@ class UserActivityAdmin(admin.ModelAdmin):
             color, icon, 'Bot' if is_bot else 'Human'
         )
     is_bot_display.short_description = 'Bot Status'
-    is_bot_display.admin_order_field = 'extra_data__is_bot'
     
     def bot_category_display(self, obj):
         """Display bot category from extra_data"""
+        if not obj.extra_data:
+            return format_html('<span style="color: #6c757d;">—</span>')
+        
         category = obj.extra_data.get('bot_category', 'human')
         category_map = {
             'human': ('👤', 'Human', '#28a745'),
@@ -983,10 +989,12 @@ class UserActivityAdmin(admin.ModelAdmin):
             color, icon, text
         )
     bot_category_display.short_description = 'Bot Category'
-    bot_category_display.admin_order_field = 'extra_data__bot_category'
     
     def bot_type_display(self, obj):
         """Display bot type from extra_data"""
+        if not obj.extra_data:
+            return format_html('<span style="color: #28a745;">👤 Human</span>')
+        
         bot_type = obj.extra_data.get('bot_type', 'human')
         if bot_type == 'human':
             return format_html('<span style="color: #28a745;">👤 Human</span>')
@@ -996,7 +1004,9 @@ class UserActivityAdmin(admin.ModelAdmin):
     
     def path_display(self, obj):
         """Display path from extra_data or model field"""
-        path = obj.extra_data.get('path', obj.path or 'N/A')
+        path = obj.path or 'N/A'
+        if obj.extra_data and 'path' in obj.extra_data:
+            path = obj.extra_data.get('path', path)
         return format_html('<code style="font-size: 0.8em;">{}</code>', path[:50] + '...' if len(path) > 50 else path)
     path_display.short_description = 'Path'
     
