@@ -45,14 +45,17 @@ from .models import (
 )
 
 # ======================
-# ✅ ADDED: ACTIVITY TRACKING FUNCTION
+# ✅ FIXED: ENHANCED ACTIVITY TRACKING FUNCTION WITH BOT DETECTION
 # ======================
 
-def track_user_activity(user, action, request=None, additional_data=None):
-    """Track user activity in the database - SAFE: Won't break existing functions"""
+def track_user_activity(user, action, request=None, extra_data=None):
+    """Enhanced tracking function with bot detection and CORRECT field names"""
     try:
         ip_address = None
         user_agent = None
+        is_bot = False
+        bot_type = None
+        bot_category = None
         
         if request:
             # Get client IP safely
@@ -64,17 +67,120 @@ def track_user_activity(user, action, request=None, additional_data=None):
             
             # Get user agent safely
             user_agent = request.META.get('HTTP_USER_AGENT', '')[:500]  # Limit length
+            
+            # ✅ COMPREHENSIVE BOT DETECTION
+            bot_indicators = {
+                # Search Engine Bots
+                'googlebot': ('Google Bot', 'search_engine'),
+                'bingbot': ('Bing Bot', 'search_engine'),
+                'duckduckbot': ('DuckDuckGo Bot', 'search_engine'),
+                'baiduspider': ('Baidu Bot', 'search_engine'),
+                'yandexbot': ('Yandex Bot', 'search_engine'),
+                'sogou': ('Sogou Bot', 'search_engine'),
+                
+                # Social Media Bots
+                'facebookexternalhit': ('Facebook Bot', 'social_media'),
+                'twitterbot': ('Twitter Bot', 'social_media'),
+                'linkedinbot': ('LinkedIn Bot', 'social_media'),
+                'pinterest': ('Pinterest Bot', 'social_media'),
+                'tiktok': ('TikTok Bot', 'social_media'),  # ✅ TIKTOK ADDED
+                'tiktokbot': ('TikTok Bot', 'social_media'),  # ✅ TIKTOK VARIATION
+                'instagram': ('Instagram Bot', 'social_media'),
+                'redditbot': ('Reddit Bot', 'social_media'),
+                'discordbot': ('Discord Bot', 'social_media'),
+                'slackbot': ('Slack Bot', 'social_media'),
+                'telegrambot': ('Telegram Bot', 'social_media'),
+                'whatsapp': ('WhatsApp Bot', 'social_media'),
+                'snapchat': ('Snapchat Bot', 'social_media'),
+                'threads': ('Threads Bot', 'social_media'),
+                
+                # Messaging/App Bots
+                'discord': ('Discord', 'messaging'),
+                'telegram': ('Telegram', 'messaging'),
+                'whatsapp': ('WhatsApp', 'messaging'),
+                'signal': ('Signal', 'messaging'),
+                'wechat': ('WeChat', 'messaging'),
+                'line': ('Line', 'messaging'),
+                
+                # SEO & Analytics Bots
+                'ahrefsbot': ('Ahrefs Bot', 'seo'),
+                'semrushbot': ('Semrush Bot', 'seo'),
+                'mj12bot': ('Majestic SEO Bot', 'seo'),
+                'dotbot': ('DotBot', 'seo'),
+                'rogerbot': ('RogerBot', 'seo'),
+                'exabot': ('ExaBot', 'seo'),
+                'ccbot': ('Common Crawl Bot', 'seo'),
+                'petalbot': ('PetalBot', 'seo'),
+                'screaming frog': ('Screaming Frog SEO Spider', 'seo'),
+                'moz.com': ('Moz Bot', 'seo'),
+                'seznam': ('Seznam Bot', 'seo'),
+                
+                # AI & Tech Bots
+                'chatgpt': ('OpenAI ChatGPT', 'ai'),
+                'openai': ('OpenAI', 'ai'),
+                'anthropic': ('Anthropic Claude', 'ai'),
+                'claude': ('Claude AI', 'ai'),
+                'google-assistant': ('Google Assistant', 'ai'),
+                'alexa': ('Amazon Alexa', 'ai'),
+                'siri': ('Apple Siri', 'ai'),
+                
+                # Monitoring & Scraping Tools
+                'uptimerobot': ('UptimeRobot', 'monitoring'),
+                'pingdom': ('Pingdom', 'monitoring'),
+                'newrelic': ('New Relic', 'monitoring'),
+                'datadog': ('Datadog', 'monitoring'),
+                'python-requests': ('Python Requests', 'scraping'),
+                'curl': ('cURL', 'scraping'),
+                'wget': ('Wget', 'scraping'),
+                'scrapy': ('Scrapy', 'scraping'),
+                'beautifulsoup': ('BeautifulSoup', 'scraping'),
+                
+                # Generic Bot Indicators (keep these last)
+                'bot': ('Generic Bot', 'unknown'),
+                'crawler': ('Generic Crawler', 'unknown'),
+                'spider': ('Generic Spider', 'unknown'),
+                'fetcher': ('Generic Fetcher', 'unknown'),
+                'checker': ('Generic Checker', 'unknown')
+            }
+            
+            if user_agent:
+                user_agent_lower = user_agent.lower()
+                for indicator, (bot_name, category) in bot_indicators.items():
+                    if indicator in user_agent_lower:
+                        is_bot = True
+                        bot_type = bot_name
+                        bot_category = category
+                        break
         
-        # Create activity record - using 'action' field that exists in your model
+        # Prepare enhanced extra_data
+        enhanced_extra_data = extra_data or {}
+        enhanced_extra_data.update({
+            'is_bot': is_bot,
+            'bot_type': bot_type,
+            'bot_category': bot_category,
+            'user_agent_preview': user_agent[:100] if user_agent else None,
+            'detection_method': 'user_agent_analysis'
+        })
+        
+        # ✅ FIXED: Create activity record with CORRECT field names
         activity = UserActivity.objects.create(
             user=user,
             action=action,  # ✅ Using 'action' field that matches your model
             ip_address=ip_address,
             user_agent=user_agent,
-            additional_data=additional_data
+            extra_data=enhanced_extra_data,  # ✅ CORRECT FIELD NAME (not additional_data)
+            timestamp=timezone.now()  # ✅ ADD TIMESTAMP (required field)
         )
-        print(f"✅ Activity tracked: {user.username} - {action}")
+        
+        # Log bot detection with categories
+        if is_bot:
+            print(f"🤖 {bot_category.upper()} BOT: {bot_type} - Action: {action} - IP: {ip_address}")
+        else:
+            user_display = user.username if user else 'Anonymous'
+            print(f"✅ Human Activity: {user_display} - {action}")
+        
         return True
+        
     except Exception as e:
         # ✅ SAFE: Fail silently without breaking the main functionality
         print(f"⚠️ Activity tracking failed (non-critical): {e}")
