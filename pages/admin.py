@@ -903,7 +903,7 @@ class MessageAdmin(admin.ModelAdmin):
             return "No message content"
     message_preview.short_description = 'Message'
 
-# ✅ FIXED: UserActivityAdmin without problematic JSON field filters
+# ✅ FIXED: UserActivityAdmin without path field dependencies
 @admin.register(UserActivity)
 class UserActivityAdmin(admin.ModelAdmin):
     list_display = [
@@ -913,10 +913,9 @@ class UserActivityAdmin(admin.ModelAdmin):
         'is_bot_display',
         'bot_category_display',
         'ip_address',
-        'path_display'
+        # 'path_display'  # Removed - no path field in database
     ]
     
-    # ✅ FIXED: Removed problematic extra_data filters
     list_filter = [
         'action',
         'timestamp',
@@ -926,15 +925,14 @@ class UserActivityAdmin(admin.ModelAdmin):
         'user__username',
         'user__email', 
         'ip_address',
-        'path',
         'user_agent',
     ]
     
     readonly_fields = [
-        'user', 'action', 'timestamp', 'ip_address', 'user_agent', 'path',
+        'user', 'action', 'timestamp', 'ip_address', 'user_agent',
         'target_object_id', 'target_content_type', 'extra_data',
         'is_bot_display', 'bot_category_display', 'bot_type_display', 
-        'path_display', 'all_extra_data_display'
+        'all_extra_data_display'
     ]
     
     fieldsets = (
@@ -942,7 +940,7 @@ class UserActivityAdmin(admin.ModelAdmin):
             'fields': ('user', 'action', 'timestamp')
         }),
         ('Request Details', {
-            'fields': ('ip_address', 'user_agent', 'path')
+            'fields': ('ip_address', 'user_agent')
         }),
         ('Bot Detection', {
             'fields': ('is_bot_display', 'bot_category_display', 'bot_type_display')
@@ -1002,14 +1000,6 @@ class UserActivityAdmin(admin.ModelAdmin):
             return format_html('<span style="color: #dc3545;">🤖 {}</span>', bot_type)
     bot_type_display.short_description = 'Bot Type'
     
-    def path_display(self, obj):
-        """Display path from extra_data or model field"""
-        path = obj.path or 'N/A'
-        if obj.extra_data and 'path' in obj.extra_data:
-            path = obj.extra_data.get('path', path)
-        return format_html('<code style="font-size: 0.8em;">{}</code>', path[:50] + '...' if len(path) > 50 else path)
-    path_display.short_description = 'Path'
-    
     def all_extra_data_display(self, obj):
         """Display all extra_data in a readable format"""
         if not obj.extra_data:
@@ -1036,15 +1026,12 @@ class UserActivityAdmin(admin.ModelAdmin):
     all_extra_data_display.short_description = 'All Extra Data'
     
     def get_queryset(self, request):
-        """Optimize queryset for admin display"""
         return super().get_queryset(request).select_related('user')
     
     def has_add_permission(self, request):
-        """Prevent adding activities manually - they should be created by tracking"""
         return False
     
     def has_change_permission(self, request, obj=None):
-        """Make activities read-only"""
         return False
 
 # ✅ CUSTOM ADMIN URLS FOR QUICK ACTIONS
