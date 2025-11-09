@@ -590,6 +590,7 @@ class UserActivity(models.Model):
     action = models.CharField(max_length=50, choices=ActionType.choices)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     user_agent = models.TextField(blank=True)
+    path = models.CharField(max_length=500, blank=True, null=True)  # The URL path that was visited
     target_object_id = models.PositiveIntegerField(null=True, blank=True)
     target_content_type = models.ForeignKey(ContentType, null=True, blank=True, on_delete=models.SET_NULL)
     extra_data = models.JSONField(default=dict, blank=True)
@@ -611,6 +612,7 @@ def log_user_activity(user, action, request=None, target_object=None, **extra_da
         action=action,
         ip_address=request.META.get('REMOTE_ADDR') if request else None,
         user_agent=request.META.get('HTTP_USER_AGENT', '') if request else '',
+        path=request.path if request else None,
         extra_data=extra_data
     )
     

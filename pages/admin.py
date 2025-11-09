@@ -903,6 +903,140 @@ class MessageAdmin(admin.ModelAdmin):
             return "No message content"
     message_preview.short_description = 'Message'
 
+# ✅ ENHANCED USER ACTIVITY ADMIN WITH BOT DETECTION
+@admin.register(UserActivity)
+class UserActivityAdmin(admin.ModelAdmin):
+    list_display = [
+        'user', 
+        'action', 
+        'timestamp', 
+        'is_bot_display',
+        'bot_category_display',
+        'ip_address',
+        'path_display'
+    ]
+    
+    list_filter = [
+        'action',
+        'timestamp',
+        'extra_data__is_bot',
+        'extra_data__bot_category',
+    ]
+    
+    search_fields = [
+        'user__username',
+        'user__email', 
+        'ip_address',
+        'path',
+        'user_agent',
+        'extra_data__path'
+    ]
+    
+    readonly_fields = [
+        'timestamp',
+        'all_extra_data_display'
+    ]
+    
+    fieldsets = (
+        ('Basic Info', {
+            'fields': ('user', 'action', 'timestamp')
+        }),
+        ('Request Details', {
+            'fields': ('ip_address', 'user_agent', 'path_display')
+        }),
+        ('Bot Detection', {
+            'fields': ('is_bot_display', 'bot_category_display', 'bot_type_display')
+        }),
+        ('Additional Data', {
+            'fields': ('all_extra_data_display',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def is_bot_display(self, obj):
+        """Display bot status from extra_data"""
+        is_bot = obj.extra_data.get('is_bot', False)
+        color = '#dc3545' if is_bot else '#28a745'
+        icon = '🤖' if is_bot else '👤'
+        return format_html(
+            '<span style="color: {}; font-weight: bold;">{} {}</span>',
+            color, icon, 'Bot' if is_bot else 'Human'
+        )
+    is_bot_display.short_description = 'Bot Status'
+    is_bot_display.admin_order_field = 'extra_data__is_bot'
+    
+    def bot_category_display(self, obj):
+        """Display bot category from extra_data"""
+        category = obj.extra_data.get('bot_category', 'human')
+        category_map = {
+            'human': ('👤', 'Human', '#28a745'),
+            'social_media': ('📱', 'Social Media', '#17a2b8'),
+            'search_engine': ('🔍', 'Search Engine', '#6f42c1'),
+            'ai_assistant': ('🤖', 'AI Assistant', '#e83e8c'),
+            'monitoring': ('📊', 'Monitoring', '#fd7e14'),
+            'seo_tool': ('⚡', 'SEO Tool', '#20c997'),
+            'unknown': ('❓', 'Unknown Bot', '#6c757d')
+        }
+        icon, text, color = category_map.get(category, ('❓', category.title(), '#6c757d'))
+        return format_html(
+            '<span style="color: {}; font-weight: bold;">{} {}</span>',
+            color, icon, text
+        )
+    bot_category_display.short_description = 'Bot Category'
+    bot_category_display.admin_order_field = 'extra_data__bot_category'
+    
+    def bot_type_display(self, obj):
+        """Display bot type from extra_data"""
+        bot_type = obj.extra_data.get('bot_type', 'human')
+        if bot_type == 'human':
+            return format_html('<span style="color: #28a745;">👤 Human</span>')
+        else:
+            return format_html('<span style="color: #dc3545;">🤖 {}</span>', bot_type)
+    bot_type_display.short_description = 'Bot Type'
+    
+    def path_display(self, obj):
+        """Display path from extra_data or model field"""
+        path = obj.extra_data.get('path', obj.path or 'N/A')
+        return format_html('<code style="font-size: 0.8em;">{}</code>', path[:50] + '...' if len(path) > 50 else path)
+    path_display.short_description = 'Path'
+    
+    def all_extra_data_display(self, obj):
+        """Display all extra_data in a readable format"""
+        if not obj.extra_data:
+            return "No additional data"
+        
+        items = []
+        for key, value in obj.extra_data.items():
+            if isinstance(value, bool):
+                display_value = '✅ Yes' if value else '❌ No'
+            elif value is None:
+                display_value = '—'
+            else:
+                display_value = str(value)
+            
+            items.append(
+                f'<tr><td style="padding: 4px 8px; border-bottom: 1px solid #eee;"><strong>{key}:</strong></td>'
+                f'<td style="padding: 4px 8px; border-bottom: 1px solid #eee;">{display_value}</td></tr>'
+            )
+        
+        return format_html(
+            '<table style="width: 100%; border-collapse: collapse;">{}</table>',
+            ''.join(items)
+        )
+    all_extra_data_display.short_description = 'All Extra Data'
+    
+    def get_queryset(self, request):
+        """Optimize queryset for admin display"""
+        return super().get_queryset(request).select_related('user')
+    
+    def has_add_permission(self, request):
+        """Prevent adding activities manually - they should be created by tracking"""
+        return False
+    
+    def has_change_permission(self, request, obj=None):
+        """Make activities read-only"""
+        return False
+
 # ✅ CUSTOM ADMIN URLS FOR QUICK ACTIONS
 def get_admin_urls():
     urls = [
@@ -1039,12 +1173,6 @@ class BlogAdmin(admin.ModelAdmin):
     list_display = ['title', 'position', 'status', 'published_at', 'is_published']
     list_editable = ['position', 'status']
     prepopulated_fields = {'slug': ('title',)}
-    list_per_page = 20
-
-@admin.register(UserActivity)
-class UserActivityAdmin(admin.ModelAdmin):
-    list_display = ('user', 'action', 'timestamp')
-    list_filter = ('action', 'timestamp')
     list_per_page = 20
 
 # ✅ REGISTER CUSTOM USER ADMIN
