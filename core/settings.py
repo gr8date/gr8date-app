@@ -182,7 +182,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Check if AWS credentials are available (production)
 if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
-    # TEMPORARY: Keep local storage until migration is complete
+    # AFTER MIGRATION: Switch to S3
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 else:
     # Development fallback
