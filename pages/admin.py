@@ -903,7 +903,7 @@ class MessageAdmin(admin.ModelAdmin):
             return "No message content"
     message_preview.short_description = 'Message'
 
-# ✅ FIXED: UserActivityAdmin without path field dependencies
+# ✅ FIXED: UserActivityAdmin with proper error handling
 @admin.register(UserActivity)
 class UserActivityAdmin(admin.ModelAdmin):
     list_display = [
@@ -981,7 +981,14 @@ class UserActivityAdmin(admin.ModelAdmin):
             'seo_tool': ('⚡', 'SEO Tool', '#20c997'),
             'unknown': ('❓', 'Unknown Bot', '#6c757d')
         }
-        icon, text, color = category_map.get(category, ('❓', category.title(), '#6c757d'))
+        
+        # ✅ FIXED: Proper error handling for unknown categories
+        if category in category_map:
+            icon, text, color = category_map[category]
+        else:
+            # Handle unknown categories safely
+            icon, text, color = '❓', str(category).title() if category else 'Unknown', '#6c757d'
+        
         return format_html(
             '<span style="color: {}; font-weight: bold;">{} {}</span>',
             color, icon, text
@@ -997,7 +1004,9 @@ class UserActivityAdmin(admin.ModelAdmin):
         if bot_type == 'human':
             return format_html('<span style="color: #28a745;">👤 Human</span>')
         else:
-            return format_html('<span style="color: #dc3545;">🤖 {}</span>', bot_type)
+            # ✅ FIXED: Handle None or unexpected bot_type values
+            display_type = str(bot_type) if bot_type else 'Unknown'
+            return format_html('<span style="color: #dc3545;">🤖 {}</span>', display_type)
     bot_type_display.short_description = 'Bot Type'
     
     def all_extra_data_display(self, obj):
