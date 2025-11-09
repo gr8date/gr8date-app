@@ -1198,3 +1198,4 @@ class MobileAdminSite(admin.AdminSite):
 
 # Apply mobile enhancements
 admin.site.__class__ = MobileAdminSite
+# Deployment trigger
