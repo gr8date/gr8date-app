@@ -763,7 +763,7 @@ def home(request):
 
 @login_required
 def dashboard(request):
-    """Main dashboard with SMART PROFILE MIXING + ROTATING FIRST 48 PROFILES"""
+    """Main dashboard with SMART PROFILE MIXING + ROTATING FIRST 48 PROFILES + ALL PROFILES BEYOND"""
     # ✅ ADDED: Track dashboard view (SAFE: Won't break dashboard)
     track_user_activity(request.user, 'dashboard_view', request)
     
@@ -786,6 +786,7 @@ def dashboard(request):
             'female': ['female'],
             'men': ['male'],      # Add variations
             'women': ['female'],   # Add variations
+            'bisexual': ['male', 'female'],  # Bisexual sees both
         }
         return mapping.get(looking_for, [])  # Empty list for anything else
     
@@ -793,13 +794,28 @@ def dashboard(request):
     if user_profile and user_profile.is_approved and not request.user.is_superuser:
         # TWO-WAY MATCHING for regular users:
         # Show profiles whose gender matches what I'm looking for AND who are looking for my gender
+        user_gender = user_profile.my_gender
+        user_looking_for = user_profile.looking_for
+        
+        # Get genders I want to see
+        genders_i_want = get_genders_user_wants(user_looking_for)
+        
+        # Get genders that would want me
+        genders_that_want_me = []
+        if user_gender == 'male':
+            genders_that_want_me = ['female', 'bisexual']
+        elif user_gender == 'female':
+            genders_that_want_me = ['male', 'bisexual']
+        elif user_gender == 'nonbinary':
+            genders_that_want_me = ['bisexual']  # Adjust based on your app's logic
+        
         suggested_profiles = Profile.objects.filter(
             is_approved=True
         ).filter(
             # Their gender is what I'm looking for
-            my_gender__in=get_genders_user_wants(user_profile.looking_for),
-            # AND they are looking for my gender
-            looking_for__in=get_genders_user_wants(user_profile.my_gender)
+            my_gender__in=genders_i_want,
+            # AND they are looking for my gender or are bisexual
+            looking_for__in=genders_that_want_me + [user_gender, 'bisexual', 'unspecified']
         )
     else:
         # Superusers see ALL profiles, or fallback for unapproved users
@@ -867,7 +883,7 @@ def dashboard(request):
             
             suggested_profiles = suggested_profiles.filter(search_conditions)
     
-    # ========== ENHANCED ROTATION FOR FIRST 48 PROFILES ==========
+    # ========== FIXED: ENHANCED ROTATION FOR FIRST 48 + ALL PROFILES BEYOND ==========
     def get_rotated_featured_profiles(profiles, user_id):
         """Get rotated featured profiles for first 48 spots based on user login"""
         
@@ -883,10 +899,10 @@ def dashboard(request):
         
         # Get top profiles by photo count and recency (respecting gender preferences)
         from django.db.models import Count
-        profiles = profiles.annotate(photo_count=Count('images'))
+        profiles_with_photos = profiles.annotate(photo_count=Count('images'))
         
         # Create scoring system focused on photo-rich profiles
-        profiles_list = list(profiles)
+        profiles_list = list(profiles_with_photos)
         scored_profiles = []
         
         for profile in profiles_list:
@@ -929,7 +945,7 @@ def dashboard(request):
         return rotated_profiles[:48]  # Return first 48 for pages 1-4
     
     def smart_profile_mixing(profiles, page_number, user_id):
-        """Smart mixing algorithm with rotation for first 48 profiles"""
+        """Smart mixing algorithm with rotation for first 48 profiles + all profiles beyond"""
         
         current_page = page_number or 1
         
@@ -961,11 +977,18 @@ def dashboard(request):
                 return page_obj
             
         else:
-            # PAGE 5+: Mix newer profiles with established ones
-            # Split into newer (last 30 days) and older profiles
+            # PAGE 5+: Show ALL remaining profiles with smart mixing
+            # Get IDs of profiles already shown in first 48
+            rotated_profiles = get_rotated_featured_profiles(profiles, user_id)
+            shown_ids = [p.id for p in rotated_profiles] if rotated_profiles else []
+            
+            # Get remaining profiles (excluding those already shown)
+            remaining_profiles = profiles.exclude(id__in=shown_ids)
+            
+            # Mix newer profiles with established ones for variety
             thirty_days_ago = timezone.now() - timedelta(days=30)
-            newer_profiles = list(profiles.filter(created_at__gte=thirty_days_ago))
-            older_profiles = list(profiles.filter(created_at__lt=thirty_days_ago))
+            newer_profiles = list(remaining_profiles.filter(created_at__gte=thirty_days_ago))
+            older_profiles = list(remaining_profiles.filter(created_at__lt=thirty_days_ago))
             
             # Shuffle both groups for variety
             import random
@@ -991,7 +1014,7 @@ def dashboard(request):
                     mixed_profiles.append(selected_newer[i])
             
             # Create paginator for traditional ordering as fallback
-            traditional_profiles = profiles.order_by('-created_at')
+            traditional_profiles = remaining_profiles.order_by('-created_at')
             paginator = Paginator(traditional_profiles, 12)
             page_obj = paginator.page(current_page)
             
