@@ -120,6 +120,10 @@ class Profile(models.Model):
         related_name='approved_profiles'
     )
 
+    # SECURITY FIX 1: Approved Content Snapshot
+    approved_content_snapshot = models.JSONField(null=True, blank=True, help_text="Stores approved content state")
+    last_approved_at = models.DateTimeField(null=True, blank=True, help_text="When approved state was captured")
+
     # Reminder Tracking Fields
     email_verification_reminder_count = models.PositiveIntegerField(default=0)
     email_verification_last_reminder_sent = models.DateTimeField(null=True, blank=True)
@@ -297,6 +301,65 @@ class Profile(models.Model):
         except Exception:
             return None    
 
+    # SECURITY FIX: Capture approved content state
+    def capture_approved_state(self):
+        """Capture current content as the approved baseline"""
+        self.approved_content_snapshot = {
+            'headline': self.headline,
+            'about': self.about,
+            'location': self.location,
+            'my_gender': self.my_gender,
+            'looking_for': self.looking_for,
+            'my_interests': self.my_interests,
+            'body_type': self.body_type,
+            'ethnicity': self.ethnicity,
+            'relationship_status': self.relationship_status,
+            'want_children': self.want_children,
+            'smoking': self.smoking,
+            'drinking': self.drinking,
+            'preferred_intent': self.preferred_intent,
+            'approved_photo_count': self.images.filter(image_type__in=['profile', 'additional']).count(),
+            'approved_private_photo_count': self.images.filter(image_type='private').count(),
+        }
+        self.last_approved_at = timezone.now()
+        self.save()
+
+    def restore_approved_content(self):
+        """Restore content to approved state if current content is degraded"""
+        if not self.approved_content_snapshot:
+            return False
+        
+        snapshot = self.approved_content_snapshot
+        restored = False
+        
+        # Restore blank fields to approved content
+        if not self.headline and snapshot.get('headline'):
+            self.headline = snapshot['headline']
+            restored = True
+        if not self.about and snapshot.get('about'):
+            self.about = snapshot['about']
+            restored = True
+        if not self.location and snapshot.get('location'):
+            self.location = snapshot['location']
+            restored = True
+        
+        if restored:
+            self.save()
+        
+        return restored
+
+    def get_approved_photo_count(self):
+        """Get the number of photos when profile was approved"""
+        if self.approved_content_snapshot:
+            return self.approved_content_snapshot.get('approved_photo_count', 0)
+        return 0
+
+    def get_approved_private_photo_count(self):
+        """Get the number of private photos when profile was approved"""
+        if self.approved_content_snapshot:
+            return self.approved_content_snapshot.get('approved_private_photo_count', 0)
+        return 0
+
     # Backwards-compat properties
     @property
     def display_name(self) -> str:
@@ -343,7 +406,7 @@ class Profile(models.Model):
 
 
 # ---------------------------------------------------------------------
-# Profile Images - FIXED VERSION
+# Profile Images - ENHANCED WITH SECURITY FIELDS
 # ---------------------------------------------------------------------
 
 class ProfileImage(models.Model):
@@ -361,6 +424,17 @@ class ProfileImage(models.Model):
     image_type = models.CharField(max_length=20, choices=ImageType.choices, default=ImageType.PROFILE)
     is_primary = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # SECURITY FIX 2: Photo approval workflow
+    needs_approval = models.BooleanField(default=False, help_text="New photos need admin approval")
+    is_approved = models.BooleanField(default=True, help_text="Photo approval status")
+    replaced_image = models.ForeignKey(
+        'self', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        help_text="Track which photo this replaces"
+    )
 
     class Meta:
         constraints = [
@@ -383,6 +457,20 @@ class ProfileImage(models.Model):
     def is_public(self) -> bool:
         """Convenience property to check if image is public"""
         return self.image_type in [self.ImageType.PROFILE, self.ImageType.ADDITIONAL]
+
+    def can_delete_safely(self):
+        """Check if deletion won't go below approved photo standards"""
+        if not self.profile.is_approved:
+            return True
+        
+        approved_count = self.profile.get_approved_photo_count()
+        current_count = self.profile.images.filter(
+            image_type__in=['profile', 'additional'],
+            is_approved=True
+        ).count()
+        
+        # Allow deletion if we have more photos than the approved baseline
+        return current_count > approved_count
 
 
 # ---------------------------------------------------------------------

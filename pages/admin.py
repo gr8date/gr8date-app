@@ -21,6 +21,8 @@ from .models import (
     ProfileImage, AdminMessage, EmailReminderLog
 )
 
+# ✅ ENHANCED ADMIN WITH SECURITY FEATURES
+
 # ✅ CUSTOM FILTERS FOR BETTER WORKFLOW
 class ApprovalStatusFilter(admin.SimpleListFilter):
     title = 'Approval Status'
@@ -105,7 +107,7 @@ class ReminderStatusFilter(admin.SimpleListFilter):
             )
         return queryset
 
-# ✅ QUICK ACTION VIEWS
+# ✅ QUICK ACTION VIEWS WITH SECURITY ENHANCEMENTS
 def approve_profile(request, profile_id):
     try:
         profile = Profile.objects.get(id=profile_id)
@@ -119,6 +121,10 @@ def approve_profile(request, profile_id):
         profile.approval_status = 'approved'
         profile.approved_at = timezone.now()
         profile.approved_by = request.user
+        
+        # SECURITY FIX: Capture approved content state
+        profile.capture_approved_state()
+        
         profile.save()
         
         # ✅ ADDED: Send approval email for single profile approval
@@ -210,12 +216,12 @@ def view_live_profile(request, profile_id):
         messages.error(request, "Profile not found")
         return HttpResponseRedirect(reverse('admin:pages_profile_changelist'))
 
-# ✅ PROFILE IMAGE INLINE FOR PROFILE ADMIN
+# ✅ PROFILE IMAGE INLINE FOR PROFILE ADMIN WITH SECURITY FIELDS
 class ProfileImageInline(admin.TabularInline):
     model = ProfileImage
     extra = 0
-    readonly_fields = ('image_preview', 'created_at')
-    fields = ('image_preview', 'image', 'image_type', 'is_primary', 'created_at')
+    readonly_fields = ('image_preview', 'created_at', 'needs_approval', 'is_approved')
+    fields = ('image_preview', 'image', 'image_type', 'is_primary', 'needs_approval', 'is_approved', 'created_at')
     
     def image_preview(self, obj):
         if obj.image:
@@ -236,7 +242,7 @@ class EmailReminderLogInline(admin.TabularInline):
     def has_add_permission(self, request, obj=None):
         return False
 
-# ✅ MOBILE-FRIENDLY PROFILE ADMIN WITH REMINDER SYSTEM
+# ✅ MOBILE-FRIENDLY PROFILE ADMIN WITH SECURITY FEATURES
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     # MOBILE-FRIENDLY COLUMNS - Only essential info
@@ -267,7 +273,8 @@ class ProfileAdmin(admin.ModelAdmin):
         'profile_images_display', 'view_live_profile_button',
         'email_verification_reminder_count', 'profile_completion_reminder_count',
         'profile_approval_reminder_count', 'inactivity_reminder_count',
-        'last_activity_date', 'marked_for_deletion_at'
+        'last_activity_date', 'marked_for_deletion_at',
+        'approved_content_snapshot_display', 'last_approved_at'  # SECURITY FIELDS
     )
     
     list_per_page = 25  # Fewer rows for mobile
@@ -284,12 +291,13 @@ class ProfileAdmin(admin.ModelAdmin):
         'send_profile_completion_reminder',
         'mark_for_deletion',
         'unmark_for_deletion',
+        'capture_approved_state',  # SECURITY ACTION
     ]
     
     # ✅ ADD PROFILE IMAGES AND REMINDER LOG INLINES
     inlines = [ProfileImageInline, EmailReminderLogInline]
     
-    # SIMPLIFIED FIELDSETS FOR MOBILE WITH IMAGES AND REMINDER TRACKING
+    # ENHANCED FIELDSETS WITH SECURITY INFORMATION
     fieldsets = (
         ('Basic Info', {
             'fields': ('user', 'headline', 'about', 'view_live_profile_button')
@@ -304,6 +312,11 @@ class ProfileAdmin(admin.ModelAdmin):
         }),
         ('Approval', {
             'fields': ('is_approved', 'approval_status', 'email_verified')
+        }),
+        ('Security - Approved Content State', {
+            'fields': ('approved_content_snapshot_display', 'last_approved_at'),
+            'classes': ('collapse',),
+            'description': 'Content state when profile was approved - prevents degradation'
         }),
         ('Reminder Tracking', {
             'fields': (
@@ -321,6 +334,27 @@ class ProfileAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+    
+    # ✅ ADDED: Display approved content snapshot
+    def approved_content_snapshot_display(self, obj):
+        """Display approved content state in admin"""
+        if not obj.approved_content_snapshot:
+            return "No approved state captured yet"
+        
+        snapshot = obj.approved_content_snapshot
+        items = []
+        
+        for key, value in snapshot.items():
+            if key in ['approved_photo_count', 'approved_private_photo_count']:
+                display_key = key.replace('_', ' ').title()
+                items.append(f"<strong>{display_key}:</strong> {value}")
+            elif value:  # Only show non-empty values
+                display_key = key.replace('_', ' ').title()
+                display_value = value[:100] + "..." if len(str(value)) > 100 else value
+                items.append(f"<strong>{display_key}:</strong> {display_value}")
+        
+        return format_html('<br>'.join(items))
+    approved_content_snapshot_display.short_description = 'Approved Content State'
     
     # ✅ ADDED: Send approval email when approving from individual profile edit page
     def save_model(self, request, obj, form, change):
@@ -341,6 +375,9 @@ class ProfileAdmin(admin.ModelAdmin):
         is_approved_now = obj.is_approved and obj.approval_status == 'approved'
         
         if is_approved_now and not was_approved_before:
+            # SECURITY FIX: Capture approved content state
+            obj.capture_approved_state()
+            
             # ✅ Send approval email for individual profile edit approval
             from .utils.emails import send_profile_approved_email
             email_sent = send_profile_approved_email(
@@ -365,13 +402,18 @@ class ProfileAdmin(admin.ModelAdmin):
         for image in images:
             status = "🟢 PRIMARY" if image.is_primary else "🔵 Additional"
             privacy = "🔒 Private" if image.image_type == 'private' else "👁 Public"
+            approval_status = "⏳ Pending" if image.needs_approval and not image.is_approved else "✅ Approved"
+            border_color = "#28a745" if image.is_primary else "#6c757d"
+            if image.needs_approval and not image.is_approved:
+                border_color = "#ffc107"  # Yellow for pending approval
+            
             image_html.append(
                 f'<div style="display: inline-block; margin: 10px; text-align: center;">'
-                f'<img src="{image.image.url}" style="max-height: 150px; max-width: 150px; border-radius: 8px; border: 2px solid {"#28a745" if image.is_primary else "#6c757d"};" />'
+                f'<img src="{image.image.url}" style="max-height: 150px; max-width: 150px; border-radius: 8px; border: 2px solid {border_color};" />'
                 f'<div style="margin-top: 5px; font-size: 12px;">'
                 f'<div>{status}</div>'
                 f'<div>{privacy}</div>'
-                f'<div>Type: {image.image_type}</div>'
+                f'<div>Approval: {approval_status}</div>'
                 f'<div>Uploaded: {image.created_at.strftime("%Y-%m-%d")}</div>'
                 f'</div>'
                 f'</div>'
@@ -439,15 +481,28 @@ class ProfileAdmin(admin.ModelAdmin):
         try:
             from .models import ProfileImage
             count = ProfileImage.objects.filter(profile=obj).count()
+            approved_count = ProfileImage.objects.filter(profile=obj, is_approved=True).count()
+            pending_count = count - approved_count
+            
             color = "#28a745" if count >= 1 else "#dc3545"
             icon = "📸" if count >= 1 else "📷"
-            return format_html(
-                '<div style="text-align: center; min-width: 60px;" title="{} photos">'
-                '<span style="color: {}; font-size: 16px;">{}</span><br/>'
-                '<small style="color: {};">{}</small>'
-                '</div>',
-                count, color, icon, color, count
-            )
+            
+            if pending_count > 0:
+                return format_html(
+                    '<div style="text-align: center; min-width: 60px;" title="{} photos ({} pending approval)">'
+                    '<span style="color: {}; font-size: 16px;">{}</span><br/>'
+                    '<small style="color: {};">{}<span style="color: #ffc107;"> (+{})</span></small>'
+                    '</div>',
+                    count, pending_count, color, icon, color, approved_count, pending_count
+                )
+            else:
+                return format_html(
+                    '<div style="text-align: center; min-width: 60px;" title="{} photos">'
+                    '<span style="color: {}; font-size: 16px;">{}</span><br/>'
+                    '<small style="color: {};">{}</small>'
+                    '</div>',
+                    count, color, icon, color, count
+                )
         except Exception:
             return format_html('<div style="text-align: center;">📷 0</div>')
     mobile_photos.short_description = 'Photos'
@@ -534,7 +589,7 @@ class ProfileAdmin(admin.ModelAdmin):
         return format_html(' '.join(buttons))
     mobile_actions.short_description = 'Actions'
     
-    # ✅ ENHANCED BULK ACTIONS WITH REMINDER SUPPORT
+    # ✅ ENHANCED BULK ACTIONS WITH SECURITY FEATURES
     
     def approve_selected_verified(self, request, queryset):
         """Approve only profiles with verified emails"""
@@ -544,13 +599,14 @@ class ProfileAdmin(admin.ModelAdmin):
         approved_count = verified_profiles.count()
         unverified_count = unverified_profiles.count()
         
-        # Only approve verified profiles
-        verified_profiles.update(
-            is_approved=True, 
-            approval_status='approved',
-            approved_at=timezone.now(),
-            approved_by=request.user
-        )
+        # Only approve verified profiles with content snapshot
+        for profile in verified_profiles:
+            profile.is_approved = True
+            profile.approval_status = 'approved'
+            profile.approved_at = timezone.now()
+            profile.approved_by = request.user
+            profile.capture_approved_state()  # SECURITY FIX
+            profile.save()
         
         # ✅ ADDED: Send approval emails for bulk approval
         from .utils.emails import send_profile_approved_email
@@ -594,13 +650,14 @@ class ProfileAdmin(admin.ModelAdmin):
                 messages.INFO
             )
         
-        # Approve all profiles
-        queryset.update(
-            is_approved=True, 
-            approval_status='approved',
-            approved_at=timezone.now(),
-            approved_by=request.user
-        )
+        # Approve all profiles with content snapshot
+        for profile in queryset:
+            profile.is_approved = True
+            profile.approval_status = 'approved'
+            profile.approved_at = timezone.now()
+            profile.approved_by = request.user
+            profile.capture_approved_state()  # SECURITY FIX
+            profile.save()
         
         # ✅ ADDED: Send approval emails for bulk approval (all)
         from .utils.emails import send_profile_approved_email
@@ -621,6 +678,29 @@ class ProfileAdmin(admin.ModelAdmin):
         )
     
     approve_selected_all.short_description = "🚀 APPROVE ALL + Auto-verify emails"
+    
+    def capture_approved_state(self, request, queryset):
+        """Capture approved content state for selected profiles"""
+        count = 0
+        for profile in queryset:
+            if profile.is_approved:
+                profile.capture_approved_state()
+                count += 1
+        
+        if count > 0:
+            self.message_user(
+                request,
+                f'✅ Captured approved content state for {count} profiles.',
+                messages.SUCCESS
+            )
+        else:
+            self.message_user(
+                request,
+                '⚠️ No approved profiles selected to capture state.',
+                messages.WARNING
+            )
+    
+    capture_approved_state.short_description = "📸 Capture approved content state"
     
     def verify_emails_selected(self, request, queryset):
         """Verify emails for selected profiles without approving"""
@@ -818,6 +898,10 @@ class ProfileAdmin(admin.ModelAdmin):
             'pending': Profile.objects.filter(approval_status='pending_review').count(),
             'unverified': Profile.objects.filter(email_verified=False).count(),
             'marked_for_deletion': Profile.objects.filter(marked_for_deletion=True).count(),
+            'approved_with_state': Profile.objects.filter(
+                is_approved=True, 
+                approved_content_snapshot__isnull=False
+            ).count(),
         }
         
         extra_context['stats'] = stats
@@ -833,11 +917,11 @@ class ProfileAdmin(admin.ModelAdmin):
             )
         }
 
-# ✅ ENHANCED PROFILE IMAGE ADMIN - Shows ALL images
+# ✅ ENHANCED PROFILE IMAGE ADMIN WITH SECURITY FIELDS
 @admin.register(ProfileImage)
 class ProfileImageAdmin(admin.ModelAdmin):
-    list_display = ('profile', 'image_preview', 'image_type', 'is_primary', 'created_at')
-    list_filter = ('image_type', 'is_primary', 'created_at')
+    list_display = ('profile', 'image_preview', 'image_type', 'is_primary', 'needs_approval', 'is_approved', 'created_at')
+    list_filter = ('image_type', 'is_primary', 'needs_approval', 'is_approved', 'created_at')
     search_fields = ('profile__user__username', 'profile__user__email')
     list_per_page = 20
     readonly_fields = ('image_preview_large', 'created_at')
@@ -849,6 +933,10 @@ class ProfileImageAdmin(admin.ModelAdmin):
         ('Settings', {
             'fields': ('image_type', 'is_primary')
         }),
+        ('Approval Workflow', {
+            'fields': ('needs_approval', 'is_approved', 'replaced_image'),
+            'description': 'Security: New photos for approved profiles need admin approval'
+        }),
         ('Timestamps', {
             'fields': ('created_at',),
             'classes': ('collapse',)
@@ -857,18 +945,21 @@ class ProfileImageAdmin(admin.ModelAdmin):
     
     def image_preview(self, obj):
         if obj.image:
+            border_color = "#28a745" if obj.is_approved else "#ffc107"
             return format_html(
-                '<img src="{}" style="max-height: 50px; max-width: 50px; border-radius: 4px;" />',
-                obj.image.url
+                '<img src="{}" style="max-height: 50px; max-width: 50px; border-radius: 4px; border: 2px solid {};" />',
+                obj.image.url, border_color
             )
         return "No image"
     image_preview.short_description = 'Preview'
     
     def image_preview_large(self, obj):
         if obj.image:
+            border_color = "#28a745" if obj.is_approved else "#ffc107"
+            border_style = "solid" if obj.is_approved else "dashed"
             return format_html(
-                '<img src="{}" style="max-height: 300px; max-width: 300px; border-radius: 8px; border: 2px solid #ddd;" />',
-                obj.image.url
+                '<img src="{}" style="max-height: 300px; max-width: 300px; border-radius: 8px; border: 3px {} {};" />',
+                obj.image.url, border_style, border_color
             )
         return "No image"
     image_preview_large.short_description = 'Large Preview'
@@ -890,13 +981,13 @@ class EmailReminderLogAdmin(admin.ModelAdmin):
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('sender', 'recipient', 'message_preview', 'created_at', 'is_read')
     list_filter = ('is_read', 'created_at')
-    search_fields = ('sender__username', 'recipient__username', 'message')
+    search_fields = ('sender__username', 'recipient__username', 'text')
     list_per_page = 20
     
     def message_preview(self, obj):
-        # Use 'message' field instead of 'content'
-        if hasattr(obj, 'message'):
-            return obj.message[:50] + "..." if len(obj.message) > 50 else obj.message
+        # Use 'text' field instead of 'content'
+        if hasattr(obj, 'text'):
+            return obj.text[:50] + "..." if len(obj.text) > 50 else obj.text
         elif hasattr(obj, 'content'):
             return obj.content[:50] + "..." if len(obj.content) > 50 else obj.content
         else:
@@ -913,7 +1004,6 @@ class UserActivityAdmin(admin.ModelAdmin):
         'is_bot_display',
         'bot_category_display',
         'ip_address',
-        # 'path_display'  # Removed - no path field in database
     ]
     
     list_filter = [
@@ -1073,6 +1163,10 @@ class CustomAdminSite(admin.AdminSite):
             pending_count = Profile.objects.filter(approval_status='pending_review').count()
             unverified_count = Profile.objects.filter(email_verified=False).count()
             deletion_count = Profile.objects.filter(marked_for_deletion=True).count()
+            approved_with_state = Profile.objects.filter(
+                is_approved=True, 
+                approved_content_snapshot__isnull=False
+            ).count()
             
             custom_app = {
                 'name': '🚀 Quick Actions',
@@ -1096,6 +1190,12 @@ class CustomAdminSite(admin.AdminSite):
                         'name': f'🚨 Marked for Deletion ({deletion_count})', 
                         'object_name': 'marked_for_deletion',
                         'admin_url': '/admin/pages/profile/?marked_for_deletion__exact=1',
+                        'view_only': True,
+                    },
+                    {
+                        'name': f'📸 Protected Profiles ({approved_with_state})', 
+                        'object_name': 'protected_profiles',
+                        'admin_url': '/admin/pages/profile/?is_approved__exact=1&approved_content_snapshot__isnull=False',
                         'view_only': True,
                     },
                 ],
