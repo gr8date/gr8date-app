@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import timedelta, date, datetime
 import json
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.core.paginator import Paginator
 from django.contrib import messages
 import re
@@ -907,13 +907,15 @@ def dashboard(request):
             one_day_ago = timezone.now() - timedelta(days=1)
             newer_profiles = profiles.filter(created_at__gte=three_days_ago, created_at__lt=one_day_ago)
             all_profiles = list(established_profiles) + list(newer_profiles)
+            
+            # ✅ FIX: Manually calculate photo_count for each profile when using lists
+            for profile in all_profiles:
+                profile.photo_count = profile.images.count()
+            
             profiles_with_photos = all_profiles
         else:
-            profiles_with_photos = established_profiles
-        
-        # Get top profiles by photo count and recency (respecting gender preferences)
-        from django.db.models import Count
-        profiles_with_photos = profiles_with_photos.annotate(photo_count=Count('images'))
+            # ✅ FIX: Use annotate but keep as QuerySet
+            profiles_with_photos = established_profiles.annotate(photo_count=Count('images'))
         
         # Create scoring system focused on photo-rich profiles
         profiles_list = list(profiles_with_photos)
@@ -982,7 +984,6 @@ def dashboard(request):
                 return page_obj
             else:
                 # Fallback: photo-rich profiles ordered by score
-                from django.db.models import Count
                 fallback_profiles = profiles.annotate(
                     photo_count=Count('images')
                 ).order_by('-photo_count', '-created_at')
