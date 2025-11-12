@@ -975,8 +975,9 @@ def dashboard(request):
                 
                 # Create paginator-like object for the full rotated set
                 from django.core.paginator import Paginator
-                paginator = Paginator(rotated_profiles, 12)
+                paginator = Paginator(profiles, 12)
                 page_obj = paginator.page(current_page)
+                page_obj.object_list = page_profiles
                 
                 return page_obj
             else:
