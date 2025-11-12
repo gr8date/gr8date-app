@@ -885,7 +885,7 @@ def dashboard(request):
     
     # ========== FIXED: ENHANCED ROTATION FOR FIRST 48 + ALL PROFILES BEYOND ==========
     def get_rotated_featured_profiles(profiles, user_id):
-        """Get rotated featured profiles for first 48 spots based on user login"""
+        """Get rotated featured profiles for first 48 spots - EXCLUDING BRAND NEW PROFILES"""
         
         # Get or create user's rotation index
         from django.core.cache import cache
@@ -897,9 +897,23 @@ def dashboard(request):
             rotation_index = user_id % 8  # 8 different starting positions
             cache.set(cache_key, rotation_index, 60 * 60 * 24)  # Store for 24 hours
         
+        # EXCLUDE profiles created in the last 3 days from rotation pool
+        three_days_ago = timezone.now() - timedelta(days=3)
+        established_profiles = profiles.filter(created_at__lt=three_days_ago)
+        
+        # If we don't have enough established profiles, include some newer ones
+        if established_profiles.count() < 48:
+            # Get some newer profiles to fill the gap, but prioritize older ones
+            one_day_ago = timezone.now() - timedelta(days=1)
+            newer_profiles = profiles.filter(created_at__gte=three_days_ago, created_at__lt=one_day_ago)
+            all_profiles = list(established_profiles) + list(newer_profiles)
+            profiles_with_photos = all_profiles
+        else:
+            profiles_with_photos = established_profiles
+        
         # Get top profiles by photo count and recency (respecting gender preferences)
         from django.db.models import Count
-        profiles_with_photos = profiles.annotate(photo_count=Count('images'))
+        profiles_with_photos = profiles_with_photos.annotate(photo_count=Count('images'))
         
         # Create scoring system focused on photo-rich profiles
         profiles_list = list(profiles_with_photos)
@@ -977,7 +991,7 @@ def dashboard(request):
                 return page_obj
             
         else:
-            # PAGE 5+: Show ALL remaining profiles with smart mixing
+            # PAGE 5+: Show ALL remaining profiles with proper pagination
             # Get IDs of profiles already shown in first 48
             rotated_profiles = get_rotated_featured_profiles(profiles, user_id)
             shown_ids = [p.id for p in rotated_profiles] if rotated_profiles else []
@@ -985,42 +999,9 @@ def dashboard(request):
             # Get remaining profiles (excluding those already shown)
             remaining_profiles = profiles.exclude(id__in=shown_ids)
             
-            # Mix newer profiles with established ones for variety
-            thirty_days_ago = timezone.now() - timedelta(days=30)
-            newer_profiles = list(remaining_profiles.filter(created_at__gte=thirty_days_ago))
-            older_profiles = list(remaining_profiles.filter(created_at__lt=thirty_days_ago))
-            
-            # Shuffle both groups for variety
-            import random
-            random.shuffle(newer_profiles)
-            random.shuffle(older_profiles)
-            
-            # Mix newer profiles throughout older ones (30% newer, 70% older)
-            total_needed = 12
-            newer_count = min(len(newer_profiles), int(total_needed * 0.3))
-            older_count = total_needed - newer_count
-            
-            selected_newer = newer_profiles[:newer_count]
-            selected_older = older_profiles[:older_count]
-            
-            # Interleave them for natural mix
-            mixed_profiles = []
-            max_len = max(len(selected_older), len(selected_newer))
-            
-            for i in range(max_len):
-                if i < len(selected_older):
-                    mixed_profiles.append(selected_older[i])
-                if i < len(selected_newer):
-                    mixed_profiles.append(selected_newer[i])
-            
-            # Create paginator for traditional ordering as fallback
-            traditional_profiles = remaining_profiles.order_by('-created_at')
-            paginator = Paginator(traditional_profiles, 12)
+            # Create proper paginator for ALL remaining profiles
+            paginator = Paginator(remaining_profiles, 12)
             page_obj = paginator.page(current_page)
-            
-            # Replace with our mixed profiles if we have enough
-            if len(mixed_profiles) >= 12:
-                page_obj.object_list = mixed_profiles[:12]
             
             return page_obj
     
