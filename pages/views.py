@@ -961,6 +961,7 @@ def dashboard(request):
     def smart_profile_mixing(profiles, page_number, user_id):
         """Smart mixing algorithm with rotation for first 48 profiles + all profiles beyond"""
         
+        from django.core.paginator import Paginator
         current_page = page_number or 1
         
         if current_page <= 4:
@@ -974,7 +975,6 @@ def dashboard(request):
                 page_profiles = rotated_profiles[start_idx:end_idx]
                 
                 # Create paginator-like object for the full rotated set
-                from django.core.paginator import Paginator
                 paginator = Paginator(profiles, 12)
                 page_obj = paginator.page(current_page)
                 page_obj.object_list = page_profiles
