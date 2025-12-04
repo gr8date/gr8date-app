@@ -1,0 +1,526 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Create Profile - Step 2 - Synergy</title>
+<meta name="description" content="Create your elite dating profile - Step 2: Your story and what you're looking for." />
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --brand: #cdad7c;
+    --brand-dark: #a88a5a;
+    --brand-light: #e8d8b8;
+    --brand-soft: rgba(205, 173, 119, 0.18);
+    --brand-glow: rgba(205, 173, 119, 0.32);
+    --bg: #050507;
+    --bg-card: rgba(18, 18, 20, 0.96);
+    --border-subtle: rgba(205, 173, 119, 0.34);
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --text: #ffffff;
+    --text-muted: #a0a0a5;
+    --text-soft: #8b8b90;
+    --text-gold: #cdad7c;
+    --error: #ff6b6b;
+    --radius-card: 24px;
+    --shadow-soft: 0 26px 50px rgba(0, 0, 0, 0.7);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+
+  body {
+    background: radial-gradient(circle at top left, #2a2a30 0, #050507 45%, #000 100%);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  #gold-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .premium-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(5, 5, 7, 0.96);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(205, 173, 119, 0.3);
+    z-index: 1000;
+  }
+
+  .nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .script-logo {
+    font-family: 'Allura', cursive;
+    font-size: 42px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #CDAD7F;
+    text-decoration: none;
+    text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .script-logo:hover {
+    transform: scale(1.05);
+    text-shadow: 1px 1px 15px rgba(255, 255, 255, 0.2);
+  }
+
+  .progress-container {
+    max-width: 1100px;
+    margin: 96px auto 2rem;
+    padding: 0 1.5rem;
+  }
+
+  .progress-bar {
+    background: rgba(255, 255, 255, 0.06);
+    height: 8px;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(205, 173, 119, 0.42);
+    margin-bottom: 0.6rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 65%; /* Step 2 */
+    background: linear-gradient(90deg, var(--brand-light), var(--brand-dark));
+    box-shadow: 0 0 18px rgba(205, 173, 119, 0.55);
+    border-radius: 999px;
+  }
+
+  .progress-text {
+    text-align:center;
+    font-size:0.86rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+  }
+
+  .profile-create-container {
+    max-width:1100px;
+    margin:0 auto 3rem;
+    padding:0 1.5rem 3rem;
+  }
+
+  .create-card {
+    background: radial-gradient(circle at top left, rgba(255,255,255,0.04) 0, rgba(7,7,10,0.96) 40%, rgba(0,0,0,0.98) 100%);
+    border-radius:var(--radius-card);
+    padding:2.8rem 2.6rem 2.7rem;
+    border:1px solid var(--border-subtle);
+    box-shadow:var(--shadow-soft), 0 0 60px rgba(205, 173, 119, 0.15);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .create-card::before {
+    content:'';
+    position:absolute;
+    inset:-40%;
+    background:radial-gradient(circle at top, rgba(205, 173, 119, 0.14), transparent 60%);
+    opacity:0.7;
+    pointer-events:none;
+    z-index:-1;
+  }
+
+  .section-header {
+    margin-bottom:2.2rem;
+    text-align:center;
+  }
+
+  .section-title {
+    font-size:2.1rem;
+    font-weight:300;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#f9f9fa;
+    margin-bottom:0.4rem;
+  }
+
+  .section-title span {
+    color:var(--text-gold);
+    font-weight:500;
+  }
+
+  .section-subtitle {
+    color:var(--text-muted);
+    font-size:0.98rem;
+    max-width:540px;
+    margin:0 auto;
+  }
+
+  .form-section { margin-bottom:2.1rem; }
+
+  .form-group { margin-bottom:1.6rem; }
+
+  .form-label {
+    display:block;
+    font-size:0.95rem;
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    color:var(--text-gold);
+    margin-bottom:0.55rem;
+    font-weight:600;
+  }
+
+  .required {
+    color:var(--error);
+    margin-left:0.1rem;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width:100%;
+    padding:0.85rem 1rem;
+    border-radius:18px;
+    border:1px solid var(--border-soft);
+    background:rgba(3,3,5,0.9);
+    color:var(--text);
+    font-size:0.95rem;
+    outline:none;
+    transition:border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+
+  .form-textarea {
+    min-height:150px;
+    resize:vertical;
+    line-height:1.6;
+  }
+
+  .form-input::placeholder,
+  .form-textarea::placeholder {
+    color:#63636a;
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    border-color:var(--text-gold);
+    box-shadow:0 0 0 1px rgba(205, 173, 119, 0.55);
+    background:rgba(5,5,9,0.98);
+  }
+
+  .form-grid {
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:1.4rem 1.6rem;
+  }
+
+  .form-tip {
+    font-size:0.85rem;
+    color:var(--text-soft);
+    margin-top:0.4rem;
+  }
+
+  .pill-hint {
+    display:inline-flex;
+    align-items:center;
+    gap:0.5rem;
+    background:rgba(255,255,255,0.03);
+    border-radius:999px;
+    padding:0.35rem 0.9rem;
+    border:1px solid rgba(255,255,255,0.06);
+    font-size:0.8rem;
+    color:var(--text-soft);
+  }
+
+  /* ERROR STYLING */
+  .form-group.field-error .form-input,
+  .form-group.field-error .form-select,
+  .form-group.field-error .form-textarea {
+    border-color:var(--error);
+    box-shadow:0 0 0 1px rgba(255, 107, 107, 0.5);
+  }
+
+  .form-group.field-error .form-label {
+    color:var(--error);
+  }
+
+  .form-error-summary {
+    margin-top:0.6rem;
+    margin-bottom:0.6rem;
+    padding:0.7rem 1rem;
+    border-radius:999px;
+    font-size:0.86rem;
+    border:1px solid rgba(255, 107, 107, 0.6);
+    background:rgba(255, 107, 107, 0.08);
+    color:var(--error);
+    text-align:right;
+    display:none;
+  }
+
+  .form-actions {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:1.8rem;
+    padding-top:1.6rem;
+    border-top:1px solid rgba(205, 173, 119, 0.35);
+  }
+
+  .btn {
+    padding:0.75rem 1.7rem;
+    border-radius:999px;
+    border:none;
+    font-size:0.92rem;
+    font-weight:600;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:0.5rem;
+    transition:all 0.25s ease;
+  }
+
+  .btn-secondary {
+    background:transparent;
+    color:var(--text-soft);
+    border:1px solid rgba(205, 173, 119, 0.5);
+  }
+
+  .btn-secondary:hover {
+    color:var(--text-gold);
+    border-color:var(--text-gold);
+    box-shadow:0 0 18px rgba(205, 173, 119, 0.35);
+    transform:translateY(-1px);
+  }
+
+  .btn-primary {
+    background:linear-gradient(135deg, var(--brand-light), var(--brand-dark));
+    color:#000;
+    box-shadow:0 14px 28px rgba(0,0,0,0.7);
+  }
+
+  .btn-primary:hover {
+    transform:translateY(-1px);
+    box-shadow:0 18px 32px rgba(0,0,0,0.8);
+  }
+
+  @media (max-width:768px) {
+    .nav-container { padding:0.8rem 1rem; }
+    .script-logo { font-size:34px; }
+    .progress-container { margin-top:82px; }
+    .create-card { padding:2.1rem 1.6rem 2.1rem; border-radius:18px; }
+    .form-grid { grid-template-columns:minmax(0,1fr); }
+    .form-actions {
+      flex-direction:column-reverse;
+      align-items:stretch;
+      gap:0.8rem;
+    }
+    .btn { width:100%; justify-content:center; }
+  }
+</style>
+</head>
+<body>
+  <div id="gold-particles"></div>
+
+  <header class="premium-header">
+    <div class="nav-container">
+      <a href="{% url 'index' %}" class="script-logo">Synergy</a>
+    </div>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+    </div>
+    <div class="progress-text">Step 2 of 4: Your Story & Intent</div>
+  </div>
+
+  <main class="profile-create-container">
+    <div class="create-card">
+      <div class="section-header">
+        <h1 class="section-title"><span>Step Two</span> • Story & Intent</h1>
+        <p class="section-subtitle">
+          This is where you share a little more of yourself—your lifestyle, values, and the kind of connection you’re open to exploring.
+        </p>
+      </div>
+
+      <form id="profileFormStep2" method="post">
+        {% csrf_token %}
+
+        <section class="form-section">
+          <div class="form-group" id="fg_about_you">
+            <label class="form-label">About You <span class="required">*</span></label>
+            <textarea class="form-textarea" id="aboutYou" name="about_you" required
+              placeholder="Share a refined snapshot of who you are—your lifestyle, interests and what makes you, you."></textarea>
+            <div class="form-tip">
+              A few thoughtful paragraphs help the right people recognise themselves in your story.
+            </div>
+          </div>
+
+          <div class="form-group" id="fg_looking_for">
+            <label class="form-label">What You’re Looking For <span class="required">*</span></label>
+            <textarea class="form-textarea" id="lookingFor" name="looking_for" required
+              placeholder="Describe the type of person and connection you’re open to. Think energy, lifestyle and expectations."></textarea>
+            <div class="form-tip">
+              <span class="pill-hint">Tip</span> Be clear and honest, while remaining discreet. This helps create aligned matches from the start.
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Occupation</label>
+              <input type="text" class="form-input" id="occupation" name="occupation" placeholder="e.g. Finance, Creative, Entrepreneur">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Industry</label>
+              <input type="text" class="form-input" id="industry" name="industry" placeholder="Optional, if you’d like to share.">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Education</label>
+              <select class="form-select" id="education" name="education">
+                <option value="">Select (optional)</option>
+                <option value="high_school">High School</option>
+                <option value="trade_certification">Trade / Certification</option>
+                <option value="bachelor">Bachelor Degree</option>
+                <option value="postgraduate">Postgraduate</option>
+                <option value="doctorate">Doctorate</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Annual Income (optional)</label>
+              <select class="form-select" id="income" name="income">
+                <option value="">Prefer not to say</option>
+                <option value="under_100k">Under $100k</option>
+                <option value="100_200k">$100k–$200k</option>
+                <option value="200_400k">$200k–$400k</option>
+                <option value="400_800k">$400k–$800k</option>
+                <option value="800k_plus">$800k+</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-tip">
+            Financial details are always optional. Only share what you’re comfortable with—your profile can still stand out without them.
+          </div>
+        </section>
+
+        <div id="formErrorSummary" class="form-error-summary"></div>
+          Please complete the highlighted fields to continue.
+        </div>
+
+        <div class="form-actions">
+          <a href="{% url 'create_profile_step1' %}" class="btn btn-secondary">Back to Step 1</a>
+          <button type="submit" class="btn btn-primary">Continue to Step 3</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Gold particles (same as Step 1)
+      function createGoldParticles() {
+        const container = document.getElementById('gold-particles');
+        for (let i = 0; i < 14; i++) {
+          const p = document.createElement('div');
+          p.className = 'gold-particle';
+          p.style.left = Math.random() * 100 + 'vw';
+          p.style.top = Math.random() * 100 + 'vh';
+          p.style.animationDelay = (Math.random() * 6) + 's';
+          container.appendChild(p);
+        }
+      }
+
+      const style = document.createElement('style');
+      style.textContent = `
+        .gold-particle {
+          position: absolute;
+          width: 3px;
+          height: 3px;
+          background: radial-gradient(circle, #ffe6b3 0%, #cdad7c 40%, transparent 70%);
+          border-radius: 50%;
+          animation: floatParticle 6s ease-in-out infinite;
+          opacity: 0.6;
+          pointer-events: none;
+        }
+        @keyframes floatParticle {
+          0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+          50% { opacity: 0.9; }
+          25%, 75% { transform: translateY(-20px) translateX(12px); }
+        }
+      `;
+      document.head.appendChild(style);
+      createGoldParticles();
+
+      const form = document.getElementById('profileFormStep2');
+      const aboutYou = document.getElementById('aboutYou');
+      const lookingFor = document.getElementById('lookingFor');
+      const fgAbout = document.getElementById('fg_about_you');
+      const fgLooking = document.getElementById('fg_looking_for');
+      const errorSummary = document.getElementById('formErrorSummary');
+
+      function clearErrors() {
+        [fgAbout, fgLooking].forEach(g => g && g.classList.remove('field-error'));
+        if (errorSummary) errorSummary.style.display = 'none';
+      }
+
+      function validateRequiredOnSubmit() {
+        clearErrors();
+        let hasError = false;
+        let firstErrorGroup = null;
+
+        if (!aboutYou.value.trim()) {
+          hasError = true;
+          fgAbout.classList.add('field-error');
+          if (!firstErrorGroup) firstErrorGroup = fgAbout;
+        }
+
+        if (!lookingFor.value.trim()) {
+          hasError = true;
+          fgLooking.classList.add('field-error');
+          if (!firstErrorGroup) firstErrorGroup = fgLooking;
+        }
+
+        if (hasError) {
+          if (errorSummary) errorSummary.style.display = 'block';
+          if (firstErrorGroup && firstErrorGroup.scrollIntoView) {
+            firstErrorGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+
+        return !hasError;
+      }
+
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          if (!validateRequiredOnSubmit()) {
+            e.preventDefault();
+          }
+        });
+
+        [aboutYou, lookingFor].forEach(el => {
+          el.addEventListener('input', () => {
+            if (el.value.trim()) {
+              const group = el.id === 'aboutYou' ? fgAbout : fgLooking;
+              group.classList.remove('field-error');
+            }
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>
+

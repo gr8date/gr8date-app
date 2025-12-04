@@ -1,0 +1,522 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Create Profile - Step 1 - Synergy</title>
+<meta name="description" content="Create your elite dating profile - Step 1: Basic Information" />
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    /* Premium gold color palette */
+    --brand: #cdad7c;
+    --brand-dark: #a88a5a;
+    --brand-light: #e8d8b8;
+    --brand-glow: rgba(205, 173, 119, 0.3);
+    
+    /* Sophisticated backgrounds */
+    --bg-dark: #0a0a0a;
+    --bg-deep: #121212;
+    --bg-charcoal: #1a1a1a;
+    --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+    
+    --card: rgba(255, 255, 255, 0.03);
+    --card-hover: rgba(255, 255, 255, 0.06);
+    --text: #ffffff;
+    --text-muted: #a0a0a0;
+    --text-gold: #cdad7c;
+    --border: rgba(205, 173, 119, 0.3);
+    --radius: 20px;
+    --shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    --glow: 0 0 60px rgba(205, 173, 119, 0.2);
+    --brand-nav-link: #cdad7f;
+  }
+
+  * { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+  }
+  
+  body {
+    background: var(--bg-gradient);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  /* Premium Header */
+  .premium-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 1000;
+    padding: 1rem 0;
+  }
+
+  .nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Logo Styling - Updated to match specifications */
+  .script-logo {
+    font-family: 'Allura', cursive;
+    font-size: 42px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #CDAD7F;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.1);
+    display: inline-block;
+    margin: 0;
+    padding: 5px 0;
+    transition: all 0.3s ease;
+  }
+
+  .script-logo:hover {
+    transform: scale(1.05);
+    text-shadow: 1px 1px 15px rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Progress Bar */
+  .progress-container {
+    max-width: 800px;
+    margin: 100px auto 2rem;
+    padding: 0 1.5rem;
+  }
+
+  .progress-bar {
+    background: var(--card);
+    height: 8px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    width: 25%;
+  }
+
+  .progress-text {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  /* Profile Creation Container */
+  .profile-create-container {
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    padding: 0 1.5rem;
+  }
+
+  .create-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 3rem;
+    transition: all 0.4s ease;
+  }
+
+  .create-card:hover {
+    box-shadow: var(--shadow), var(--glow);
+    border-color: var(--brand);
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .section-subtitle {
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 1.1rem;
+  }
+
+  .section-title .gold-accent {
+    color: var(--text-gold);
+    font-weight: 600;
+  }
+
+  /* Form Styles */
+  .form-group {
+    margin-bottom: 2rem;
+  }
+
+  .form-label {
+    display: block;
+    color: var(--text-gold);
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+  }
+
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    color: var(--text);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+  }
+
+  .form-textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--text-gold);
+    box-shadow: 0 0 0 3px rgba(205, 173, 119, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  /* Photo Upload */
+  .photo-upload-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .photo-upload-item {
+    aspect-ratio: 3/4;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed var(--border);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .photo-upload-item:hover {
+    border-color: var(--text-gold);
+    background: rgba(205, 173, 119, 0.05);
+  }
+
+  .photo-upload-item.main {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  .upload-icon {
+    color: var(--text-muted);
+    font-size: 2rem;
+    transition: color 0.3s ease;
+  }
+
+  .photo-upload-item:hover .upload-icon {
+    color: var(--text-gold);
+  }
+
+  .upload-text {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+
+  /* Form Actions */
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn {
+    padding: 12px 30px;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    box-shadow: var(--glow);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(205, 173, 119, 0.3);
+  }
+
+  /* Tips & Guidance */
+  .form-tip {
+    background: rgba(205, 173, 119, 0.1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    margin-top: 1rem;
+    color: var(--text-gold);
+    font-size: 0.9rem;
+  }
+
+  .tip-icon {
+    margin-right: 0.5rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .premium-header {
+      padding: 0.8rem 0;
+    }
+    
+    .nav-container {
+      padding: 0 1rem;
+    }
+    
+    .script-logo {
+      font-size: 36px;
+    }
+    
+    .progress-container {
+      margin-top: 80px;
+    }
+    
+    .create-card {
+      padding: 2rem 1.5rem;
+    }
+    
+    .section-title {
+      font-size: 1.7rem;
+    }
+    
+    .photo-upload-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .photo-upload-item.main {
+      grid-column: span 2;
+    }
+    
+    .form-actions {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .btn {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>
+    
+</head>
+<body>
+  <div id="gold-particles"></div>
+  
+  <header class="premium-header">
+    <div class="nav-container">
+      <a href="{% url 'index' %}" class="script-logo" itemprop="url">Synergy</a>
+    </div>
+  </header>
+
+  <!-- Progress Bar -->
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+    </div>
+    <div class="progress-text">Step 1 of 4: Basic Information & Photos</div>
+  </div>
+
+  <main class="profile-create-container">
+    <div class="create-card">
+      <h1 class="section-title">Basic <span class="gold-accent">Information</span></h1>
+      <p class="section-subtitle">Let's start with the essentials to create your elite profile</p>
+
+      <form id="profileFormStep1">
+        <!-- Photo Upload Section -->
+        <div class="form-group">
+          <label class="form-label">Profile Photos</label>
+          <p class="upload-text">Add at least 2 photos to increase your matches by 300%</p>
+          <div class="photo-upload-grid">
+            <div class="photo-upload-item main">
+              <div>
+                <div class="upload-icon">📷</div>
+                <div class="upload-text">Main Photo</div>
+              </div>
+            </div>
+            <div class="photo-upload-item">
+              <div class="upload-icon">+</div>
+            </div>
+            <div class="photo-upload-item">
+              <div class="upload-icon">+</div>
+            </div>
+            <div class="photo-upload-item">
+              <div class="upload-icon">+</div>
+            </div>
+          </div>
+          <div class="form-tip">
+            <span class="tip-icon">💡</span>
+            Use clear, recent photos that show your face and personality
+          </div>
+        </div>
+
+        <!-- Basic Information -->
+        <div class="form-group">
+          <label class="form-label">Basic Information</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <input type="text" class="form-input" placeholder="First Name" required>
+            </div>
+            <div>
+              <input type="number" class="form-input" placeholder="Age" min="18" max="99" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Location</label>
+          <select class="form-select" required>
+            <option value="">Select your city</option>
+            <option value="sydney">Sydney, Australia</option>
+            <option value="melbourne">Melbourne, Australia</option>
+            <option value="brisbane">Brisbane, Australia</option>
+            <option value="perth">Perth, Australia</option>
+            <option value="auckland">Auckland, New Zealand</option>
+            <option value="wellington">Wellington, New Zealand</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Occupation</label>
+          <input type="text" class="form-input" placeholder="What do you do?" required>
+        </div>
+
+        <!-- Quick Bio -->
+        <div class="form-group">
+          <label class="form-label">Quick Introduction</label>
+          <textarea class="form-textarea" placeholder="Briefly describe yourself in 1-2 sentences..." maxlength="150"></textarea>
+          <div class="form-tip">
+            <span class="tip-icon">💫</span>
+            This will be shown on your profile card. Keep it engaging and authentic.
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+          <a href="{% url 'create_profile_step2' %}" class="btn btn-primary">Continue to Step 2</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Create gold particles
+      function createGoldParticles() {
+        const container = document.getElementById('gold-particles');
+        for (let i = 0; i < 15; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'gold-particle';
+          particle.style.left = Math.random() * 100 + 'vw';
+          particle.style.top = Math.random() * 100 + 'vh';
+          particle.style.animationDelay = Math.random() * 6 + 's';
+          container.appendChild(particle);
+        }
+      }
+      
+      createGoldParticles();
+
+      // Photo upload functionality
+      const photoItems = document.querySelectorAll('.photo-upload-item');
+      photoItems.forEach(item => {
+        item.addEventListener('click', function() {
+          // In a real app, this would trigger file input
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = 'image/*';
+          input.onchange = function(e) {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                item.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 13px;">`;
+              };
+              reader.readAsDataURL(file);
+            }
+          };
+          input.click();
+        });
+      });
+    });
+
+    // Add gold particle styles
+    const style = document.createElement('style');
+    style.textContent = `
+      .gold-particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: var(--brand);
+        border-radius: 50%;
+        animation: floatParticle 6s ease-in-out infinite;
+        opacity: 0.6;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      @keyframes floatParticle {
+        0%, 100% {
+          transform: translateY(0px) translateX(0px);
+          opacity: 0;
+        }
+        50% {
+          opacity: 0.8;
+        }
+        25%, 75% {
+          transform: translateY(-20px) translateX(10px);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

@@ -1,0 +1,861 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Create Profile - Step 3 - Synergy</title>
+<meta name="description" content="Create your elite dating profile - Step 3: Preferences & Interests" />
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --brand: #cdad7c;
+    --brand-dark: #a88a5a;
+    --brand-light: #e8d8b8;
+    --brand-glow: rgba(205, 173, 119, 0.3);
+    --bg-dark: #0a0a0a;
+    --bg-deep: #121212;
+    --bg-charcoal: #1a1a1a;
+    --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+    --card: rgba(255, 255, 255, 0.03);
+    --card-hover: rgba(255, 255, 255, 0.06);
+    --text: #ffffff;
+    --text-muted: #a0a0a0;
+    --text-gold: #cdad7c;
+    --border: rgba(205, 173, 119, 0.3);
+    --radius: 20px;
+    --shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    --glow: 0 0 60px rgba(205, 173, 119, 0.2);
+    --brand-nav-link: #cdad7f;
+    --error: #ff6b6b;
+    --success: #51cf66;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    background: var(--bg-gradient);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  .premium-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 1000;
+    padding: 1rem 0;
+  }
+
+  .nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .script-logo {
+    font-family: 'Allura', cursive;
+    font-size: 42px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #CDAD7F;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.1);
+    display: inline-block;
+    margin: 0;
+    padding: 5px 0;
+    transition: all 0.3s ease;
+  }
+
+  .script-logo:hover {
+    transform: scale(1.05);
+    text-shadow: 1px 1px 15px rgba(255, 255, 255, 0.2);
+  }
+  
+  .progress-container {
+    max-width: 800px;
+    margin: 100px auto 2rem;
+    padding: 0 1.5rem;
+  }
+
+  .progress-bar {
+    background: var(--card);
+    height: 8px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    border-radius: 10px;
+    width: 75%;
+  }
+
+  .progress-text {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .profile-create-container {
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    padding: 0 1.5rem;
+  }
+
+  .create-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 3rem;
+    transition: all 0.4s ease;
+  }
+
+  .create-card:hover {
+    box-shadow: var(--shadow), var(--glow);
+    border-color: var(--brand);
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .section-subtitle {
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 1.1rem;
+  }
+
+  .section-title .gold-accent {
+    color: var(--text-gold);
+    font-weight: 600;
+  }
+
+  .form-group {
+    margin-bottom: 2rem;
+  }
+
+  .form-label {
+    display: block;
+    color: var(--text-gold);
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+  }
+
+  .form-label .required {
+    color: var(--error);
+  }
+
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    color: var(--text);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+  }
+
+  .form-textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--text-gold);
+    box-shadow: 0 0 0 3px rgba(205, 173, 119, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .tag-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .tag-item {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    padding: 0.8rem 1.2rem;
+    border-radius: 25px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+  }
+
+  .tag-item:hover {
+    background: rgba(205, 173, 119, 0.1);
+    color: var(--text-gold);
+  }
+
+  .tag-item.selected {
+    background: rgba(205, 173, 119, 0.2);
+    color: var(--text-gold);
+    border-color: var(--text-gold);
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn {
+    padding: 12px 30px;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    box-shadow: var(--glow);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(205, 173, 119, 0.3);
+  }
+
+  .form-tip {
+    background: rgba(205, 173, 119, 0.1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    margin-top: 1rem;
+    color: var(--text-gold);
+    font-size: 0.9rem;
+  }
+
+  .validation-message {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .validation-message.error {
+    color: var(--error);
+  }
+
+  /* NEW: Dual range slider styles */
+  .range-wrapper {
+    position: relative;
+    height: 40px;
+    margin: 1rem 0;
+  }
+  
+  .range-track {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: var(--card);
+    border-radius: 3px;
+    transform: translateY(-50%);
+  }
+  
+  .range-fill {
+    position: absolute;
+    height: 6px;
+    background: var(--brand);
+    border-radius: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .range-slider {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 20px;
+    background: transparent;
+    -webkit-appearance: none;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 2;
+  }
+  
+  .range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--brand);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--brand-light);
+    pointer-events: all;
+  }
+  
+  .range-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  
+  .range-value {
+    color: var(--text-gold);
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  
+  .location-options {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .location-option {
+    flex: 1;
+    min-width: 120px;
+  }
+  
+  .location-btn {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  
+  .location-btn:hover {
+    background: rgba(205, 173, 119, 0.1);
+    color: var(--text-gold);
+  }
+  
+  .location-btn.selected {
+    background: rgba(205, 173, 119, 0.2);
+    color: var(--text-gold);
+    border-color: var(--text-gold);
+  }
+  
+  .preference-summary {
+    background: rgba(205, 173, 119, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  
+  .summary-label {
+    color: var(--text-muted);
+  }
+  
+  .summary-value {
+    color: var(--text-gold);
+    font-weight: 500;
+  }
+
+  @media (max-width: 768px) {
+    .premium-header { padding: 0.8rem 0; }
+    .nav-container { padding: 0 1rem; }
+    .script-logo { font-size: 36px; }
+    .progress-container { margin-top: 80px; }
+    .create-card { padding: 2rem 1.5rem; }
+    .section-title { font-size: 1.7rem; }
+    .form-actions { flex-direction: column; gap: 1rem; }
+    .btn { width: 100%; text-align: center; }
+    .tag-grid { gap: 0.6rem; }
+    .tag-item { padding: 0.6rem 1rem; font-size: 0.85rem; }
+    .location-options { flex-direction: column; }
+    .location-option { min-width: auto; }
+  }
+</style>
+    
+</head>
+<body>
+  <div id="gold-particles"></div>
+  
+  <header class="premium-header">
+    <div class="nav-container">
+      <a href="{% url 'index' %}" class="script-logo" itemprop="url">Synergy</a>
+    </div>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+    </div>
+    <div class="progress-text">Step 3 of 4: Preferences & Interests</div>
+  </div>
+
+  <main class="profile-create-container">
+    <div class="create-card">
+      <h1 class="section-title">Preferences & <span class="gold-accent">Interests</span></h1>
+      <p class="section-subtitle">Define what you're looking for and what you enjoy</p>
+
+      <form id="profileFormStep3">
+        <!-- Arrangement Preferences -->
+        <div class="form-group">
+          <label class="form-label">Arrangement Preferences <span class="required">*</span></label>
+          <div class="tag-grid" id="arrangementPreferences">
+            <div class="tag-item" data-value="casual">Casual Dating</div>
+            <div class="tag-item" data-value="long_term">Long Term Relationship</div>
+            <div class="tag-item" data-value="short_term">Short Term</div>
+            <div class="tag-item" data-value="travel">Travel Partner</div>
+            <div class="tag-item" data-value="discuss">Discuss When Meet</div>
+            <div class="tag-item" data-value="monogamous">Monogamous</div>
+            <div class="tag-item" data-value="marriage">Marriage Minded</div>
+            <div class="tag-item" data-value="open">Open Relationship</div>
+          </div>
+          <div class="validation-message" id="arrangementValidation"></div>
+        </div>
+
+        <!-- Age Preference - IMPROVED: Dual slider -->
+        <div class="form-group">
+          <label class="form-label">Preferred Age Range <span class="required">*</span></label>
+          
+          <div class="range-wrapper">
+            <div class="range-track"></div>
+            <div class="range-fill" id="ageRangeFill"></div>
+            <input type="range" class="range-slider" id="ageMin" min="18" max="65" value="25">
+            <input type="range" class="range-slider" id="ageMax" min="18" max="65" value="45">
+          </div>
+          
+          <div class="range-display">
+            <span class="range-value" id="ageMinDisplay">25</span>
+            <span style="color: var(--text-muted)">to</span>
+            <span class="range-value" id="ageMaxDisplay">45</span>
+            <span style="color: var(--text-muted); font-size: 0.8rem;">years old</span>
+          </div>
+        </div>
+
+        <!-- Location Preference - NEW: Enhanced options -->
+        <div class="form-group">
+          <label class="form-label">Location Preference <span class="required">*</span></label>
+          
+          <div class="location-options">
+            <div class="location-option">
+              <button type="button" class="location-btn" data-value="city">Same City</button>
+            </div>
+            <div class="location-option">
+              <button type="button" class="location-btn" data-value="state">State Wide</button>
+            </div>
+            <div class="location-option">
+              <button type="button" class="location-btn" data-value="country">Country Wide</button>
+            </div>
+            <div class="location-option">
+              <button type="button" class="location-btn" data-value="international">International</button>
+            </div>
+          </div>
+          
+          <div class="validation-message" id="locationValidation"></div>
+          
+          <!-- Distance slider (shown when city is selected) -->
+          <div id="distanceSection" style="display: none; margin-top: 1rem;">
+            <label style="color: var(--text-muted); font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">
+              Maximum distance from your location:
+            </label>
+            <div class="range-wrapper">
+              <div class="range-track"></div>
+              <div class="range-fill" id="distanceRangeFill"></div>
+              <input type="range" class="range-slider" id="distanceRange" min="5" max="100" value="25">
+            </div>
+            <div class="range-display">
+              <span class="range-value" id="distanceDisplay">25km</span>
+              <span style="color: var(--text-muted); font-size: 0.8rem;">maximum distance</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lifestyle & Interests -->
+        <div class="form-group">
+          <label class="form-label">Lifestyle & Interests</label>
+          <div class="tag-grid" id="lifestyleInterests">
+            <div class="tag-item" data-value="fine_dining">Fine Dining</div>
+            <div class="tag-item" data-value="travel">Travel</div>
+            <div class="tag-item" data-value="wine">Wine Tasting</div>
+            <div class="tag-item" data-value="art">Art Galleries</div>
+            <div class="tag-item" data-value="adventure">Adventure Sports</div>
+            <div class="tag-item" data-value="yoga">Yoga & Wellness</div>
+            <div class="tag-item" data-value="music">Music Concerts</div>
+            <div class="tag-item" data-value="cooking">Cooking</div>
+            <div class="tag-item" data-value="reading">Reading</div>
+            <div class="tag-item" data-value="photography">Photography</div>
+            <div class="tag-item" data-value="golf">Golf</div>
+            <div class="tag-item" data-value="sailing">Sailing</div>
+            <div class="tag-item" data-value="hiking">Hiking</div>
+            <div class="tag-item" data-value="theater">Theater</div>
+            <div class="tag-item" data-value="fashion">Fashion</div>
+            <div class="tag-item" data-value="technology">Technology</div>
+          </div>
+        </div>
+
+        <!-- What You're Looking For -->
+        <div class="form-group">
+          <label class="form-label">What You're Looking For</label>
+          <textarea class="form-textarea" name="looking_for" placeholder="Describe your ideal match and the type of connection you're seeking..." maxlength="500"></textarea>
+          <div class="form-tip">
+            Be specific about the qualities, values, and lifestyle you're seeking in a partner.
+          </div>
+        </div>
+
+        <!-- Preference Summary - NEW: Live summary -->
+        <div class="preference-summary">
+          <div class="summary-item">
+            <span class="summary-label">Age Range:</span>
+            <span class="summary-value" id="summaryAge">25-45</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Location:</span>
+            <span class="summary-value" id="summaryLocation">Not selected</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Arrangements:</span>
+            <span class="summary-value" id="summaryArrangements">0 selected</span>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <a href="{% url 'create_profile_step2' %}" class="btn btn-secondary">Back to Step 2</a>
+          <button type="button" id="continueBtn" class="btn btn-primary" disabled>Continue to Step 4</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Create gold particles
+      function createGoldParticles() {
+        const container = document.getElementById('gold-particles');
+        for (let i = 0; i < 15; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'gold-particle';
+          particle.style.left = Math.random() * 100 + 'vw';
+          particle.style.top = Math.random() * 100 + 'vh';
+          particle.style.animationDelay = Math.random() * 6 + 's';
+          container.appendChild(particle);
+        }
+      }
+      
+      createGoldParticles();
+
+      // TEMPORARY: For development/testing - remove in production
+      function checkStep2Complete() {
+        const step2Data = sessionStorage.getItem('profileStep2');
+        if (!step2Data) {
+          // Create mock data for testing
+          const mockStep2Data = {
+            my_story: "This is a test story for development purposes.",
+            personality_traits: ["ambitious", "adventurous"],
+            communication_style: ["thoughtful"],
+            life_priorities: ["career", "travel"],
+            core_values: ["honesty", "growth"]
+          };
+          sessionStorage.setItem('profileStep2', JSON.stringify(mockStep2Data));
+          console.log('Created mock Step 2 data for testing');
+        }
+        return true;
+      }
+
+      // Tag selection functionality
+      const tagItems = document.querySelectorAll('.tag-item');
+      tagItems.forEach(tag => {
+        tag.addEventListener('click', function() {
+          this.classList.toggle('selected');
+          validateForm();
+          saveFormData();
+          updateSummary();
+        });
+      });
+
+      // IMPROVED: Dual range slider for age
+      const ageMin = document.getElementById('ageMin');
+      const ageMax = document.getElementById('ageMax');
+      const ageMinDisplay = document.getElementById('ageMinDisplay');
+      const ageMaxDisplay = document.getElementById('ageMaxDisplay');
+      const ageRangeFill = document.getElementById('ageRangeFill');
+      
+      function updateAgeRange() {
+        const min = parseInt(ageMin.value);
+        const max = parseInt(ageMax.value);
+        
+        // Ensure min doesn't exceed max
+        if (min > max) {
+          ageMin.value = max;
+          updateAgeRange();
+          return;
+        }
+        
+        ageMinDisplay.textContent = min;
+        ageMaxDisplay.textContent = max;
+        
+        // Update fill track
+        const minPercent = ((min - 18) / (65 - 18)) * 100;
+        const maxPercent = ((max - 18) / (65 - 18)) * 100;
+        ageRangeFill.style.left = minPercent + '%';
+        ageRangeFill.style.width = (maxPercent - minPercent) + '%';
+        
+        updateSummary();
+        saveFormData();
+      }
+      
+      ageMin.addEventListener('input', updateAgeRange);
+      ageMax.addEventListener('input', updateAgeRange);
+      
+      // NEW: Location preference handling
+      const locationBtns = document.querySelectorAll('.location-btn');
+      const distanceSection = document.getElementById('distanceSection');
+      const distanceRange = document.getElementById('distanceRange');
+      const distanceDisplay = document.getElementById('distanceDisplay');
+      const distanceRangeFill = document.getElementById('distanceRangeFill');
+      let selectedLocation = '';
+      
+      locationBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          // Remove selection from all buttons
+          locationBtns.forEach(b => b.classList.remove('selected'));
+          // Add selection to clicked button
+          this.classList.add('selected');
+          
+          selectedLocation = this.getAttribute('data-value');
+          
+          // Show/hide distance slider
+          if (selectedLocation === 'city') {
+            distanceSection.style.display = 'block';
+          } else {
+            distanceSection.style.display = 'none';
+          }
+          
+          validateForm();
+          updateSummary();
+          saveFormData();
+        });
+      });
+      
+      // Distance range slider
+      distanceRange.addEventListener('input', function() {
+        const value = this.value;
+        distanceDisplay.textContent = value + 'km';
+        
+        // Update fill track
+        const percent = ((value - 5) / (100 - 5)) * 100;
+        distanceRangeFill.style.width = percent + '%';
+        
+        updateSummary();
+        saveFormData();
+      });
+      
+      // Initialize distance fill
+      distanceRange.dispatchEvent(new Event('input'));
+      
+      // Textarea auto-save
+      const lookingForTextarea = document.querySelector('textarea[name="looking_for"]');
+      lookingForTextarea.addEventListener('input', function() {
+        saveFormData();
+      });
+
+      // IMPROVED: Update preference summary
+      function updateSummary() {
+        document.getElementById('summaryAge').textContent = 
+          ageMinDisplay.textContent + '-' + ageMaxDisplay.textContent;
+        
+        const arrangementCount = document.querySelectorAll('#arrangementPreferences .tag-item.selected').length;
+        document.getElementById('summaryArrangements').textContent = 
+          arrangementCount + ' selected';
+        
+        if (selectedLocation) {
+          let locationText = selectedLocation.charAt(0).toUpperCase() + selectedLocation.slice(1).replace('_', ' ');
+          if (selectedLocation === 'city') {
+            locationText += ` (${distanceRange.value}km)`;
+          }
+          document.getElementById('summaryLocation').textContent = locationText;
+        }
+      }
+      
+      // IMPROVED: Form validation
+      function validateForm() {
+        const continueBtn = document.getElementById('continueBtn');
+        const arrangementSelected = document.querySelectorAll('#arrangementPreferences .tag-item.selected').length > 0;
+        const locationSelected = selectedLocation !== '';
+        const arrangementValidation = document.getElementById('arrangementValidation');
+        const locationValidation = document.getElementById('locationValidation');
+        
+        let isValid = true;
+        
+        if (!arrangementSelected) {
+          arrangementValidation.textContent = 'Please select at least one arrangement preference';
+          arrangementValidation.className = 'validation-message error';
+          isValid = false;
+        } else {
+          arrangementValidation.textContent = '';
+        }
+        
+        if (!locationSelected) {
+          locationValidation.textContent = 'Please select a location preference';
+          locationValidation.className = 'validation-message error';
+          isValid = false;
+        } else {
+          locationValidation.textContent = '';
+        }
+        
+        continueBtn.disabled = !isValid;
+      }
+      
+      // IMPROVED: Save form data
+      function saveFormData() {
+        const formData = {
+          arrangement_preferences: Array.from(document.querySelectorAll('#arrangementPreferences .tag-item.selected')).map(tag => tag.getAttribute('data-value')),
+          lifestyle_interests: Array.from(document.querySelectorAll('#lifestyleInterests .tag-item.selected')).map(tag => tag.getAttribute('data-value')),
+          looking_for: lookingForTextarea.value,
+          age_min: ageMin.value,
+          age_max: ageMax.value,
+          location_preference: selectedLocation,
+          max_distance: selectedLocation === 'city' ? distanceRange.value : null
+        };
+        sessionStorage.setItem('profileStep3', JSON.stringify(formData));
+      }
+      
+      // IMPROVED: Load saved data
+      function loadFormData() {
+        const savedData = sessionStorage.getItem('profileStep3');
+        if (savedData) {
+          const formData = JSON.parse(savedData);
+          
+          // Load arrangement preferences
+          formData.arrangement_preferences?.forEach(value => {
+            const tag = document.querySelector(`#arrangementPreferences .tag-item[data-value="${value}"]`);
+            if (tag) tag.classList.add('selected');
+          });
+
+          // Load lifestyle interests
+          formData.lifestyle_interests?.forEach(value => {
+            const tag = document.querySelector(`#lifestyleInterests .tag-item[data-value="${value}"]`);
+            if (tag) tag.classList.add('selected');
+          });
+
+          // Load age range
+          if (formData.age_min && formData.age_max) {
+            ageMin.value = formData.age_min;
+            ageMax.value = formData.age_max;
+            updateAgeRange();
+          }
+          
+          // Load location preference
+          if (formData.location_preference) {
+            const btn = document.querySelector(`.location-btn[data-value="${formData.location_preference}"]`);
+            if (btn) {
+              btn.click(); // This will trigger all the associated logic
+              if (formData.max_distance) {
+                distanceRange.value = formData.max_distance;
+                distanceRange.dispatchEvent(new Event('input'));
+              }
+            }
+          }
+
+          // Load textarea
+          lookingForTextarea.value = formData.looking_for || '';
+        }
+      }
+
+      // Continue button handler
+      document.getElementById('continueBtn').addEventListener('click', function() {
+        if (!this.disabled) {
+          saveFormData();
+          window.location.href = "{% url 'create_profile_step4' %}";
+        }
+      });
+
+      // Initialize
+      if (checkStep2Complete()) {
+        updateAgeRange(); // Set initial age range display
+        loadFormData();
+        validateForm();
+        updateSummary();
+      }
+    });
+
+    const style = document.createElement('style');
+    style.textContent = `
+      .gold-particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: var(--brand);
+        border-radius: 50%;
+        animation: floatParticle 6s ease-in-out infinite;
+        opacity: 0.6;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      @keyframes floatParticle {
+        0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0; }
+        50% { opacity: 0.8; }
+        25%, 75% { transform: translateY(-20px) translateX(10px); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

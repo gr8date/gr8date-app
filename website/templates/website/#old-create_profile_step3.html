@@ -1,0 +1,484 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Create Profile - Step 3 - Synergy</title>
+<meta name="description" content="Create your elite dating profile - Step 3: Preferences & Interests" />
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+
+<style>
+  /* Same CSS as Step 1 - just change progress width to 75% */
+  :root {
+    --brand: #cdad7c;
+    --brand-dark: #a88a5a;
+    --brand-light: #e8d8b8;
+    --brand-glow: rgba(205, 173, 119, 0.3);
+    --bg-dark: #0a0a0a;
+    --bg-deep: #121212;
+    --bg-charcoal: #1a1a1a;
+    --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+    --card: rgba(255, 255, 255, 0.03);
+    --card-hover: rgba(255, 255, 255, 0.06);
+    --text: #ffffff;
+    --text-muted: #a0a0a0;
+    --text-gold: #cdad7c;
+    --border: rgba(205, 173, 119, 0.3);
+    --radius: 20px;
+    --shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    --glow: 0 0 60px rgba(205, 173, 119, 0.2);
+    --brand-nav-link: #cdad7f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    background: var(--bg-gradient);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  .premium-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 1000;
+    padding: 1rem 0;
+  }
+
+  .nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Logo Styling - Updated to match specifications */
+  .script-logo {
+    font-family: 'Allura', cursive;
+    font-size: 42px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #CDAD7F;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.1);
+    display: inline-block;
+    margin: 0;
+    padding: 5px 0;
+    transition: all 0.3s ease;
+  }
+
+  .script-logo:hover {
+    transform: scale(1.05);
+    text-shadow: 1px 1px 15px rgba(255, 255, 255, 0.2);
+  }
+  
+  .progress-container {
+    max-width: 800px;
+    margin: 100px auto 2rem;
+    padding: 0 1.5rem;
+  }
+
+  .progress-bar {
+    background: var(--card);
+    height: 8px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    border-radius: 10px;
+    width: 75%;
+  }
+
+  .progress-text {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .profile-create-container {
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    padding: 0 1.5rem;
+  }
+
+  .create-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 3rem;
+    transition: all 0.4s ease;
+  }
+
+  .create-card:hover {
+    box-shadow: var(--shadow), var(--glow);
+    border-color: var(--brand);
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .section-subtitle {
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 1.1rem;
+  }
+
+  .section-title .gold-accent {
+    color: var(--text-gold);
+    font-weight: 600;
+  }
+
+  .form-group {
+    margin-bottom: 2rem;
+  }
+
+  .form-label {
+    display: block;
+    color: var(--text-gold);
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+  }
+
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    color: var(--text);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+  }
+
+  .form-textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--text-gold);
+    box-shadow: 0 0 0 3px rgba(205, 173, 119, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .tag-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .tag-item {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    padding: 0.8rem 1.2rem;
+    border-radius: 25px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+  }
+
+  .tag-item:hover {
+    background: rgba(205, 173, 119, 0.1);
+    color: var(--text-gold);
+  }
+
+  .tag-item.selected {
+    background: rgba(205, 173, 119, 0.2);
+    color: var(--text-gold);
+    border-color: var(--text-gold);
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn {
+    padding: 12px 30px;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    box-shadow: var(--glow);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(205, 173, 119, 0.3);
+  }
+
+  .form-tip {
+    background: rgba(205, 173, 119, 0.1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    margin-top: 1rem;
+    color: var(--text-gold);
+    font-size: 0.9rem;
+  }
+
+  .tip-icon {
+    margin-right: 0.5rem;
+  }
+
+  .range-container {
+    padding: 1rem 0;
+  }
+
+  .range-slider {
+    width: 100%;
+    height: 6px;
+    background: var(--card);
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+  }
+
+  .range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--brand);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--brand-light);
+  }
+
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .premium-header { padding: 0.8rem 0; }
+    .nav-container { padding: 0 1rem; }
+    .script-logo { font-size: 36px; }
+    .progress-container { margin-top: 80px; }
+    .create-card { padding: 2rem 1.5rem; }
+    .section-title { font-size: 1.7rem; }
+    .form-actions { flex-direction: column; gap: 1rem; }
+    .btn { width: 100%; text-align: center; }
+  }
+</style>
+    
+</head>
+<body>
+  <div id="gold-particles"></div>
+  
+  <header class="premium-header">
+    <div class="nav-container">
+      <a href="{% url 'index' %}" class="script-logo" itemprop="url">Synergy</a>
+    </div>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+    </div>
+    <div class="progress-text">Step 3 of 4: Preferences & Interests</div>
+  </div>
+
+  <main class="profile-create-container">
+    <div class="create-card">
+      <h1 class="section-title">Preferences & <span class="gold-accent">Interests</span></h1>
+      <p class="section-subtitle">Define what you're looking for and what you enjoy</p>
+
+      <form id="profileFormStep3">
+        <!-- Arrangement Preferences -->
+        <div class="form-group">
+          <label class="form-label">Arrangement Preferences</label>
+          <div class="tag-grid">
+            <div class="tag-item selected">Casual Dating</div>
+            <div class="tag-item">Long Term Relationship</div>
+            <div class="tag-item">Short Term</div>
+            <div class="tag-item">Travel Partner</div>
+            <div class="tag-item">Discuss When Meet</div>
+            <div class="tag-item">Monogamous</div>
+            <div class="tag-item">Marriage Minded</div>
+            <div class="tag-item">Open Relationship</div>
+          </div>
+        </div>
+
+        <!-- Lifestyle & Interests -->
+        <div class="form-group">
+          <label class="form-label">Lifestyle & Interests</label>
+          <div class="tag-grid">
+            <div class="tag-item selected">Fine Dining</div>
+            <div class="tag-item selected">Travel</div>
+            <div class="tag-item">Wine Tasting</div>
+            <div class="tag-item">Art Galleries</div>
+            <div class="tag-item">Adventure Sports</div>
+            <div class="tag-item">Yoga & Wellness</div>
+            <div class="tag-item">Music Concerts</div>
+            <div class="tag-item">Cooking</div>
+            <div class="tag-item">Reading</div>
+            <div class="tag-item">Photography</div>
+            <div class="tag-item">Golf</div>
+            <div class="tag-item">Sailing</div>
+            <div class="tag-item">Hiking</div>
+            <div class="tag-item">Theater</div>
+            <div class="tag-item">Fashion</div>
+            <div class="tag-item">Technology</div>
+          </div>
+        </div>
+
+        <!-- What You're Looking For -->
+        <div class="form-group">
+          <label class="form-label">What You're Looking For</label>
+          <textarea class="form-textarea" placeholder="Describe your ideal match and the type of connection you're seeking..." maxlength="500"></textarea>
+          <div class="form-tip">
+            <span class="tip-icon">💫</span>
+            Be specific about the qualities, values, and lifestyle you're seeking in a partner.
+          </div>
+        </div>
+
+        <!-- Age Preference -->
+        <div class="form-group">
+          <label class="form-label">Preferred Age Range</label>
+          <div class="range-container">
+            <input type="range" class="range-slider" min="18" max="65" value="35">
+            <div class="range-labels">
+              <span>18</span>
+              <span id="age-range">30-40</span>
+              <span>65</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Distance Preference -->
+        <div class="form-group">
+          <label class="form-label">Maximum Distance</label>
+          <div class="range-container">
+            <input type="range" class="range-slider" min="5" max="200" value="50">
+            <div class="range-labels">
+              <span>5km</span>
+              <span id="distance-range">50km</span>
+              <span>200km</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <a href="{% url 'create_profile_step2' %}" class="btn btn-secondary">Back to Step 2</a>
+          <a href="{% url 'create_profile_step4' %}" class="btn btn-primary">Continue to Step 4</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Create gold particles
+      function createGoldParticles() {
+        const container = document.getElementById('gold-particles');
+        for (let i = 0; i < 15; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'gold-particle';
+          particle.style.left = Math.random() * 100 + 'vw';
+          particle.style.top = Math.random() * 100 + 'vh';
+          particle.style.animationDelay = Math.random() * 6 + 's';
+          container.appendChild(particle);
+        }
+      }
+      
+      createGoldParticles();
+
+      // Tag selection functionality
+      const tagItems = document.querySelectorAll('.tag-item');
+      tagItems.forEach(tag => {
+        tag.addEventListener('click', function() {
+          this.classList.toggle('selected');
+        });
+      });
+
+      // Age range slider
+      const ageSlider = document.querySelector('.range-slider');
+      const ageRangeLabel = document.getElementById('age-range');
+      
+      ageSlider.addEventListener('input', function() {
+        const value = parseInt(this.value);
+        ageRangeLabel.textContent = `${value-5}-${value+5}`;
+      });
+
+      // Distance range slider
+      const distanceSlider = document.querySelectorAll('.range-slider')[1];
+      const distanceRangeLabel = document.getElementById('distance-range');
+      
+      distanceSlider.addEventListener('input', function() {
+        distanceRangeLabel.textContent = `${this.value}km`;
+      });
+    });
+
+    const style = document.createElement('style');
+    style.textContent = `
+      .gold-particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: var(--brand);
+        border-radius: 50%;
+        animation: floatParticle 6s ease-in-out infinite;
+        opacity: 0.6;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      @keyframes floatParticle {
+        0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0; }
+        50% { opacity: 0.8; }
+        25%, 75% { transform: translateY(-20px) translateX(10px); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

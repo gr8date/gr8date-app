@@ -1,0 +1,1387 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    
+    <!-- Primary Meta Tags -->
+    <title>Synergy — Elite Dating Experience | Premium Matchmaking</title>
+    <meta name="description" content="Join Synergy's exclusive dating community. Curated matches, verified profiles, and meaningful connections for sophisticated singles seeking serious relationships." />
+    <meta name="keywords" content="elite dating, premium matchmaking, sophisticated singles, meaningful relationships, verified dating, luxury dating app" />
+    <meta name="author" content="Synergy Dating" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://synergy-dating.com/" />
+    <meta property="og:title" content="Synergy — Elite Dating Experience | Premium Matchmaking" />
+    <meta property="og:description" content="Join Synergy's exclusive dating community. Curated matches and meaningful connections for sophisticated singles." />
+    <meta property="og:image" content="{% static 'images/synergy-og-image.jpg' %}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="Synergy Dating" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://synergy-dating.com/" />
+    <meta property="twitter:title" content="Synergy — Elite Dating Experience | Premium Matchmaking" />
+    <meta property="twitter:description" content="Join Synergy's exclusive dating community. Curated matches and meaningful connections for sophisticated singles." />
+    <meta property="twitter:image" content="{% static 'images/synergy-twitter-image.jpg' %}" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://synergy-dating.com/" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}" />
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" as="video" href="{% static 'videos/hero-background.mp4' %}" />
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "DatingService",
+      "name": "Synergy Dating",
+      "description": "Premium dating service for sophisticated singles seeking meaningful relationships",
+      "url": "https://synergy-dating.com",
+      "logo": "https://synergy-dating.com{% static 'images/synergy-logo.png' %}",
+      "areaServed": "Australia",
+      "serviceType": "Dating Service",
+      "audience": {
+        "@type": "PeopleAudience",
+        "audienceType": "Sophisticated singles seeking serious relationships"
+      },
+      "offers": {
+        "@type": "Offer",
+        "description": "Premium dating membership"
+      },
+      "sameAs": [
+        "https://www.instagram.com/synergydating",
+        "https://www.facebook.com/synergydating"
+      ]
+    }
+    </script>
+
+<style>
+  :root {
+    /* Premium gold color palette */
+    --brand: #cdad7c;
+    --brand-dark: #a88a5a;
+    --brand-light: #e8d8b8;
+    --brand-glow: rgba(205, 173, 119, 0.3);
+    
+    /* Sophisticated backgrounds */
+    --bg-dark: #0a0a0a;
+    --bg-deep: #121212;
+    --bg-charcoal: #1a1a1a;
+    --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+    
+    --card: rgba(255, 255, 255, 0.03);
+    --card-hover: rgba(255, 255, 255, 0.06);
+    --text: #ffffff;
+    --text-muted: #a0a0a0;
+    --text-gold: #cdad7c; /* GOLD TEXT COLOR */
+    --border: rgba(205, 173, 119, 0.3); /* GOLD BORDERS */
+    --radius: 20px;
+    --shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    --glow: 0 0 60px rgba(205, 173, 119, 0.2); /* GOLD GLOW */
+    --brand-nav-link: #cdad7f; /* Specific gold for navigation links */
+  }
+
+  * { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+  }
+  
+  body {
+    background: var(--bg-gradient);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  h1, h2, h3 {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 300;
+  }
+
+  /* Script Logo Styles */
+  .script-logo {
+    font-family: 'Allura', cursive;
+    font-size: 42px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #CDAD7F;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.1);
+    display: inline-block;
+    margin: 0;
+    padding: 5px 0;
+    transition: all 0.3s ease;
+  }
+
+  .script-logo:hover {
+    transform: scale(1.05);
+    text-shadow: 1px 1px 20px rgba(205, 173, 119, 0.3);
+  }
+
+  /* Slimmer Premium Header */
+  .premium-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 1000;
+    padding: 0.8rem 0; /* Reduced padding for slimmer header */
+    transition: all 0.4s ease;
+  }
+
+  .nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo-premium {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  .logo-container {
+    height: 50px; /* Reduced height for slimmer header */
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo-img {
+    height: 100%;
+    width: auto;
+    max-width: 200px; /* Slightly smaller logo */
+    object-fit: contain;
+  }
+  
+  .logo-placeholder {
+    height: 50px; /* Reduced height */
+    width: 180px; /* Reduced width */
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem; /* Smaller font */
+    font-weight: bold;
+    color: #000;
+    border: 2px solid var(--brand);
+    box-shadow: var(--glow);
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 10px rgba(205, 173, 119, 0.1); }
+    50% { transform: scale(1.02); box-shadow: 0 0 20px rgba(205, 173, 119, 0.3); }
+    100% { transform: scale(1); box-shadow: 0 0 10px rgba(205, 173, 119, 0.1); }
+  }
+
+  /* Desktop navigation links */
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .nav-link {
+    color: var(--brand-nav-link);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem; /* Slightly smaller font */
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 0.3rem 0; /* Reduced padding */
+  }
+
+  .nav-link:hover {
+    color: var(--text);
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--brand-nav-link);
+    transition: width 0.3s ease;
+  }
+
+  .nav-link:hover::after {
+    width: 100%;
+  }
+
+  .auth-buttons {
+    display: flex;
+    gap: 1rem; /* Reduced gap */
+    align-items: center;
+  }
+
+  .btn {
+    padding: 12px 24px; /* Reduced padding for slimmer buttons */
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem; /* Slightly smaller font */
+    letter-spacing: 0.5px;
+  }
+
+  .btn-login {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-join {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    font-weight: 700;
+    box-shadow: var(--glow);
+  }
+
+  .btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(205, 173, 119, 0.3);
+  }
+
+  /* Mobile Header Auth Buttons - OPTION 1 */
+  .mobile-header-auth {
+    display: none;
+    gap: 0.8rem;
+    align-items: center;
+  }
+
+  .btn-mobile-login {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .btn-mobile-join {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: var(--glow);
+  }
+
+  .btn-mobile-login:hover,
+  .btn-mobile-join:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Hero Section with Full Background Video - FIXED */
+  .hero-with-video {
+    position: relative;
+    height: 60vh; /* Perfect height - not too large */
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-top: 100px; /* FIX: Added padding to account for fixed header */
+  }
+
+  .hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: 1;
+    object-fit: cover;
+    filter: none;
+  }
+
+  .hero-video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      to bottom,
+      rgba(10, 10, 10, 0.4) 0%, /* Lighter overlay */
+      rgba(10, 10, 10, 0.3) 50%,
+      transparent 100%
+    );
+    z-index: 2;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 3;
+    max-width: 900px;
+    padding: 0 2rem;
+  }
+
+  .hero-title {
+    font-size: clamp(3.5rem, 6vw, 6rem);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 2rem;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .hero-title .gold-accent {
+    font-weight: 600;
+    color: var(--text-gold);
+    display: block;
+    margin-top: 0.5rem;
+    text-shadow: 0 0 30px rgba(205, 173, 119, 0.5);
+  }
+
+  .hero-subtitle {
+    font-size: 1.4rem;
+    color: var(--text);
+    margin-bottom: 0; /* No bottom margin since CTAs are below */
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 300;
+    line-height: 1.6;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  }
+
+  /* CTA Section Below Hero */
+  .cta-section {
+    padding: 4rem 2rem;
+    background: var(--bg-gradient);
+    text-align: center;
+  }
+
+  .cta-group {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    padding: 18px 36px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    box-shadow: var(--glow);
+    border: 2px solid var(--brand);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, var(--text-gold) 0%, transparent 100%);
+    opacity: 0;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.6s ease-out;
+    z-index: -1;
+  }
+
+  .btn-primary:hover::before {
+    width: 200%;
+    height: 200%;
+    opacity: 0.2;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 2px solid var(--border);
+    padding: 18px 36px;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  /* Updated Trust Indicators */
+  .trust-indicators {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    color: var(--text-muted);
+    font-size: 1rem;
+  }
+
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .trust-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .trust-icon {
+    color: var(--text-gold);
+    font-size: 1.2rem;
+  }
+
+  /* Luxury Features with GOLD ACCENTS */
+  .features-luxury {
+    padding: 8rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    text-align: center;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 300;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+
+  .section-title .gold-accent {
+    font-weight: 600;
+    color: var(--text-gold);
+    text-shadow: 0 0 20px rgba(205, 173, 119, 0.2);
+  }
+
+  .section-subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 1.3rem;
+    margin-bottom: 5rem;
+    font-weight: 300;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 3rem;
+  }
+
+  .feature-card-luxury {
+    background: var(--card);
+    padding: 3rem 2.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card-luxury::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(205, 173, 119, 0.15), transparent);
+    transition: left 0.7s ease;
+  }
+
+  .feature-card-luxury:hover::before {
+    left: 100%;
+  }
+
+  .feature-card-luxury:hover {
+    background: var(--card-hover);
+    transform: translateY(-15px) scale(1.02);
+    box-shadow: var(--shadow), var(--glow);
+    border-color: var(--brand);
+  }
+
+  .feature-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    color: #000;
+    border: 2px solid var(--brand-light);
+    transition: transform 0.3s ease;
+  }
+  
+  .feature-card-luxury:hover .feature-icon {
+    transform: scale(1.1) rotate(5deg);
+  }
+
+  .feature-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    color: var(--text);
+  }
+
+  .feature-desc {
+    color: var(--text-muted);
+    line-height: 1.7;
+    font-size: 1.1rem;
+  }
+
+  /* Elite Profiles Showcase with GOLD ACCENTS */
+  .profiles-elite {
+    padding: 8rem 2rem;
+    background: rgba(255, 255, 255, 0.02);
+    position: relative;
+  }
+
+  .profiles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .profile-card-elite {
+    background: var(--card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: all 0.4s ease;
+    position: relative;
+  }
+
+  .profile-card-elite:hover {
+    transform: translateY(-15px) scale(1.02);
+    box-shadow: var(--shadow), var(--glow);
+    border-color: var(--brand);
+  }
+
+  .profile-image {
+    width: 100%;
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+    filter: grayscale(20%);
+    transition: filter 0.4s ease;
+  }
+
+  .profile-card-elite:hover .profile-image {
+    filter: grayscale(0);
+  }
+
+  .profile-image::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  }
+
+  .profile-badge {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: var(--brand);
+    color: #000;
+    padding: 0.7rem 1.2rem;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border: 1px solid var(--brand-light);
+  }
+
+  .profile-info {
+    padding: 2rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .profile-name {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .profile-details {
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .profile-stats {
+    display: flex;
+    gap: 1.5rem;
+    color: var(--text-gold);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  /* Final Luxury CTA with GOLD ACCENTS */
+  .final-cta-luxury {
+    padding: 8rem 2rem;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(205, 173, 119, 0.15), rgba(205, 173, 119, 0.08));
+    position: relative;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cta-title {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+
+  .cta-title .gold-accent {
+    font-weight: 600;
+    color: var(--text-gold);
+    text-shadow: 0 0 30px rgba(205, 173, 119, 0.3);
+  }
+
+  .cta-subtitle {
+    font-size: 1.3rem;
+    color: var(--text-muted);
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 300;
+  }
+  
+  /* Luxury Testimonials Section */
+  .testimonials-luxury {
+    padding: 8rem 2rem;
+    background: var(--bg-charcoal);
+  }
+  
+  .testimonial-card {
+    background: var(--card-hover);
+    padding: 2.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .testimonial-quote {
+    font-style: italic;
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding: 0 2rem;
+  }
+  
+  .testimonial-quote::before, .testimonial-quote::after {
+    content: '“';
+    font-family: serif;
+    font-size: 4rem;
+    color: var(--brand);
+    position: absolute;
+    opacity: 0.2;
+    line-height: 0;
+  }
+  
+  .testimonial-quote::before {
+    top: 1rem;
+    left: 0;
+  }
+  
+  .testimonial-quote::after {
+    content: '”';
+    top: 3.5rem;
+    right: 0;
+  }
+  
+  .testimonial-author {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  
+  .testimonial-details {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  /* Luxury Footer with GOLD ACCENTS */
+  .luxury-footer {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 4rem 2rem 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 3rem;
+  }
+
+  .footer-brand {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text-gold);
+  }
+
+  .footer-desc {
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 400px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .footer-column-title {
+    color: var(--text-gold);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+  }
+
+  .footer-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-size: 0.95rem;
+  }
+
+  .footer-link:hover {
+    color: var(--text-gold);
+  }
+
+  .footer-bottom {
+    max-width: 1400px;
+    margin: 3rem auto 0;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+  
+  /* Loading animation */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-in {
+    animation: fadeInUp 0.8s ease forwards;
+  }
+
+  /* Gold particle animation for extra luxury */
+  .gold-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--brand);
+    border-radius: 50%;
+    animation: floatParticle 6s ease-in-out infinite;
+    opacity: 0.6;
+  }
+
+  @keyframes floatParticle {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px);
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.8;
+    }
+    25%, 75% {
+      transform: translateY(-20px) translateX(10px);
+    }
+  }
+  
+  /* =====================
+     Responsive Media Queries
+     ===================== */
+  
+  /* Desktop: Hide mobile-specific elements */
+  .hamburger-menu,
+  .mobile-cta-container, 
+  .mobile-nav-links {
+    display: none;
+  }
+
+  /* Mobile: Hide desktop-specific elements and show mobile ones */
+  @media (max-width: 768px) {
+    .premium-header {
+      padding: 0.6rem 0; /* Even slimmer on mobile */
+    }
+    
+    .nav-container {
+      flex-direction: row;
+      align-items: center;
+      padding: 0 1rem;
+      position: relative;
+      min-height: 60px; /* Reduced height */
+    }
+
+    .nav-links, .auth-buttons {
+      display: none;
+    }
+
+    /* Show mobile header auth buttons */
+    .mobile-header-auth {
+      display: flex;
+      margin-left: auto;
+      margin-right: 4rem; /* Space for hamburger */
+    }
+
+    /* Script logo adjustments for mobile */
+    .script-logo {
+      font-size: 36px;
+    }
+
+    .footer-logo.script-logo {
+      font-size: 32px;
+    }
+
+    /* Mobile-specific elements */
+    .hamburger-menu {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 25px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      right: 1.5rem;
+      transform: translateY(-50%);
+      z-index: 1001;
+    }
+
+    .hamburger-menu .line {
+      width: 100%;
+      height: 3px;
+      background: var(--text-gold);
+      transition: all 0.3s ease;
+      transform-origin: center;
+    }
+
+    /* Animation for hamburger to 'X' */
+    .hamburger-menu.open .line:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger-menu.open .line:first-child {
+      transform: translateY(11px) rotate(45deg);
+    }
+    .hamburger-menu.open .line:last-child {
+      transform: translateY(-11px) rotate(-45deg);
+    }
+
+    /* Mobile full-screen navigation */
+    .mobile-nav-links {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg-deep);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      padding: 2rem;
+      z-index: 999;
+    }
+    
+    .mobile-nav-links.open {
+      display: flex;
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    .mobile-nav-links .nav-link {
+      font-size: 1.8rem;
+      color: var(--text);
+      opacity: 0;
+      animation: slideIn 0.6s ease-out forwards;
+      transition-delay: var(--delay);
+    }
+
+    /* Animation for mobile menu */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Fix body scroll when menu is open */
+    body.no-scroll {
+      overflow: hidden;
+    }
+    
+    /* Mobile hero section fixes */
+    .hero-with-video {
+      height: 70vh; /* Perfect mobile height */
+      padding-top: 80px; /* Adjusted padding for mobile */
+    }
+
+    .hero-content {
+      padding: 0 1rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 8vw, 4rem);
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+    }
+
+    .cta-section {
+      padding: 3rem 1rem;
+    }
+
+    .cta-group {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .features-grid, .profiles-grid, .footer-content {
+      grid-template-columns: 1fr;
+    }
+    
+    .logo-container {
+      height: 40px;
+    }
+    
+    .logo-placeholder {
+      height: 40px;
+      width: 150px;
+      font-size: 1rem;
+    }
+    
+    /* Mobile trust indicators */
+    .trust-indicators {
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .trust-item {
+      width: 100%;
+      max-width: 300px;
+      justify-content: center;
+    }
+  }
+</style>
+    
+</head>
+<body itemscope itemtype="https://schema.org/WebPage">
+  <div id="gold-particles"></div>
+  
+  <header class="premium-header" role="banner">
+    <div class="nav-container">
+      <a href="/" class="script-logo" itemprop="url">
+        Synergy
+      </a>
+      
+      <!-- MOBILE HEADER AUTH BUTTONS - VISIBLE ALL THE TIME -->
+      <div class="mobile-header-auth">
+        <a href="/login/" class="btn-mobile-login">Sign In</a>
+        <a href="/join/" class="btn-mobile-join">Join</a>
+      </div>
+      
+      <button class="hamburger-menu" aria-label="Toggle navigation menu" aria-expanded="false">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </button>
+
+      <nav class="nav-links" role="navigation" aria-label="Main navigation">
+        <a href="/discover-elite-members/" class="nav-link">Discover</a>
+        <a href="/success-stories/" class="nav-link">Success Stories</a>
+        <a href="/about-us/" class="nav-link">About</a>
+      </nav>
+
+      <div class="auth-buttons">
+        <a href="/login/" class="btn btn-login">Sign In</a>
+        <a href="/join/" class="btn btn-join">Join Elite</a>
+      </div>
+    </div>
+
+    <nav class="mobile-nav-links" role="navigation" aria-label="Mobile navigation">
+      <a href="/discover-elite-members/" class="nav-link" style="--delay: 0.1s;">Discover</a>
+      <a href="/success-stories/" class="nav-link" style="--delay: 0.2s;">Success Stories</a>
+      <a href="/about-us/" class="nav-link" style="--delay: 0.3s;">About</a>
+    </nav>
+  </header>
+
+  <main role="main">
+    <!-- Hero Section with Full Background Video -->
+    <section class="hero-with-video">
+      <video autoplay muted loop playsinline class="hero-video" aria-label="Luxury dating experience background video">
+        <source src="{% static 'videos/hero-background.mp4' %}" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <div class="hero-video-overlay"></div>
+      
+      <div class="hero-content animate-in">
+        <h1 class="hero-title" itemprop="headline">
+          Where Elegance Meets
+          <span class="gold-accent">Authentic Connection</span>
+        </h1>
+        <p class="hero-subtitle" itemprop="description">
+          Discover a curated community of sophisticated individuals seeking meaningful relationships. 
+          Where every connection is intentional, and every moment is valued.
+        </p>
+      </div>
+    </section>
+
+    <!-- CTA Section Below Hero -->
+    <section class="cta-section">
+      <div class="cta-group">
+        <a href="/join/" class="btn btn-primary" itemprop="url">Begin Your Journey</a>
+        <a href="/discover-elite-members/" class="btn btn-secondary" itemprop="url">View Elite Members</a>
+      </div>
+      
+      <div class="trust-indicators">
+        <div class="trust-item">
+          <span aria-hidden="true">✓</span>
+          <span>Elite Community</span>
+        </div>
+        <div class="trust-item">
+          <span aria-hidden="true">✓</span>
+          <span>Absolute Discretion</span>
+        </div>
+        <div class="trust-item">
+          <span aria-hidden="true">✓</span>
+          <span>Verified Profiles</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="features-luxury" aria-labelledby="features-heading">
+      <h2 id="features-heading" class="section-title">The <span class="gold-accent">Elite Experience</span></h2>
+      <p class="section-subtitle">Designed for those who appreciate sophistication and meaningful connections</p>
+      
+      <div class="features-grid">
+        <article class="feature-card-luxury animate-in" itemscope itemtype="https://schema.org/Service">
+          <h3 class="feature-title" itemprop="name">Curated Matching</h3>
+          <p class="feature-desc" itemprop="description">Our exclusive algorithm connects you with compatible partners who share your values, lifestyle, and aspirations for meaningful relationships.</p>
+        </article>
+        
+        <article class="feature-card-luxury animate-in" itemscope itemtype="https://schema.org/Service">
+          <h3 class="feature-title" itemprop="name">Complete Privacy</h3>
+          <p class="feature-desc" itemprop="description">Your discretion is our priority. Advanced security measures and private browsing ensure your experience remains confidential and secure.</p>
+        </article>
+        
+        <article class="feature-card-luxury animate-in" itemscope itemtype="https://schema.org/Service">
+          <h3 class="feature-title" itemprop="name">Verified Excellence</h3>
+          <p class="feature-desc" itemprop="description">Every member undergoes a thorough verification process to maintain the highest standards of authenticity and quality in our community.</p>
+        </article>
+      </div>
+    </section>
+    
+    <section class="profiles-elite" aria-labelledby="profiles-heading">
+      <h2 id="profiles-heading" class="section-title">Meet <span class="gold-accent">Exceptional Individuals</span></h2>
+      <p class="section-subtitle">Discover accomplished members seeking genuine connections</p>
+      
+      <div class="profiles-grid">
+        <article class="profile-card-elite animate-in" itemscope itemtype="https://schema.org/Person">
+          <div class="profile-image" style="background-image: url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')" 
+               aria-label="Profile photo of Sophia" itemprop="image"></div>
+          <div class="profile-badge">Verified</div>
+          <div class="profile-info">
+            <h3 class="profile-name" itemprop="name">Sophia, 28</h3>
+            <p class="profile-details" itemprop="jobTitle">Art Gallery Director • Sydney</p>
+            <div class="profile-stats">
+              <span itemprop="knowsAbout">Art Lover</span>
+              <span itemprop="knowsAbout">Frequent Traveler</span>
+            </div>
+          </div>
+        </article>
+        
+        <article class="profile-card-elite animate-in" itemscope itemtype="https://schema.org/Person">
+          <div class="profile-image" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')" 
+               aria-label="Profile photo of Alexander" itemprop="image"></div>
+          <div class="profile-badge">Premium</div>
+          <div class="profile-info">
+            <h3 class="profile-name" itemprop="name">Alexander, 32</h3>
+            <p class="profile-details" itemprop="jobTitle">Investment Partner • Melbourne</p>
+            <div class="profile-stats">
+              <span itemprop="knowsAbout">Golf</span>
+              <span itemprop="knowsAbout">Wine Connoisseur</span>
+            </div>
+          </div>
+        </article>
+        
+        <article class="profile-card-elite animate-in" itemscope itemtype="https://schema.org/Person">
+          <div class="profile-image" style="background-image: url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')" 
+               aria-label="Profile photo of Isabelle" itemprop="image"></div>
+          <div class="profile-badge">Featured</div>
+          <div class="profile-info">
+            <h3 class="profile-name" itemprop="name">Isabelle, 26</h3>
+            <p class="profile-details" itemprop="jobTitle">Fashion Designer • Brisbane</p>
+            <div class="profile-stats">
+              <span itemprop="knowsAbout">Theater</span>
+              <span itemprop="knowsAbout">Cultural Events</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="testimonials-luxury" aria-labelledby="testimonials-heading">
+        <h2 id="testimonials-heading" class="section-title">Success <span class="gold-accent">Stories</span></h2>
+        <p class="section-subtitle">Hear from our members who found their perfect connection.</p>
+        
+        <div class="testimonial-card animate-in" itemscope itemtype="https://schema.org/Review">
+          <p class="testimonial-quote" itemprop="reviewBody">
+            Joining Synergy was the best decision I made. The quality of connections is unparalleled, and the experience is truly tailored for discerning individuals.
+          </p>
+          <p class="testimonial-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+            <span itemprop="name">Sarah L., Sydney</span>
+          </p>
+          <p class="testimonial-details" itemprop="description">Entrepreneur & Philanthropist</p>
+        </div>
+    </section>
+
+    <section class="final-cta-luxury" aria-labelledby="cta-heading">
+      <h2 id="cta-heading" class="cta-title">Ready for <span class="gold-accent">Meaningful Connections?</span></h2>
+      <p class="cta-subtitle">Join our exclusive community and experience dating redefined with sophistication and purpose.</p>
+      <a href="/join/" class="btn btn-primary" style="font-size: 1.2rem; padding: 20px 45px;" itemprop="url">
+        Start Your Journey Today
+      </a>
+    </section>
+  </main>
+
+  <footer class="luxury-footer" role="contentinfo" itemscope itemtype="https://schema.org/Organization">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="footer-logo script-logo" itemprop="name">Synergy</div>
+        <p class="footer-desc" itemprop="description">
+          Where sophisticated singles connect for meaningful relationships. 
+          Experience dating elevated to an art form.
+        </p>
+      </div>
+      
+      <div class="footer-links">
+        <div class="footer-column">
+          <div class="footer-column-title">Company</div>
+          <a href="/about-us/" class="footer-link" itemprop="url">About Us</a>
+          <a href="/blog/" class="footer-link" itemprop="url">Blog</a>       
+          <a href="/contact/" class="footer-link" itemprop="url">Contact</a>
+        </div>
+        
+        <div class="footer-column">
+          <div class="footer-column-title">Legal</div>
+          <a href="/privacy/" class="footer-link" itemprop="url">Privacy Policy</a>
+          <a href="/terms/" class="footer-link" itemprop="url">Terms of Service</a>
+          <a href="/safety/" class="footer-link" itemprop="url">Safety Center</a>
+        </div>
+        
+        <div class="footer-column">
+          <div class="footer-column-title">Support</div>
+          <a href="/help-center/" class="footer-link" itemprop="url">Help Center</a>
+          
+          <a href="/faq/" class="footer-link" itemprop="url">FAQ</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; <span itemprop="copyrightYear">2024</span> <span itemprop="name">Synergy</span>. All rights reserved. | Where sophisticated connections begin.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Create gold particles
+      function createGoldParticles() {
+        const container = document.getElementById('gold-particles');
+        for (let i = 0; i < 15; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'gold-particle';
+          particle.style.left = Math.random() * 100 + 'vw';
+          particle.style.top = Math.random() * 100 + 'vh';
+          particle.style.animationDelay = Math.random() * 6 + 's';
+          container.appendChild(particle);
+        }
+      }
+      
+      createGoldParticles();
+
+      // Animate elements on scroll
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.animate-in').forEach(element => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(40px)';
+        element.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        observer.observe(element);
+      });
+
+      // Header scroll effect
+      window.addEventListener('scroll', () => {
+        const header = document.querySelector('.premium-header');
+        if (window.scrollY > 100) {
+          header.style.background = 'rgba(10, 10, 10, 0.98)';
+          header.style.padding = '0.6rem 0'; /* Consistent with reduced padding */
+        } else {
+          header.style.background = 'rgba(10, 10, 10, 0.95)';
+          header.style.padding = '0.8rem 0';
+        }
+      });
+      
+      // Hamburger menu functionality - FIXED VERSION
+      const hamburger = document.querySelector('.hamburger-menu');
+      const mobileNav = document.querySelector('.mobile-nav-links');
+      const navLinks = document.querySelectorAll('.mobile-nav-links .nav-link');
+
+      if (hamburger) {
+        hamburger.addEventListener('click', () => {
+          const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
+          hamburger.setAttribute('aria-expanded', !isExpanded);
+          hamburger.classList.toggle('open');
+          mobileNav.classList.toggle('open');
+          
+          // Toggle body scroll
+          if (mobileNav.classList.contains('open')) {
+            document.body.classList.add('no-scroll');
+          } else {
+            document.body.classList.remove('no-scroll');
+          }
+        });
+      }
+
+      // Close mobile menu when clicking links
+      navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          hamburger.classList.remove('open');
+          hamburger.setAttribute('aria-expanded', 'false');
+          mobileNav.classList.remove('open');
+          document.body.classList.remove('no-scroll');
+        });
+      });
+
+      // Add current year to footer
+      const yearElement = document.createElement('span');
+      yearElement.textContent = new Date().getFullYear();
+      document.querySelector('.footer-bottom p').innerHTML = 
+        document.querySelector('.footer-bottom p').innerHTML.replace('2024', yearElement.textContent);
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,554 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Create Profile - Step 3 - Synergy</title>
+<meta name="description" content="Create your elite dating profile - Step 3: Lifestyle and connection preferences." />
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --brand: #cdad7c;
+    --brand-dark: #a88a5a;
+    --brand-light: #e8d8b8;
+    --brand-soft: rgba(205, 173, 119, 0.18);
+    --bg: #050507;
+    --bg-card: rgba(18, 18, 20, 0.96);
+    --border-subtle: rgba(205, 173, 119, 0.34);
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --text: #ffffff;
+    --text-muted: #a0a0a5;
+    --text-soft: #8b8b90;
+    --text-gold: #cdad7c;
+    --error: #ff6b6b;
+    --radius-card: 24px;
+    --shadow-soft: 0 26px 50px rgba(0, 0, 0, 0.7);
+  }
+
+  * { box-sizing:border-box; margin:0; padding:0; }
+
+  body {
+    background: radial-gradient(circle at top left, #2a2a30 0, #050507 45%, #000 100%);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  #gold-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .premium-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(5, 5, 7, 0.96);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(205, 173, 119, 0.3);
+    z-index: 1000;
+  }
+
+  .nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .script-logo {
+    font-family: 'Allura', cursive;
+    font-size: 42px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #CDAD7F;
+    text-decoration: none;
+    text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .script-logo:hover {
+    transform: scale(1.05);
+    text-shadow: 1px 1px 15px rgba(255, 255, 255, 0.2);
+  }
+
+  .progress-container {
+    max-width: 1100px;
+    margin: 96px auto 2rem;
+    padding: 0 1.5rem;
+  }
+
+  .progress-bar {
+    background: rgba(255, 255, 255, 0.06);
+    height: 8px;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(205, 173, 119, 0.42);
+    margin-bottom: 0.6rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 85%; /* Step 3 */
+    background: linear-gradient(90deg, var(--brand-light), var(--brand-dark));
+    box-shadow: 0 0 18px rgba(205, 173, 119, 0.55);
+    border-radius: 999px;
+  }
+
+  .progress-text {
+    text-align:center;
+    font-size:0.86rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+  }
+
+  .profile-create-container {
+    max-width:1100px;
+    margin:0 auto 3rem;
+    padding:0 1.5rem 3rem;
+  }
+
+  .create-card {
+    background: radial-gradient(circle at top left, rgba(255,255,255,0.04) 0, rgba(7,7,10,0.96) 40%, rgba(0,0,0,0.98) 100%);
+    border-radius:var(--radius-card);
+    padding:2.8rem 2.6rem 2.7rem;
+    border:1px solid var(--border-subtle);
+    box-shadow:var(--shadow-soft), 0 0 60px rgba(205, 173, 119, 0.15);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .create-card::before {
+    content:'';
+    position:absolute;
+    inset:-40%;
+    background:radial-gradient(circle at top, rgba(205, 173, 119, 0.14), transparent 60%);
+    opacity:0.7;
+    pointer-events:none;
+    z-index:-1;
+  }
+
+  .section-header {
+    margin-bottom:2.2rem;
+    text-align:center;
+  }
+
+  .section-title {
+    font-size:2.1rem;
+    font-weight:300;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:#f9f9fa;
+    margin-bottom:0.4rem;
+  }
+
+  .section-title span {
+    color:var(--text-gold);
+    font-weight:500;
+  }
+
+  .section-subtitle {
+    color:var(--text-muted);
+    font-size:0.98rem;
+    max-width:540px;
+    margin:0 auto;
+  }
+
+  .form-section { margin-bottom:2.1rem; }
+
+  .form-group { margin-bottom:1.6rem; }
+
+  .form-label {
+    display:block;
+    font-size:0.95rem;
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    color:var(--text-gold);
+    margin-bottom:0.55rem;
+    font-weight:600;
+  }
+
+  .required {
+    color:var(--error);
+    margin-left:0.1rem;
+  }
+
+  .form-input,
+  .form-select {
+    width:100%;
+    padding:0.85rem 1rem;
+    border-radius:18px;
+    border:1px solid var(--border-soft);
+    background:rgba(3,3,5,0.9);
+    color:var(--text);
+    font-size:0.95rem;
+    outline:none;
+    transition:border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+
+  .form-input::placeholder {
+    color:#63636a;
+  }
+
+  .form-input:focus,
+  .form-select:focus {
+    border-color:var(--text-gold);
+    box-shadow:0 0 0 1px rgba(205, 173, 119, 0.55);
+    background:rgba(5,5,9,0.98);
+  }
+
+  .form-grid {
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:1.4rem 1.6rem;
+  }
+
+  .form-tip {
+    font-size:0.85rem;
+    color:var(--text-soft);
+    margin-top:0.4rem;
+  }
+
+  .pill-hint {
+    display:inline-flex;
+    align-items:center;
+    gap:0.5rem;
+    background:rgba(255,255,255,0.03);
+    border-radius:999px;
+    padding:0.35rem 0.9rem;
+    border:1px solid rgba(255,255,255,0.06);
+    font-size:0.8rem;
+    color:var(--text-soft);
+  }
+
+  /* ERROR STYLING */
+  .form-group.field-error .form-input,
+  .form-group.field-error .form-select {
+    border-color:var(--error);
+    box-shadow:0 0 0 1px rgba(255, 107, 107, 0.5);
+  }
+
+  .form-group.field-error .form-label {
+    color:var(--error);
+  }
+
+  .form-error-summary {
+    margin-top:0.6rem;
+    margin-bottom:0.6rem;
+    padding:0.7rem 1rem;
+    border-radius:999px;
+    font-size:0.86rem;
+    border:1px solid rgba(255, 107, 107, 0.6);
+    background:rgba(255, 107, 107, 0.08);
+    color:var(--error);
+    text-align:right;
+    display:none;
+  }
+
+  .form-actions {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:1.8rem;
+    padding-top:1.6rem;
+    border-top:1px solid rgba(205, 173, 119, 0.35);
+  }
+
+  .btn {
+    padding:0.75rem 1.7rem;
+    border-radius:999px;
+    border:none;
+    font-size:0.92rem;
+    font-weight:600;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:0.5rem;
+    transition:all 0.25s ease;
+  }
+
+  .btn-secondary {
+    background:transparent;
+    color:var(--text-soft);
+    border:1px solid rgba(205, 173, 119, 0.5);
+  }
+
+  .btn-secondary:hover {
+    color:var(--text-gold);
+    border-color:var(--text-gold);
+    box-shadow:0 0 18px rgba(205, 173, 119, 0.35);
+    transform:translateY(-1px);
+  }
+
+  .btn-primary {
+    background:linear-gradient(135deg, var(--brand-light), var(--brand-dark));
+    color:#000;
+    box-shadow:0 14px 28px rgba(0,0,0,0.7);
+  }
+
+  .btn-primary:hover {
+    transform:translateY(-1px);
+    box-shadow:0 18px 32px rgba(0,0,0,0.8);
+  }
+
+  @media (max-width:768px) {
+    .nav-container { padding:0.8rem 1rem; }
+    .script-logo { font-size:34px; }
+    .progress-container { margin-top:82px; }
+    .create-card { padding:2.1rem 1.6rem 2.1rem; border-radius:18px; }
+    .form-grid { grid-template-columns:minmax(0,1fr); }
+    .form-actions {
+      flex-direction:column-reverse;
+      align-items:stretch;
+      gap:0.8rem;
+    }
+    .btn { width:100%; justify-content:center; }
+  }
+</style>
+</head>
+<body>
+  <div id="gold-particles"></div>
+
+  <header class="premium-header">
+    <div class="nav-container">
+      <a href="{% url 'index' %}" class="script-logo">Synergy</a>
+    </div>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+    </div>
+    <div class="progress-text">Step 3 of 4: Lifestyle & Preferences</div>
+  </div>
+
+  <main class="profile-create-container">
+    <div class="create-card">
+      <div class="section-header">
+        <h1 class="section-title"><span>Step Three</span> • Lifestyle & Preferences</h1>
+        <p class="section-subtitle">
+          Help us understand how you like to spend your time, and how a connection might fit into your world.
+        </p>
+      </div>
+
+      <form id="profileFormStep3" method="post">
+        {% csrf_token %}
+
+        <section class="form-section">
+          <div class="form-grid">
+            <div class="form-group" id="fg_meeting_style">
+              <label class="form-label">Ideal Meeting Style <span class="required">*</span></label>
+              <select class="form-select" id="meetingStyle" name="meeting_style" required>
+                <option value="">Select one</option>
+                <option value="casual_coffee">Casual coffee or drink</option>
+                <option value="fine_dining">Fine dining experience</option>
+                <option value="daytime_meet">Daytime meet (lunch, walk, gallery)</option>
+                <option value="evening_occasions">Evening occasions & events</option>
+                <option value="get_to_know_first">Prefer to get to know each other first</option>
+              </select>
+              <div class="form-tip">
+                Think about what feels natural and comfortable for a first connection.
+              </div>
+            </div>
+
+            <div class="form-group" id="fg_meeting_frequency">
+              <label class="form-label">Preferred Frequency <span class="required">*</span></label>
+              <select class="form-select" id="meetingFrequency" name="meeting_frequency" required>
+                <option value="">Select one</option>
+                <option value="once_month">Once a month</option>
+                <option value="twice_month">Twice a month</option>
+                <option value="weekly">Weekly</option>
+                <option value="multiple_week">Multiple times per week</option>
+                <option value="flexible">Flexible / depends on chemistry</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="fg_availability">
+              <label class="form-label">Availability <span class="required">*</span></label>
+              <select class="form-select" id="availability" name="availability" required>
+                <option value="">Select one</option>
+                <option value="weeknights">Mostly weeknights</option>
+                <option value="weekends">Mostly weekends</option>
+                <option value="days">Mostly weekdays (daytime)</option>
+                <option value="travel_often">Travel often, schedule varies</option>
+                <option value="very_flexible">Very flexible</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Travel</label>
+              <select class="form-select" id="travel" name="travel">
+                <option value="">Select (optional)</option>
+                <option value="rarely">Prefer to stay local</option>
+                <option value="sometimes">Open to occasional travel</option>
+                <option value="often">Travel often and enjoy it</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <div class="form-grid">
+            <div class="form-group" id="fg_drinking">
+              <label class="form-label">Drinking <span class="required">*</span></label>
+              <select class="form-select" id="drinking" name="drinking" required>
+                <option value="">Select one</option>
+                <option value="no">Do not drink</option>
+                <option value="social">Socially</option>
+                <option value="regular">Regularly</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="fg_exercise">
+              <label class="form-label">Exercise & Wellness <span class="required">*</span></label>
+              <select class="form-select" id="exercise" name="exercise" required>
+                <option value="">Select one</option>
+                <option value="rarely">Not a focus at the moment</option>
+                <option value="sometimes">A few times a month</option>
+                <option value="weekly">1–3 times per week</option>
+                <option value="often">4+ times per week</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Dining & Social Preferences</label>
+              <input type="text" class="form-input" id="dining" name="dining"
+                     placeholder="e.g. Fine dining, wine bars, hidden local spots">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Other Lifestyle Notes</label>
+              <input type="text" class="form-input" id="lifestyleNotes" name="lifestyle_notes"
+                     placeholder="Anything else helpful to know (optional)">
+            </div>
+          </div>
+        </section>
+
+        <div id="formErrorSummary" class="form-error-summary" style="display:none;">
+          Please complete the highlighted fields to continue.
+        </div>
+
+        <div class="form-actions">
+          <a href="{% url 'create_profile_step2' %}" class="btn btn-secondary">Back to Step 2</a>
+          <button type="submit" class="btn btn-primary">Continue to Final Step</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      function createGoldParticles() {
+        const container = document.getElementById('gold-particles');
+        for (let i = 0; i < 14; i++) {
+          const p = document.createElement('div');
+          p.className = 'gold-particle';
+          p.style.left = Math.random() * 100 + 'vw';
+          p.style.top = Math.random() * 100 + 'vh';
+          p.style.animationDelay = (Math.random() * 6) + 's';
+          container.appendChild(p);
+        }
+      }
+
+      const style = document.createElement('style');
+      style.textContent = `
+        .gold-particle {
+          position: absolute;
+          width: 3px;
+          height: 3px;
+          background: radial-gradient(circle, #ffe6b3 0%, #cdad7c 40%, transparent 70%);
+          border-radius: 50%;
+          animation: floatParticle 6s ease-in-out infinite;
+          opacity: 0.6;
+          pointer-events: none;
+        }
+        @keyframes floatParticle {
+          0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+          50% { opacity: 0.9; }
+          25%, 75% { transform: translateY(-20px) translateX(12px); }
+        }
+      `;
+      document.head.appendChild(style);
+      createGoldParticles();
+
+      const form = document.getElementById('profileFormStep3');
+      const errorSummary = document.getElementById('formErrorSummary');
+
+      const requiredConfig = [
+        { id: 'meetingStyle', groupId: 'fg_meeting_style' },
+        { id: 'meetingFrequency', groupId: 'fg_meeting_frequency' },
+        { id: 'availability', groupId: 'fg_availability' },
+        { id: 'drinking', groupId: 'fg_drinking' },
+        { id: 'exercise', groupId: 'fg_exercise' }
+      ];
+
+      function clearErrors() {
+        requiredConfig.forEach(field => {
+          const group = document.getElementById(field.groupId);
+          if (group) group.classList.remove('field-error');
+        });
+        if (errorSummary) errorSummary.style.display = 'none';
+      }
+
+      function validateRequiredOnSubmit() {
+        clearErrors();
+        let hasError = false;
+        let firstErrorGroup = null;
+
+        requiredConfig.forEach(field => {
+          const input = document.getElementById(field.id);
+          const group = document.getElementById(field.groupId);
+          if (!input || !group) return;
+          if (!input.value || !input.value.trim()) {
+            hasError = true;
+            group.classList.add('field-error');
+            if (!firstErrorGroup) firstErrorGroup = group;
+          }
+        });
+
+        if (hasError) {
+          if (errorSummary) errorSummary.style.display = 'block';
+          if (firstErrorGroup && firstErrorGroup.scrollIntoView) {
+            firstErrorGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+
+        return !hasError;
+      }
+
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          if (!validateRequiredOnSubmit()) {
+            e.preventDefault();
+          }
+        });
+
+        requiredConfig.forEach(field => {
+          const input = document.getElementById(field.id);
+          const group = document.getElementById(field.groupId);
+          if (!input || !group) return;
+          input.addEventListener('change', () => {
+            if (input.value && input.value.trim()) {
+              group.classList.remove('field-error');
+              if ([...document.querySelectorAll('.field-error')].length === 0 && errorSummary) {
+                errorSummary.style.display = 'none';
+              }
+            }
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>
+

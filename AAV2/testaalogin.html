@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Login | Adult Arrangements</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Space+Grotesk:wght=300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* 2025 Palette */
+            --bg-deep: #050505;
+            --bg-panel: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-muted: #888888;
+
+            /* Champagne Chrome Gradient */
+            --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 100%);
+
+            /* Glassmorphism Styles */
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+            --blur: blur(20px);
+
+            /* Accents */
+            --accent-glow: 0 0 20px rgba(191, 149, 63, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+            min-height: 100vh;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* --- NAVIGATION --- (Reused from template) */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 4rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            background: linear-gradient(to bottom, #000000 0%, transparent 100%);
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-button {
+            background: transparent;
+            border: var(--glass-border);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-button.primary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 15px rgba(255,255,255,0.1);
+        }
+        
+        /* --- UTILITIES --- */
+        .gold-text {
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* --- LOGIN SECTION --- (Modified Hero) */
+        .auth-hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 1rem;
+        }
+        
+        /* Ambient Glow behind Hero */
+        .auth-hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(191, 149, 63, 0.08) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- AUTH PANEL --- (Modified interactive-form) */
+        .auth-panel {
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            border: var(--glass-border);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            max-width: 420px;
+            width: 100%;
+            color: #ddd;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .auth-panel h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        /* --- FORM ELEMENTS --- */
+        .input-group-field {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        
+        .input-group-field label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #ddd;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        
+        /* Wrapper for password input and toggle button */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .input-group-field input {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            /* Extra space for the toggle button */
+            padding-right: 45px; 
+        }
+
+        .input-group-field input:focus {
+            outline: none;
+            border-color: #bf953f;
+            box-shadow: 0 0 5px rgba(191, 149, 63, 0.5);
+        }
+        
+        /* Styles for the toggle button */
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 5px;
+            transition: color 0.3s;
+            line-height: 1;
+            z-index: 10;
+        }
+
+        .password-toggle:hover {
+            color: #bf953f;
+        }
+
+
+        .cta-button {
+            display: block;
+            width: 100%;
+            margin-top: 2.5rem;
+            padding: 1rem;
+            background: var(--gold-gradient);
+            color: #000;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: 0.3s;
+            box-shadow: var(--accent-glow);
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 40px rgba(191, 149, 63, 0.6);
+        }
+
+        .hero-note {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        .hero-note a {
+            color: #bf953f;
+            transition: color 0.3s;
+        }
+        .hero-note a:hover {
+            color: #fcf6ba;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 4rem;
+            border-top: 1px solid #111;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        footer a {
+            color: #888;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* RESPONSIVE FIXES */
+        @media (max-width: 900px) {
+            nav {
+                padding: 1rem 1rem;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .nav-button {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            /* Hide 'About' on mobile for simplicity */
+            .nav-actions a:first-child {
+                display: none;
+            }
+            
+            .auth-panel {
+                padding: 2rem 1.5rem;
+                max-width: 90%;
+            }
+            
+            .auth-panel h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo">ADULT ARRANGEMENTS</a>
+        <div class="nav-actions">
+            <a href="/about" class="nav-button">About</a>
+            <a href="/join" class="nav-button primary">Begin Arrangement</a>
+        </div>
+    </nav>
+
+    <section class="auth-hero">
+        <form class="auth-panel" action="/dashboard" method="POST">
+            <h2 class="gold-text">Member Login</h2>
+            
+            <div class="input-group-field">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required placeholder="name@domain.com">
+            </div>
+            
+            <div class="input-group-field">
+                <label for="password">Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" name="password" required placeholder="••••••••">
+                    <!-- Toggle Button with Eye/Lock Icon -->
+                    <button type="button" class="password-toggle" id="togglePassword" title="Show Password">
+                        �️
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="cta-button">Access Account</button>
+            
+            <p class="hero-note">
+                <a href="/forgot-password">Forgot your password?</a> or 
+                <a href="/join">Join the network</a>.
+            </p>
+        </form>
+    </section>
+
+    <footer>
+        <p>
+            © 2025 ADULT ARRANGEMENTS. REDEFINING LUXURY DATING. 18+ ONLY.
+        </p>
+        <p style="margin-top: 0.5rem;">
+            <a href="/terms">Terms</a> •
+            <a href="/privacy">Privacy</a> •
+            <a href="/safety">Safety &amp; Support</a>
+        </p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            const toggleButton = document.getElementById('togglePassword');
+
+            if (toggleButton) {
+                toggleButton.addEventListener('click', function() {
+                    // Toggle the type attribute
+                    const isPassword = passwordInput.getAttribute('type') === 'password';
+                    const newType = isPassword ? 'text' : 'password';
+                    passwordInput.setAttribute('type', newType);
+
+                    // Toggle the icon and title
+                    if (isPassword) {
+                        // Using lock emoji when password is shown (type='text')
+                        toggleButton.textContent = '�'; 
+                        toggleButton.title = 'Hide Password';
+                    } else {
+                        // Using eye emoji when password is hidden (type='password')
+                        toggleButton.textContent = '�️'; 
+                        toggleButton.title = 'Show Password';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!-- website/templates/includes/profile_images.html -->
+{% load static %}
+
+<!-- Main Profile Image -->
+{% if user_profile.profile_photo %}
+    <img src="{{ user_profile.profile_photo.url }}" alt="{{ user_profile.profile_name }}" class="profile-image">
+{% else %}
+    <img src="{% static 'images/default-profile.jpg' %}" alt="Default Profile" class="profile-image">
+{% endif %}
+
+<!-- Additional Images Gallery -->
+<div class="image-gallery">
+    {% for image in user_profile.images.all %}
+        {% if image.image_type == 'additional' %}
+        <div class="gallery-item">
+            {% if image.image_url %}
+                <img src="{{ image.image_url }}" alt="Additional photo {{ forloop.counter }}" class="gallery-image">
+            {% endif %}
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<!-- Private Images (only visible to profile owner) -->
+{% if user.is_authenticated and user == user_profile.user %}
+<div class="private-gallery">
+    {% for image in user_profile.images.all %}
+        {% if image.image_type == 'private' %}
+        <div class="private-gallery-item">
+            {% if image.image_url %}
+                <img src="{{ image.image_url }}" alt="Private photo {{ forloop.counter }}" class="private-image">
+            {% endif %}
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}

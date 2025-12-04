@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adult Arrangements | Unlock Your True Desires</title>
+
+    <!-- SEO & Social Meta -->
+    <meta name="description" content="Adult Arrangements is an exclusive, invitation-only platform connecting discerning gentlemen and ladies for mutually beneficial, luxury dating experiences.">
+    <meta property="og:title" content="Adult Arrangements | Unlock Your True Desires">
+    <meta property="og:description" content="Exclusive, high-end arrangements with verified members and no hidden fees.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.adultarrangements.com/">
+    <meta property="og:image" content="https://www.adultarrangements.com/social-preview.jpg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* 2025 Palette */
+            --bg-deep: #050505;
+            --bg-panel: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-muted: #888888;
+
+            /* Champagne Chrome Gradient */
+            --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 100%);
+
+            /* Glassmorphism Styles */
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+            --blur: blur(20px);
+
+            /* Accents */
+            --accent-glow: 0 0 20px rgba(191, 149, 63, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+            min-height: 100vh;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 4rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            background: linear-gradient(to bottom, #000000 0%, transparent 100%);
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-button {
+            background: transparent;
+            border: var(--glass-border);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-button.primary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 15px rgba(255,255,255,0.1);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            padding: 0 2rem;
+            padding-top: 7rem; /* space for fixed nav */
+        }
+
+        /* Ambient Glow behind Hero */
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(191, 149, 63, 0.08) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 2rem;
+            letter-spacing: -0.02em;
+        }
+
+        h1 span {
+            display: block;
+            font-size: 0.4em;
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .gold-text {
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- INTERACTIVE FORM --- */
+        .interactive-form {
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            border: var(--glass-border);
+            padding: 2rem 3rem;
+            border-radius: 20px;
+            margin-top: 2rem;
+            max-width: 800px;
+            font-size: 1.2rem;
+            color: #ddd;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: block;
+            text-align: center;
+        }
+
+        .interactive-form-text {
+            line-height: 1.8;
+        }
+
+        .input-group {
+            display: inline-block;
+            position: relative;
+            border-bottom: 1px solid #555;
+            margin: 0 0.5rem;
+            color: #fff;
+        }
+
+        .input-group select {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            padding: 0.2rem 1.5rem 0.2rem 0.5rem;
+            appearance: none;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* Custom Arrow for select */
+        .input-group::after {
+            content: '▼';
+            font-size: 0.6rem;
+            position: absolute;
+            right: 0;
+            top: 40%;
+            pointer-events: none;
+            color: #bf953f;
+        }
+
+        .cta-button {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 1rem 3rem;
+            background: var(--gold-gradient);
+            color: #000;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: 0.3s;
+            box-shadow: var(--accent-glow);
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(191, 149, 63, 0.6);
+        }
+
+        .hero-note {
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* --- BENTO GRID SECTION --- */
+        .dashboard {
+            padding: 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .grid-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .grid-header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+        }
+
+        .grid-header p {
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 300px);
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border: var(--glass-border);
+            border-radius: 24px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-4px);
+        }
+
+        .card-profile {
+            grid-column: span 1;
+            grid-row: span 2;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-profile.jasmine {
+            background-image: linear-gradient(to top, #000 0%, transparent 50%), url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop');
+        }
+
+        .card-profile.new-arrival {
+            background-image: linear-gradient(to top, #000 0%, transparent 50%), url('https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1000&auto=format&fit=crop');
+        }
+
+        .card-experience {
+            grid-column: span 2;
+            background-image: linear-gradient(to right, #000 40%, transparent), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: right center;
+        }
+
+        .card-stats {
+            grid-column: span 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .tag {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            align-self: flex-start;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tag.active {
+            border-color: #0f0;
+            color: #afa;
+        }
+
+        .card-info h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .price-badge {
+            margin-top: 1rem;
+            display: inline-block;
+            font-family: 'Space Grotesk', sans-serif;
+            color: #bf953f;
+            border: 1px solid #bf953f;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .desktop-only {
+            display: block;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 4rem;
+            border-top: 1px solid #111;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        footer a {
+            color: #888;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* RESPONSIVE FIXES (MOBILE OPTIMIZATION) */
+        @media (max-width: 900px) {
+            nav {
+                padding: 1rem 1rem;
+            }
+
+            .dashboard {
+                padding: 2rem 1.5rem;
+            }
+
+            .bento-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+
+            .card-profile {
+                grid-row: span 1;
+                height: 400px;
+            }
+
+            .card-experience {
+                grid-column: span 1;
+                height: 300px;
+            }
+
+            h1 {
+                font-size: clamp(2.5rem, 8vw, 3rem);
+                font-weight: 600;
+            }
+
+            h1 span {
+                letter-spacing: 0.2em;
+            }
+
+            .nav-actions {
+                gap: 0.5rem;
+            }
+
+            .nav-button {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            /* Hide 'About' on mobile for simplicity */
+            .nav-actions a:first-child {
+                display: none;
+            }
+
+            .interactive-form {
+                padding: 1.5rem;
+                font-size: 1.1rem;
+                white-space: normal;
+                line-height: 1.8;
+                text-align: left;
+            }
+
+            .interactive-form-text {
+                text-align: left;
+            }
+
+            .input-group {
+                margin: 0.1rem 0.25rem;
+                display: block;
+                border-bottom: 1px solid #333;
+            }
+
+            .input-group select {
+                font-size: 1.1rem;
+                padding: 0.5rem 1.5rem 0.5rem 0;
+                width: 100%;
+            }
+
+            .input-group::after {
+                right: 5px;
+            }
+
+            .cta-button {
+                width: 100%;
+                text-align: center;
+            }
+
+            .desktop-only {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">ADULT ARRANGEMENTS</div>
+        <div class="nav-actions">
+            <a href="/about" class="nav-button">About</a>
+            <a href="/login" class="nav-button primary">Member Login</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>
+            <span>Est. 2025 • Exclusive</span>
+            UNLOCK YOUR<br>
+            <span class="gold-text">TRUE DESIRES</span>
+        </h1>
+
+        <!-- Turned into a real form -->
+        <form class="interactive-form" action="/join" method="GET">
+            <div class="interactive-form-text">
+                I am a
+                <span class="input-group">
+                    <select name="iam" aria-label="I am a">
+                        <option value="gentleman">Gentleman</option>
+                        <option value="lady">Lady</option>
+                    </select>
+                </span>
+                seeking a
+                <span class="input-group">
+                    <select name="connection_type" aria-label="Type of connection">
+                        <option value="mutually-beneficial">Mutually Beneficial</option>
+                        <option value="casual">Casual</option>
+                        <option value="long-term">Long Term</option>
+                    </select>
+                </span>
+                connection with a
+                <span class="input-group">
+                    <select name="looking_for" aria-label="Looking for">
+                        <option value="woman">Woman</option>
+                        <option value="man">Man</option>
+                        <option value="couple">Couple</option>
+                    </select>
+                </span>.
+            </div>
+
+            <button type="submit" class="cta-button">Begin Arrangement</button>
+
+            <p class="hero-note">
+                By continuing, you confirm you are 18+ and agree to our
+                <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.
+            </p>
+        </form>
+    </section>
+
+    <section class="dashboard">
+        <div class="grid-header">
+            <div>
+                <h2>Curated Selections</h2>
+                <p>Updated live • 32 online now</p>
+            </div>
+            <div style="font-size: 2rem; color: #333;" class="desktop-only" aria-hidden="true">← →</div>
+        </div>
+
+        <div class="bento-grid">
+            <div class="card card-profile jasmine">
+                <div class="tag active">● Online</div>
+                <div class="card-info">
+                    <h3>Jasmine, 24</h3>
+                    <p>Sydney • Model</p>
+                </div>
+            </div>
+
+            <div class="card card-experience">
+                <div class="tag">Dec 7th • Sydney</div>
+                <div class="card-info">
+                    <h3>Private Dinner &amp; Opera</h3>
+                    <p>Seeking an elegant companion for a black-tie evening.</p>
+                    <span class="price-badge">Generous Gift Offering</span>
+                </div>
+            </div>
+
+            <div class="card card-profile new-arrival">
+                <div class="tag">New</div>
+                <div class="card-info">
+                    <h3>UpAllNight, 22</h3>
+                    <p>Melbourne • Student</p>
+                </div>
+            </div>
+
+            <div class="card card-stats">
+                <div>
+                    <h3 class="gold-text">100%</h3>
+                    <p>Verified Profiles</p>
+                    <br>
+                    <h3 class="gold-text">Zero</h3>
+                    <p>Hidden Fees</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>
+            © 2025 ADULT ARRANGEMENTS. REDEFINING LUXURY DATING. PRIVACY ENCRYPTED. 18+ ONLY.
+        </p>
+        <p style="margin-top: 0.5rem;">
+            <a href="/terms">Terms</a> •
+            <a href="/privacy">Privacy</a> •
+            <a href="/safety">Safety &amp; Support</a>
+        </p>
+    </footer>
+
+</body>
+</html>

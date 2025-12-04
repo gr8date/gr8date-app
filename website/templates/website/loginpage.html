@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>Sign In — Access Your Exclusive Synergy Account</title>
+    <meta name="description" content="Securely sign in to your Synergy elite dating account. Access your profile, matches, and premium features.">
+    <meta name="keywords" content="sign in, login, elite dating, premium account, secure login, Synergy">
+    <meta name="author" content="Synergy">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Sign In — Access Your Exclusive Synergy Account">
+    <meta property="og:description" content="Securely sign in to your Synergy elite dating account. Access your profile, matches, and premium features.">
+    <meta property="og:image" content="https://yoursite.com/images/login-og.jpg">
+    <meta property="og:url" content="https://yoursite.com/login/">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Sign In — Access Your Exclusive Account">
+    <meta name="twitter:description" content="Securely sign in to your Synergy elite dating account.">
+    <meta name="twitter:image" content="https://yoursite.com/images/login-twitter.jpg">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://yoursite.com/login/">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Sign In — Access Your Exclusive Synergy Account",
+      "description": "Securely sign in to your Synergy elite dating account. Access your profile, matches, and premium features.",
+      "url": "https://yoursite.com/login/",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Synergy",
+        "description": "Where sophisticated singles connect for meaningful relationships"
+      }
+    }
+    </script>
+
+    <style>
+        :root {
+            /* Premium gold color palette */
+            --brand: #cdad7c;
+            --brand-dark: #a88a5a;
+            --brand-light: #e8d8b8;
+            --brand-glow: rgba(205, 173, 119, 0.3);
+            
+            /* Sophisticated backgrounds */
+            --bg-dark: #0a0a0a;
+            --bg-deep: #121212;
+            --bg-charcoal: #1a1a1a;
+            --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+            
+            --card: rgba(255, 255, 255, 0.03);
+            --card-hover: rgba(255, 255, 255, 0.06);
+            --text: #ffffff;
+            --text-muted: #a0a0a0;
+            --text-gold: #cdad7c;
+            --border: rgba(205, 173, 119, 0.3);
+            --radius: 20px;
+            --shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            --glow: 0 0 60px rgba(205, 173, 119, 0.2);
+            --brand-nav-link: #cdad7f;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 300;
+        }
+
+        .script-logo {
+            font-family: 'Allura', cursive;
+            font-size: 42px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            color: #CDAD7F;
+            text-decoration: none;
+            text-transform: none;
+            text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.1);
+            display: inline-block;
+            margin: 0;
+            padding: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .script-logo:hover {
+            transform: scale(1.05);
+            text-shadow: 1px 1px 20px rgba(205, 173, 119, 0.3);
+        }
+
+        .premium-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.4s ease;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mobile-header-auth {
+            display: none;
+            gap: 0.8rem;
+            align-items: center;
+            margin-left: auto;
+            margin-right: 4rem;
+        }
+
+        .btn-mobile-login {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-mobile-join {
+            background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+            color: #000;
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: var(--glow);
+        }
+
+        .btn-mobile-login:hover,
+        .btn-mobile-join:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--brand-nav-link);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.3rem 0;
+        }
+
+        .nav-link:hover {
+            color: var(--text);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--brand-nav-link);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.4s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-login {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-join {
+            background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+            color: #000;
+            font-weight: 700;
+            box-shadow: var(--glow);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(205, 173, 119, 0.3);
+        }
+
+        .inner-page-content {
+            padding: 8rem 2rem;
+            padding-top: 10rem;
+            max-width: 900px;
+            margin: 0 auto;
+            min-height: 70vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-card {
+            background: var(--bg-charcoal);
+            padding: 3rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--brand);
+            max-width: 450px;
+            width: 100%;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 300;
+            margin-bottom: 1rem;
+            color: var(--text);
+            text-align: center;
+        }
+
+        .section-title .gold-accent {
+            font-weight: 600;
+            color: var(--text-gold);
+            text-shadow: 0 0 20px rgba(205, 173, 119, 0.2);
+        }
+
+        .login-card p {
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .login-card input[type="text"],
+        .login-card input[type="email"],
+        .login-card input[type="password"] {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            background: var(--bg-deep);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .login-card input:focus {
+            outline: none;
+            border-color: var(--brand);
+            box-shadow: 0 0 10px rgba(205, 173, 119, 0.2);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .remember-me input[type="checkbox"] {
+            accent-color: var(--brand);
+        }
+
+        .forgot-link {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-link:hover {
+            color: var(--text-gold);
+        }
+
+        /* Password toggle */
+        .password-field {
+            position: relative;
+        }
+
+        .password-field input[type="password"],
+        .password-field input[type="text"] {
+            padding-right: 4rem;
+            margin-bottom: 0;
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 0.75rem;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .password-help {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0.4rem 0 1.2rem;
+            text-align: left;
+        }
+
+        .security-features {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .security-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .security-item:before {
+            content: "✓";
+            color: var(--brand);
+            font-weight: bold;
+        }
+
+        .luxury-footer {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 3rem;
+        }
+
+        .footer-brand {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .footer-logo.script-logo {
+            font-size: 36px;
+        }
+
+        .footer-desc {
+            color: var(--text-muted);
+            line-height: 1.6;
+            max-width: 400px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-column-title {
+            color: var(--text-gold);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .footer-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .footer-link:hover {
+            color: var(--text-gold);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 3rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .hamburger-menu,
+        .mobile-nav-links {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .premium-header {
+                padding: 0.6rem 0;
+            }
+            
+            .nav-container {
+                flex-direction: row;
+                align-items: center;
+                padding: 0 1rem;
+                position: relative;
+                min-height: 60px;
+            }
+
+            .nav-links,
+            .auth-buttons {
+                display: none;
+            }
+
+            .mobile-header-auth {
+                display: flex;
+            }
+
+            .script-logo {
+                font-size: 36px;
+            }
+
+            .hamburger-menu {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                width: 30px;
+                height: 25px;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                margin-left: 1rem;
+            }
+
+            .hamburger-menu .line {
+                width: 100%;
+                height: 3px;
+                background: var(--text-gold);
+                transition: all 0.3s ease;
+                transform-origin: center;
+            }
+
+            .mobile-nav-links {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: var(--bg-deep);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 2rem;
+                padding: 2rem;
+                z-index: 999;
+            }
+
+            .mobile-nav-links.open {
+                display: flex;
+            }
+
+            .inner-page-content {
+                padding-top: 6rem;
+                padding: 4rem 1rem;
+            }
+
+            .login-card {
+                padding: 2rem;
+                margin: 0;
+            }
+
+            .form-options {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .footer-brand, .footer-links {
+                min-width: 100%;
+            }
+
+            .footer-links {
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="gold-particles"></div>
+
+    <header class="premium-header">
+        <div class="nav-container">
+            <a href="{% url 'index' %}" class="script-logo">Synergy</a>
+            
+            <!-- MOBILE HEADER AUTH BUTTONS -->
+            <div class="mobile-header-auth">
+                <a href="{% url 'login' %}" class="btn-mobile-login">Sign In</a>
+                <a href="{% url 'join' %}" class="btn-mobile-join">Join</a>
+            </div>
+            
+            <button class="hamburger-menu" aria-label="Toggle navigation menu" aria-expanded="false">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </button>
+
+            <nav class="nav-links">
+                <a href="{% url 'discover' %}" class="nav-link">Discover</a>
+                <a href="{% url 'success_stories' %}" class="nav-link">Success Stories</a>
+                <a href="{% url 'about' %}" class="nav-link">About</a>
+            </nav>
+            
+            <div class="auth-buttons">
+                <a href="{% url 'login' %}" class="btn btn-login">Sign In</a>
+                <a href="{% url 'join' %}" class="btn btn-join">Join Elite</a>
+            </div>
+        </div>
+
+        <nav class="mobile-nav-links">
+            <a href="{% url 'discover' %}" class="nav-link" style="--delay: 0.1s;">Discover</a>
+            <a href="{% url 'success_stories' %}" class="nav-link" style="--delay: 0.2s;">Success Stories</a>
+            <a href="{% url 'about' %}" class="nav-link" style="--delay: 0.3s;">About</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="inner-page-content animate-in">
+            <div class="login-card">
+                <h2 class="section-title">Welcome <span class="gold-accent">Back</span></h2>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">
+                    Access your exclusive Synergy account
+                </p>
+                
+                <form action="{% url 'login' %}" method="POST" id="loginForm">
+                    {% csrf_token %}
+                    <!-- username OR email -->
+                    <input 
+                        type="text" 
+                        name="login" 
+                        placeholder="Email or Username" 
+                        required 
+                    />
+                    
+                    <div class="password-field">
+                        <input 
+                            type="password" 
+                            name="password" 
+                            id="password" 
+                            placeholder="Password" 
+                            required 
+                            minlength="10" 
+                        />
+                        <button type="button" class="toggle-password" aria-label="Show password">
+                            Show
+                        </button>
+                    </div>
+                    <p class="password-help">
+                        For your security, we recommend at least 10 characters with a mix of letters and numbers.
+                    </p>
+                    
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" name="remember">
+                            Remember me
+                        </label>
+                        <a href="{% url 'password_reset' %}" class="forgot-link">Forgot Password?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-join" style="width: 100%; padding: 16px 0;">
+                        Sign In Securely
+                    </button>
+                </form>
+                
+                <div class="security-features">
+                    <div class="security-item">End-to-end encryption</div>
+                    <div class="security-item">Two-factor authentication ready</div>
+                    <div class="security-item">Secure socket layer (SSL) protected</div>
+                </div>
+                
+                <p style="text-align: center; color: var(--text-muted); font-size: 0.95rem; margin-top: 1.5rem;">
+                    Not yet a member? 
+                    <a href="{% url 'join' %}" class="nav-link" style="color: var(--brand-nav-link); display: inline;">Join Elite</a>
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="luxury-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo script-logo">Synergy</div>
+                <p class="footer-desc">
+                    Where sophisticated singles connect for meaningful relationships. 
+                    Experience dating elevated to an art form.
+                </p>
+            </div>
+            
+            <div class="footer-links">
+                <div class="footer-column">
+                    <div class="footer-column-title">Company</div>
+                    <a href="{% url 'about' %}" class="footer-link">About Us</a>
+                    <a href="{% url 'blog' %}" class="footer-link">Blog</a>
+                    <a href="{% url 'contact' %}" class="footer-link">Contact</a>
+                </div>
+                
+                <div class="footer-column">
+                    <div class="footer-column-title">Legal</div>
+                    <a href="{% url 'privacy' %}" class="footer-link">Privacy Policy</a>
+                    <a href="{% url 'terms' %}" class="footer-link">Terms of Service</a>
+                </div>
+                
+                <div class="footer-column">
+                    <div class="footer-column-title">Support</div>
+                    <a href="{% url 'contact' %}" class="footer-link">Help Centre</a>
+                    <a href="#" class="footer-link">FAQ</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            © {{ current_year|default:"2025" }} Synergy. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Mobile nav toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            const hamburger = document.querySelector('.hamburger-menu');
+            const mobileNav = document.querySelector('.mobile-nav-links');
+
+            if (hamburger && mobileNav) {
+                hamburger.addEventListener('click', function () {
+                    const isOpen = mobileNav.classList.toggle('open');
+                    hamburger.classList.toggle('open', isOpen);
+                    document.body.classList.toggle('no-scroll', isOpen);
+                    hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                });
+            }
+
+            // Show / hide password
+            const toggle = document.querySelector('.toggle-password');
+            const pwd = document.getElementById('password');
+
+            if (toggle && pwd) {
+                toggle.addEventListener('click', function () {
+                    const showing = pwd.type === 'text';
+                    pwd.type = showing ? 'password' : 'text';
+                    toggle.textContent = showing ? 'Show' : 'Hide';
+                    toggle.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

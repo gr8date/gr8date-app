@@ -1,0 +1,842 @@
+<!-- dates_create.html -->
+{% extends 'website/synergy_base_header.html' %}
+{% load static %}
+
+{% block title %}Create Date - Synergy{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+    .create-container {
+        padding: 2rem;
+        max-width: 600px;
+        margin: 0 auto;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .page-title {
+        font-weight: 800;
+        color: #cdad7c;
+        font-size: 2.5rem;
+        margin: 0 0 1rem 0;
+    }
+
+    .page-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    .form-card {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
+        border: 1px solid rgba(205, 173, 124, 0.2);
+        border-radius: 20px;
+        padding: 2.5rem;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .form-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #cdad7c, transparent);
+    }
+
+    .form-section {
+        margin-bottom: 2.5rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid rgba(205, 173, 124, 0.1);
+    }
+
+    .form-section:last-of-type {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #cdad7c;
+        margin: 0 0 1.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title .material-icons {
+        font-size: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-hint {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        font-style: italic;
+    }
+
+    .form-control {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(205, 173, 124, 0.3);
+        border-radius: 12px;
+        padding: 12px 16px;
+        color: #fff;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #cdad7c;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 0 3px rgba(205, 173, 124, 0.1);
+    }
+
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23cdad7c' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        background-size: 16px;
+        padding-right: 45px;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(205, 173, 124, 0.5);
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.05);
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .checkbox-group input[type="checkbox"]:checked {
+        background: #cdad7c;
+        border-color: #cdad7c;
+    }
+
+    .checkbox-group input[type="checkbox"]:checked::after {
+        content: '✓';
+        position: absolute;
+        color: #000;
+        font-weight: bold;
+        font-size: 14px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .checkbox-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.95rem;
+        cursor: pointer;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border: 1px solid rgba(205, 173, 124, 0.3);
+        border-radius: 12px;
+        padding: 14px 24px;
+        background: rgba(205, 173, 124, 0.1);
+        cursor: pointer;
+        text-decoration: none;
+        color: #cdad7c;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        width: 100%;
+    }
+
+    .btn:hover {
+        background: rgba(205, 173, 124, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(205, 173, 124, 0.3);
+    }
+
+    .btn-primary {
+        background: #cdad7c;
+        border-color: #cdad7c;
+        color: #000;
+    }
+
+    .btn-primary:hover {
+        background: #b89a66;
+        border-color: #b89a66;
+    }
+
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .form-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .premium-feature {
+        background: rgba(205, 173, 124, 0.1);
+        border: 1px solid rgba(205, 173, 124, 0.3);
+        border-radius: 12px;
+        padding: 1rem;
+        margin: 1rem 0;
+        position: relative;
+    }
+
+    .premium-feature::before {
+        content: '⭐';
+        position: absolute;
+        top: -8px;
+        left: 12px;
+        background: #000;
+        padding: 0 4px;
+        font-size: 12px;
+    }
+
+    .premium-text {
+        color: #cdad7c;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    .datetime-group {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1rem;
+    }
+
+    .vibe-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .vibe-tag {
+        background: rgba(205, 173, 124, 0.1);
+        border: 1px solid rgba(205, 173, 124, 0.3);
+        border-radius: 20px;
+        padding: 6px 12px;
+        color: #cdad7c;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .vibe-tag:hover,
+    .vibe-tag.active {
+        background: #cdad7c;
+        color: #000;
+    }
+
+    .auto-title-display {
+        background: rgba(205, 173, 124, 0.1);
+        border: 1px solid rgba(205, 173, 124, 0.3);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .auto-title-label {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .auto-title {
+        color: #cdad7c;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin: 0;
+        word-break: break-word;
+    }
+
+    .error-message {
+        color: #ef4444;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        display: none;
+    }
+
+    .form-control.error {
+        border-color: #ef4444;
+    }
+
+    @media (max-width: 768px) {
+        .create-container {
+            padding: 1rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .form-card {
+            padding: 1.5rem;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            grid-template-columns: 1fr;
+        }
+
+        .datetime-group {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="create-container">
+    <div class="page-header">
+        <h1 class="page-title">Create Date</h1>
+        <p class="page-subtitle">Craft your perfect Synergy experience</p>
+    </div>
+
+    <form method="post" class="form-card" id="dateForm">
+        {% csrf_token %}
+        
+        <!-- Auto-generated Title Display -->
+        <div class="auto-title-display">
+            <div class="auto-title-label">Your Date Title:</div>
+            <div id="autoTitle" class="auto-title">Loading...</div>
+        </div>
+        
+        <!-- Hidden title field for form submission -->
+        <input type="hidden" id="title" name="title" value="">
+
+        <!-- Activity Section -->
+        <div class="form-section">
+            <h2 class="section-title">
+                <span class="material-icons">local_activity</span>
+                Activity & Details
+            </h2>
+
+            <div class="form-group">
+                <label class="form-label" for="activity">Activity Type *</label>
+                <select id="activity" name="activity" class="form-control" required>
+                    <option value="">Select an activity</option>
+                    <option value="Coffee">Coffee</option>
+                    <option value="Drinks / Wine Bar">Drinks / Wine Bar</option>
+                    <option value="Dinner">Dinner</option>
+                    <option value="Walk / Park">Walk / Park</option>
+                    <option value="Gallery / Museum">Gallery / Museum</option>
+                    <option value="Movie">Movie</option>
+                    <option value="Live Music / Comedy">Live Music / Comedy</option>
+                    <option value="Surprise Me">Surprise Me</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="vibe">Vibe & Atmosphere *</label>
+                <select id="vibe" name="vibe" class="form-control" required>
+                    <option value="">Select a vibe</option>
+                    <option value="Chill">Chill</option>
+                    <option value="Classy">Classy</option>
+                    <option value="Adventurous">Adventurous</option>
+                    <option value="Playful">Playful</option>
+                    <option value="Quiet">Quiet</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Logistics Section -->
+        <div class="form-section">
+            <h2 class="section-title">
+                <span class="material-icons">schedule</span>
+                Date & Time
+            </h2>
+            
+            <div class="form-group">
+                <div class="form-row">
+                    <div>
+                        <label class="form-label" for="date">Date *</label>
+                        <input type="date" id="date" name="date" class="form-control" required>
+                    </div>
+                    <div>
+                        <label class="form-label" for="time">Time *</label>
+                        <input type="time" id="time" name="time" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="duration">Duration *</label>
+                <select id="duration" name="duration" class="form-control" required>
+                    <option value="">Select duration</option>
+                    <option value="45 min">45 min</option>
+                    <option value="60 min">60 min</option>
+                    <option value="90 min">90 min</option>
+                    <option value="2 hours">2 hours</option>
+                    <option value="3 hours">3 hours</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Location & Budget -->
+        <div class="form-section">
+            <h2 class="section-title">
+                <span class="material-icons">location_on</span>
+                Location & Budget
+            </h2>
+            
+            <div class="form-group">
+                <label class="form-label" for="area">Area / Suburb *</label>
+                <input type="text" id="area" name="area" class="form-control" placeholder="e.g., Bondi, Sydney CBD" required>
+                <div class="form-hint">Enter a valid suburb or area name (letters, spaces, and hyphens only)</div>
+                <div class="error-message" id="areaError">Please enter a valid suburb/area name without inappropriate content</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="budget">Budget *</label>
+                <select id="budget" name="budget" class="form-control" required>
+                    <option value="">Select budget</option>
+                    <option value="Free">Free</option>
+                    <option value="$">$ - Casual ($20-50)</option>
+                    <option value="$$">$$ - Moderate ($50-100)</option>
+                    <option value="$$$">$$$ - Premium ($100-200)</option>
+                    <option value="Each pays their way">Each pays their way</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Group & Audience -->
+        <div class="form-section">
+            <h2 class="section-title">
+                <span class="material-icons">groups</span>
+                Group & Audience
+            </h2>
+            
+            <div class="form-group">
+                <label class="form-label" for="group_size">Group Size *</label>
+                <select id="group_size" name="group_size" class="form-control" required>
+                    <option value="">Select group size</option>
+                    <option value="1_on_1">1 on 1</option>
+                    <option value="small_group">Small group (3–4)</option>
+                    <option value="group">Group (5+)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="audience">Audience *</label>
+                <select id="audience" name="audience" class="form-control" required>
+                    <option value="">Select audience</option>
+                    <option value="anyone">Anyone</option>
+                    <option value="women_only">Women only</option>
+                    <option value="men_only">Men only</option>
+                </select>
+                <div class="form-hint">Controls who can see and join your date</div>
+            </div>
+        </div>
+
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <a href="{% url 'dates_list' %}" class="btn btn-secondary">
+                <span class="material-icons">arrow_back</span>
+                Cancel
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <span class="material-icons">check</span>
+                Create Date
+            </button>
+        </div>
+    </form>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set minimum date to today and maximum date to 3 months from today
+    const dateInput = document.getElementById('date');
+    if (dateInput) {
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+        
+        // Calculate max date (3 months from today)
+        const maxDate = new Date();
+        maxDate.setMonth(maxDate.getMonth() + 3);
+        const maxDateStr = maxDate.toISOString().split('T')[0];
+        
+        // Set min and max attributes
+        dateInput.min = todayStr;
+        dateInput.max = maxDateStr;
+        
+        // Set default to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        // Ensure tomorrow is not beyond max date
+        if (tomorrow <= maxDate) {
+            dateInput.value = tomorrow.toISOString().split('T')[0];
+        } else {
+            dateInput.value = maxDateStr;
+        }
+    }
+    
+    // Set default time to 7:00 PM
+    const timeInput = document.getElementById('time');
+    if (timeInput) {
+        timeInput.value = '19:00';
+    }
+
+    // Elements for auto-title generation
+    const activitySelect = document.getElementById('activity');
+    const vibeSelect = document.getElementById('vibe');
+    const areaInput = document.getElementById('area');
+    const groupSizeSelect = document.getElementById('group_size');
+    const budgetSelect = document.getElementById('budget');
+    const autoTitleDisplay = document.getElementById('autoTitle');
+    const hiddenTitleInput = document.getElementById('title');
+    const areaError = document.getElementById('areaError');
+
+    // Format time to readable format
+    function formatTime(timeStr) {
+        if (!timeStr) return '';
+        const [hours, minutes] = timeStr.split(':');
+        const hour = parseInt(hours);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const displayHour = hour % 12 || 12;
+        return `${displayHour}:${minutes} ${ampm}`;
+    }
+
+    // Format date to readable format
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        const options = { weekday: 'short', month: 'short', day: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+    }
+
+    // Generate auto title based on form inputs
+    function generateAutoTitle() {
+        const activity = activitySelect.value || 'Activity';
+        const vibe = vibeSelect.value ? vibeSelect.value.toLowerCase() : '';
+        const area = areaInput.value || 'Location';
+        const date = dateInput.value ? formatDate(dateInput.value) : '';
+        const time = timeInput.value ? formatTime(timeInput.value) : '';
+        const groupSize = groupSizeSelect.value || '';
+        const budget = budgetSelect.value || '';
+        
+        // Build title parts
+        let titleParts = [];
+        
+        // Add vibe if selected
+        if (vibe) {
+            titleParts.push(vibe.charAt(0).toUpperCase() + vibe.slice(1));
+        }
+        
+        // Add activity
+        titleParts.push(activity);
+        
+        // Add group size
+        let groupText = '';
+        switch(groupSize) {
+            case '1_on_1':
+                groupText = '1-on-1';
+                break;
+            case 'small_group':
+                groupText = 'Small Group';
+                break;
+            case 'group':
+                groupText = 'Group';
+                break;
+        }
+        if (groupText) {
+            titleParts.push(groupText);
+        }
+        
+        // Add budget
+        if (budget) {
+            titleParts.push(budget);
+        }
+        
+        // Add area
+        titleParts.push(`in ${area}`);
+        
+        // Add date and time if available
+        if (date && time) {
+            titleParts.push(`on ${date} at ${time}`);
+        } else if (date) {
+            titleParts.push(`on ${date}`);
+        } else if (time) {
+            titleParts.push(`at ${time}`);
+        }
+        
+        // Join parts with spaces
+        const generatedTitle = titleParts.join(' ');
+        
+        // Update display and hidden input
+        autoTitleDisplay.textContent = generatedTitle;
+        hiddenTitleInput.value = generatedTitle;
+        
+        return generatedTitle;
+    }
+
+    // Generate initial title
+    generateAutoTitle();
+
+    // Add event listeners to update title when form changes
+    const formInputs = [activitySelect, vibeSelect, areaInput, dateInput, timeInput, groupSizeSelect, budgetSelect];
+    formInputs.forEach(input => {
+        if (input) {
+            input.addEventListener('change', generateAutoTitle);
+            if (input.tagName === 'INPUT') {
+                input.addEventListener('input', generateAutoTitle);
+            }
+        }
+    });
+
+    // PROFANITY FILTER AND AREA VALIDATION
+    const profanityWords = [
+        'fuck', 'shit', 'asshole', 'bitch', 'cunt', 'dick', 'piss', 'cock',
+        'pussy', 'fag', 'whore', 'slut', 'bastard', 'damn', 'hell', 'crap',
+        'motherfucker', 'douche', 'twat', 'wanker', 'arse', 'bollocks', 'bugger',
+        'bloody', 'choad', 'faggot', 'jizz', 'nigga', 'nigger', 'prick', 'queer',
+        'retard', 'screw', 'scrotum', 'shitass', 'shiz', 'skank', 'tit', 'tits',
+        'titties', 'titty', 'vagina', 'wank', 'whore', 'wtf', 'xxx'
+    ];
+
+    function containsProfanity(text) {
+        const lowerText = text.toLowerCase();
+        return profanityWords.some(word => {
+            // Match whole words only
+            const regex = new RegExp('\\b' + word + '\\b', 'i');
+            return regex.test(lowerText);
+        });
+    }
+
+    function validateAreaName(area) {
+        // Remove profanity
+        if (containsProfanity(area)) {
+            return {
+                valid: false,
+                message: 'Please use appropriate language for area/suburb names'
+            };
+        }
+        
+        // Validate format (letters, spaces, hyphens, apostrophes, commas allowed)
+        const validFormat = /^[A-Za-z\s\-\',\.]+$/;
+        if (!validFormat.test(area)) {
+            return {
+                valid: false,
+                message: 'Area/suburb names should only contain letters, spaces, hyphens, commas, and apostrophes'
+            };
+        }
+        
+        // Check minimum length
+        if (area.trim().length < 2) {
+            return {
+                valid: false,
+                message: 'Area/suburb name should be at least 2 characters'
+            };
+        }
+        
+        // Check maximum length
+        if (area.length > 100) {
+            return {
+                valid: false,
+                message: 'Area/suburb name should not exceed 100 characters'
+            };
+        }
+        
+        return { valid: true, message: '' };
+    }
+
+    // Real-time area validation
+    areaInput.addEventListener('input', function() {
+        const area = areaInput.value.trim();
+        const validation = validateAreaName(area);
+        
+        if (area.length > 0 && !validation.valid) {
+            areaInput.classList.add('error');
+            areaError.textContent = validation.message;
+            areaError.style.display = 'block';
+        } else {
+            areaInput.classList.remove('error');
+            areaError.style.display = 'none';
+        }
+        
+        // Still update title even with validation error
+        generateAutoTitle();
+    });
+
+    // Form validation with date range check
+    const form = document.getElementById('dateForm');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const requiredFields = form.querySelectorAll('[required]');
+        let valid = true;
+        let errorMessages = [];
+
+        // Reset all error states
+        requiredFields.forEach(field => {
+            field.classList.remove('error');
+        });
+        areaError.style.display = 'none';
+
+        // Check required fields
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('error');
+                valid = false;
+            }
+        });
+
+        // Validate area
+        const areaValidation = validateAreaName(areaInput.value.trim());
+        if (!areaValidation.valid) {
+            areaInput.classList.add('error');
+            areaError.textContent = areaValidation.message;
+            areaError.style.display = 'block';
+            valid = false;
+            errorMessages.push(areaValidation.message);
+        }
+
+        // Additional date validation
+        if (dateInput.value) {
+            const selectedDate = new Date(dateInput.value);
+            const today = new Date();
+            const maxDate = new Date();
+            maxDate.setMonth(maxDate.getMonth() + 3);
+            
+            today.setHours(0, 0, 0, 0);
+            maxDate.setHours(0, 0, 0, 0);
+            selectedDate.setHours(0, 0, 0, 0);
+            
+            if (selectedDate < today) {
+                dateInput.classList.add('error');
+                errorMessages.push('Date cannot be in the past. Please select a date from today onwards.');
+                valid = false;
+            }
+            
+            if (selectedDate > maxDate) {
+                dateInput.classList.add('error');
+                errorMessages.push('Date cannot be more than 3 months in the future. Please select an earlier date.');
+                valid = false;
+            }
+        }
+
+        if (!valid) {
+            // Show all error messages
+            if (errorMessages.length > 0) {
+                alert('Please fix the following errors:\n\n' + errorMessages.join('\n'));
+            } else {
+                alert('Please fill in all required fields.');
+            }
+            return false;
+        } else {
+            // Ensure title is generated before submission
+            generateAutoTitle();
+            
+            // Log for debugging
+            console.log('Form submitted with data:', {
+                title: hiddenTitleInput.value,
+                activity: activitySelect.value,
+                vibe: vibeSelect.value,
+                date: dateInput.value,
+                time: timeInput.value,
+                duration: document.getElementById('duration').value,
+                area: areaInput.value,
+                budget: budgetSelect.value,
+                group_size: groupSizeSelect.value,
+                audience: document.getElementById('audience').value
+            });
+            
+            // Submit the form
+            form.submit();
+        }
+    });
+
+    // Pre-populate with common Australian suburbs for user convenience
+    const australianSuburbs = [
+        'Bondi', 'Surry Hills', 'Sydney CBD', 'Newtown', 'Manly', 
+        'Parramatta', 'Chatswood', 'Darlinghurst', 'Paddington',
+        'Melbourne CBD', 'Fitzroy', 'St Kilda', 'South Yarra',
+        'Brisbane CBD', 'Fortitude Valley', 'South Bank',
+        'Perth CBD', 'Fremantle', 'Subiaco',
+        'Adelaide CBD', 'Glenelg', 'North Adelaide'
+    ];
+
+    // Optional: Add autocomplete suggestions
+    areaInput.addEventListener('focus', function() {
+        if (!this.getAttribute('list')) {
+            const datalist = document.createElement('datalist');
+            datalist.id = 'suburbSuggestions';
+            
+            australianSuburbs.forEach(suburb => {
+                const option = document.createElement('option');
+                option.value = suburb;
+                datalist.appendChild(option);
+            });
+            
+            document.body.appendChild(datalist);
+            this.setAttribute('list', 'suburbSuggestions');
+        }
+    });
+});
+</script>
+{% endblock %}

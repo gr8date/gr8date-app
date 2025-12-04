@@ -1,0 +1,487 @@
+{% extends 'website/synergy_base_header.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  :root {
+    --brand: #cdad7c;
+    --brand-dark: #a88a5a;
+    --brand-soft: #e7d3af;
+    --bg: #050509;
+    --bg-soft: #090b12;
+    --bg-elevated: #0b0e18;
+    --card: rgba(15, 23, 42, 0.96);
+    --card-soft: rgba(15, 23, 42, 0.9);
+    --text: #f9fafb;
+    --text-soft: #9ca3af;
+    --text-muted: #6b7280;
+    --text-gold: #f5e6c5;
+    --border: rgba(148, 163, 184, 0.45);
+    --border-soft: rgba(148, 163, 184, 0.2);
+    --shadow-soft: 0 20px 60px rgba(15, 23, 42, 0.9);
+    --shadow-strong: 0 30px 80px rgba(0, 0, 0, 0.95);
+    --radius: 20px;
+  }
+
+  /* Success Messages */
+  .messages-container {
+    position: fixed;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    width: 90%;
+    max-width: 500px;
+  }
+
+  .alert {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--brand-soft);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  .close-alert {
+    background: none;
+    border: none;
+    color: #000;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+  }
+
+  .close-alert:hover {
+    opacity: 0.7;
+  }
+
+  @keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+  }
+
+  /* Main App Layout */
+  .app-container {
+    margin-top: 100px;
+    padding: 1.5rem;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .app-title {
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--text);
+  }
+
+  .app-title .gold-accent {
+    color: var(--text-gold);
+    font-weight: 600;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    box-shadow: 0 10px 25px rgba(205, 173, 119, 0.3);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(205, 173, 119, 0.3);
+  }
+
+  /* Members Grid - 4 columns - Clean & Minimal */
+  .members-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .member-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: all 0.4s ease;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .member-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-soft), 0 10px 30px rgba(205, 173, 119, 0.2);
+    border-color: var(--brand);
+  }
+
+  .member-image {
+    width: 100%;
+    height: 220px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+    filter: grayscale(20%);
+    transition: filter 0.4s ease;
+  }
+
+  .member-card:hover .member-image {
+    filter: grayscale(0);
+  }
+
+  .member-image::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  }
+
+  .member-content {
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .member-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+    color: var(--text);
+  }
+
+  .member-details {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  /* No Profiles Message */
+  .no-profiles {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* Elite Pagination */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .page-btn.prev-next {
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 300;
+    transition: all 0.3s ease;
+    min-width: 50px;
+    text-align: center;
+  }
+
+  .page-btn.prev-next:hover:not(.disabled) {
+    background: rgba(205, 173, 119, 0.1);
+    border-color: var(--brand);
+    transform: translateY(-2px);
+  }
+
+  .page-btn.prev-next.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .page-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text);
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+  }
+
+  .current-page {
+    color: var(--text-gold);
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .page-of {
+    color: var(--text-muted);
+  }
+
+  .total-pages {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* Responsive */
+  @media (max-width: 1200px) {
+    .members-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .members-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .app-container {
+      padding: 1rem;
+      margin-top: 80px;
+    }
+    
+    .app-header {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    
+    .app-title {
+      font-size: 1.8rem;
+    }
+    
+    .members-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    .member-image {
+      height: 250px;
+    }
+    
+    .action-buttons {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .btn {
+      flex: 1;
+      text-align: center;
+    }
+
+    /* Mobile Pagination */
+    .pagination {
+      gap: 1rem;
+    }
+
+    .page-btn.prev-next {
+      padding: 10px 14px;
+      min-width: 45px;
+    }
+
+    /* Mobile Messages */
+    .messages-container {
+      top: 70px;
+      width: 95%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .members-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .member-content {
+      padding: 1rem;
+    }
+    
+    .pagination {
+      gap: 0.8rem;
+    }
+    
+    .page-btn.prev-next {
+      padding: 8px 12px;
+      min-width: 40px;
+      font-size: 1.1rem;
+    }
+
+    .page-info {
+      font-size: 0.8rem;
+    }
+
+    .current-page {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<!-- Success Messages Display -->
+{% if messages %}
+<div class="messages-container">
+  {% for message in messages %}
+  <div class="alert">
+    {{ message }}
+    <button class="close-alert">&times;</button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="app-container">
+  <div class="app-header">
+    <h1 class="app-title">Elite <span class="gold-accent">Members</span></h1>
+    <div class="action-buttons">
+    </div>
+  </div>
+
+  <!-- Clean & Minimal Members Grid -->
+  <section class="members-grid">
+    {% for profile in profiles %}
+    <article class="member-card" onclick="window.location.href='{% url 'profile_detail_member' profile.user_id %}'">
+      <div class="member-image" style="background-image: url('{{ profile.profile_image|default:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80' }}')">
+        <!-- No badges - Clean & Elite -->
+      </div>
+      <div class="member-content">
+        <!-- FIXED: Use display_name instead of hardcoded "Member" -->
+        <h3 class="member-name">{{ profile.display_name }}</h3>
+        <p class="member-details">
+          {{ profile.age|default:"Not provided" }} • {{ profile.location|default:"Location not provided" }}
+        </p>
+        <!-- No bio or tags - Minimal & Sophisticated -->
+      </div>
+    </article>
+    {% empty %}
+    <div class="no-profiles">
+      <p>No profiles found.</p>
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- Elite Pagination: < 1 of 12 > -->
+  <div class="pagination">
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}" class="page-btn prev-next">‹</a>
+    {% else %}
+      <span class="page-btn prev-next disabled">‹</span>
+    {% endif %}
+
+    <span class="page-info">
+      <span class="current-page">{{ page_obj.number }}</span>
+      <span class="page-of">of</span>
+      <span class="total-pages">{{ page_obj.paginator.num_pages }}</span>
+    </span>
+
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}" class="page-btn prev-next">›</a>
+    {% else %}
+      <span class="page-btn prev-next disabled">›</span>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add hover effects to member cards
+    const memberCards = document.querySelectorAll('.member-card');
+    memberCards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-8px) scale(1.02)';
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(0) scale(1)';
+      });
+    });
+
+    // Close alert messages
+    document.querySelectorAll('.close-alert').forEach(button => {
+      button.addEventListener('click', function() {
+        const alert = this.closest('.alert');
+        alert.style.animation = 'slideUp 0.3s ease-in forwards';
+        setTimeout(() => {
+          alert.remove();
+        }, 300);
+      });
+    });
+
+    // Auto-remove alerts after 5 seconds
+    setTimeout(() => {
+      document.querySelectorAll('.alert').forEach(alert => {
+        alert.style.animation = 'slideUp 0.3s ease-in forwards';
+        setTimeout(() => alert.remove(), 300);
+      });
+    }, 5000);
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #cdad7c; color: white; padding: 30px; text-align: center; }
+        .content { padding: 30px; background: #f9f9f9; }
+        .user-info { background: white; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .changes { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #cdad7c; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
+        .button { display: inline-block; padding: 12px 24px; background: #cdad7c; color: white; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>New Profile Edit Request</h1>
+            <p>Synergy Admin Notification</p>
+        </div>
+        
+        <div class="content">
+            <h2>Profile Edit Request Submitted</h2>
+            
+            <div class="user-info">
+                <p><strong>User:</strong> {{ edit_request.profile.user.username }}</p>
+                <p><strong>Email:</strong> {{ edit_request.profile.user.email }}</p>
+                <p><strong>Submitted:</strong> {{ edit_request.submitted_at|date:"M j, Y g:i A" }}</p>
+            </div>
+            
+            <div class="changes">
+                <h3>Fields Changed:</h3>
+                <ul>
+                    {% for field in changed_fields %}
+                    <li><strong>{{ field|title }}</strong></li>
+                    {% empty %}
+                    <li>No specific fields changed (possibly photos only)</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <p style="text-align: center;">
+                <a href="{{ admin_url }}" class="button">Review Changes in Admin</a>
+            </p>
+            
+            <p><em>This profile edit request is pending your review and approval.</em></p>
+        </div>
+        
+        <div class="footer">
+            <p>Synergy Admin System<br>Automated Notification</p>
+        </div>
+    </div>
+</body>
+</html>

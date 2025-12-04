@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #cdad7c; color: white; padding: 30px; text-align: center; }
+        .content { padding: 30px; background: #f9f9f9; }
+        .changes { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #ff6b6b; }
+        .reason { background: #fff3f3; padding: 15px; margin: 15px 0; border-radius: 5px; border: 1px solid #ff6b6b; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
+        .button { display: inline-block; padding: 12px 24px; background: #cdad7c; color: white; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Profile Changes Require Revision</h1>
+            <p>Synergy Elite Dating</p>
+        </div>
+        
+        <div class="content">
+            <h2>Hello {{ user.username }},</h2>
+            <p>Your recent profile changes require some revisions before they can be approved.</p>
+            
+            <div class="changes">
+                <h3>Changes Requiring Revision:</h3>
+                <ul>
+                    {% for field in changed_fields %}
+                    <li>{{ field|title }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            {% if reason %}
+            <div class="reason">
+                <h4>Admin Notes:</h4>
+                <p>{{ reason }}</p>
+            </div>
+            {% endif %}
+            
+            <p>Please review the feedback above and resubmit your changes.</p>
+            
+            <p style="text-align: center;">
+                <a href="https://yoursite.com/profile/edit/" class="button">Edit Your Profile</a>
+            </p>
+            
+            <p>If you need clarification on the required changes, please contact our support team.</p>
+        </div>
+        
+        <div class="footer">
+            <p>Best regards,<br>The Synergy Team</p>
+            <p><small>This is an automated message. Please do not reply to this email.</small></p>
+        </div>
+    </div>
+</body>
+</html>

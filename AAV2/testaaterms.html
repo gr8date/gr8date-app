@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms & Conditions | Adult Arrangements</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* 2025 Palette */
+            --bg-deep: #050505;
+            --bg-panel: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-muted: #888888;
+
+            /* Champagne Chrome Gradient */
+            --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 100%);
+
+            /* Glassmorphism Styles */
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+            --blur: blur(20px);
+
+            /* Accents */
+            --accent-glow: 0 0 20px rgba(191, 149, 63, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        a:hover {
+            color: #bf953f;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 4rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: var(--glass-border);
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-button {
+            background: transparent;
+            border: var(--glass-border);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 10px rgba(191, 149, 63, 0.2);
+        }
+        
+        /* --- UTILITIES --- */
+        .gold-text {
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- LEGAL CONTENT LAYOUT --- */
+        .legal-wrapper {
+            padding: 6rem 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .legal-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .legal-header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .legal-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .legal-document {
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            border: var(--glass-border);
+            border-radius: 20px;
+            padding: 4rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .legal-document h2 {
+            font-family: 'Cinzel', serif;
+            color: #fcf6ba; /* Light gold */
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            border-bottom: 1px solid rgba(191, 149, 63, 0.3);
+            padding-bottom: 0.5rem;
+        }
+        
+        .legal-document h2:first-of-type {
+            margin-top: 0;
+        }
+
+        .legal-document h3 {
+            font-family: 'Cinzel', serif;
+            color: #fff;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .legal-document p {
+            color: #ddd;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .legal-document ul {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            color: #ddd;
+        }
+
+        .legal-document li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 4rem;
+            border-top: 1px solid #111;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        footer a {
+            color: #888;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* RESPONSIVE FIXES */
+        @media (max-width: 900px) {
+            nav {
+                padding: 1rem;
+            }
+            .legal-wrapper {
+                padding: 4rem 1rem;
+            }
+            .legal-document {
+                padding: 2rem;
+            }
+            .legal-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo">ADULT ARRANGEMENTS</a>
+        <div class="nav-actions">
+            <a href="/login" class="nav-button">Member Login</a>
+            <a href="/join" class="nav-button">Join Now</a>
+        </div>
+    </nav>
+
+    <section class="legal-wrapper">
+        <header class="legal-header">
+            <h1 class="gold-text">Terms of Service</h1>
+            <p>Effective Date: December 4, 2025</p>
+        </header>
+
+        <div class="legal-document">
+            <p>Welcome to <strong>Adult Arrangements</strong>, a premium platform facilitating sophisticated connections. By accessing or using our services, you agree to be bound by these Terms and Conditions. Please read them carefully.</p>
+
+            <h2>1. Acceptance of Terms</h2>
+            <p>By creating an account, accessing, or using the Adult Arrangements website or mobile application (the "Service"), you agree to these Terms, our Privacy Policy, and all applicable laws and regulations. If you do not agree to these terms, you must not use the Service.</p>
+
+            <h2>2. Eligibility and Verification</h2>
+            <h3>2.1 Age Requirement</h3>
+            <p>The Service is strictly limited to individuals who are at least eighteen (18) years of age. By using the Service, you represent and warrant that you are 18 years of age or older.</p>
+
+            <h3>2.2 Verification</h3>
+            <p>You agree to cooperate fully with our profile verification process, which may include identity, background, and financial screening to maintain the integrity of our elite community. We reserve the right to deny or terminate access based on the results of these checks.</p>
+
+            <h2>3. Account and Membership</h2>
+            <h3>3.1 Account Security</h3>
+            <p>You are responsible for maintaining the confidentiality of your login credentials and for all activities that occur under your account. You agree to notify us immediately of any unauthorized use of your account.</p>
+
+            <h3>3.2 Membership Tiers and Fees</h3>
+            <p>Access to certain features of the Service requires a paid membership. Fees are detailed on the Service and are subject to change. All fees are non-refundable, except as expressly provided in our refund policy.</p>
+
+            <h2>4. Code of Conduct</h2>
+            <h3>4.1 Lawful Use</h3>
+            <p>You agree to use the Service in full compliance with all local, state, national, and international laws and regulations.</p>
+
+            <h3>4.2 Prohibited Content</h3>
+            <p>You agree not to post, transmit, or share any content that is:</p>
+            <ul>
+                <li>Illegal, harmful, harassing, or defamatory.</li>
+                <li>Pornographic, excessively violent, or overtly sexual in nature.</li>
+                <li>Infringing upon any third party's intellectual property rights.</li>
+                <li>Spam, phishing, or unauthorized solicitations.</li>
+            </ul>
+
+            <h3>4.3 Respectful Interaction</h3>
+            <p>You agree to treat all members with respect and dignity. Harassment, abuse, or aggressive communication is strictly prohibited and will result in immediate account termination.</p>
+
+            <h2>5. Termination and Suspension</h2>
+            <p>We may terminate or suspend your account, without notice or liability, for any reason, including without limitation if you breach these Terms. Upon termination, your right to use the Service will immediately cease.</p>
+
+            <h2>6. Disclaimer of Warranties</h2>
+            <p>The Service is provided on an "as is" and "as available" basis. Adult Arrangements expressly disclaims all warranties of any kind, whether express or implied, including, but not limited to the implied warranties of merchantability, fitness for a particular purpose, and non-infringement. We do not guarantee any specific results from the use of the Service.</p>
+
+            <h2>7. Governing Law</h2>
+            <p>These Terms shall be governed by the laws of New South Wales, Australia, without regard to its conflict of law provisions.</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>
+            © 2025 ADULT ARRANGEMENTS. REDEFINING LUXURY DATING. 18+ ONLY.
+        </p>
+        <p style="margin-top: 0.5rem;">
+            <a href="/terms">Terms</a> •
+            <a href="/privacy">Privacy</a> •
+            <a href="/safety">Safety &amp; Support</a>
+        </p>
+    </footer>
+
+</body>
+</html>

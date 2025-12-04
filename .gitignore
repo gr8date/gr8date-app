@@ -1,0 +1,70 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# ⚠️ LOCAL DEVELOPMENT DATABASES - DO NOT COMMIT!
+*.sqlite3
+*.db
+db_*.sqlite3
+db_backup_*.sqlite3
+/local_dev_db/
+
+# Virtual environment
+venv/
+
+# Environment variables (passwords, API keys)
+.env
+.env.local
+.env.*.local
+.env.*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Static files at build time
+staticfiles/
+
+# Media files (user uploaded)
+media/
+
+# Backup files
+*.backup
+*_backup.*
+backup_*
+
+# Test/development scripts
+test_*.py
+
+# Render/Railway specific
+Procfile
+railway.json
+render.yaml
+
+# Temporary files
+*.tmp
+temp/
+tmp/
+
+# Development data exports (uncomment if you want to include)
+# datadump.json

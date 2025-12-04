@@ -1,0 +1,680 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Create Profile - Step 4 - Synergy</title>
+<meta name="description" content="Create your elite dating profile - Step 4: Trust & Privacy" />
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --brand: #cdad7c;
+    --brand-dark: #a88a5a;
+    --brand-light: #e8d8b8;
+    --brand-glow: rgba(205, 173, 119, 0.3);
+    --bg-dark: #0a0a0a;
+    --bg-deep: #121212;
+    --bg-charcoal: #1a1a1a;
+    --bg-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+    --card: rgba(255, 255, 255, 0.03);
+    --card-hover: rgba(255, 255, 255, 0.06);
+    --text: #ffffff;
+    --text-muted: #a0a0a0;
+    --text-gold: #cdad7c;
+    --border: rgba(205, 173, 119, 0.3);
+    --radius: 20px;
+    --shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    --glow: 0 0 60px rgba(205, 173, 119, 0.2);
+    --brand-nav-link: #cdad7f;
+    --error: #ff6b6b;
+    --success: #51cf66;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    background: var(--bg-gradient);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  .premium-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 1000;
+    padding: 1rem 0;
+  }
+
+  .nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .script-logo {
+    font-family: 'Allura', cursive;
+    font-size: 42px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #CDAD7F;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.1);
+    display: inline-block;
+    margin: 0;
+    padding: 5px 0;
+    transition: all 0.3s ease;
+  }
+
+  .script-logo:hover {
+    transform: scale(1.05);
+    text-shadow: 1px 1px 15px rgba(255, 255, 255, 0.2);
+  }
+  
+  .progress-container {
+    max-width: 800px;
+    margin: 100px auto 2rem;
+    padding: 0 1.5rem;
+  }
+
+  .progress-bar {
+    background: var(--card);
+    height: 8px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    border-radius: 10px;
+    width: 100%;
+  }
+
+  .progress-text {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .profile-create-container {
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    padding: 0 1.5rem;
+  }
+
+  .create-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 3rem;
+    transition: all 0.4s ease;
+  }
+
+  .create-card:hover {
+    box-shadow: var(--shadow), var(--glow);
+    border-color: var(--brand);
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .section-subtitle {
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 1.1rem;
+  }
+
+  .section-title .gold-accent {
+    color: var(--text-gold);
+    font-weight: 600;
+  }
+
+  .form-group {
+    margin-bottom: 2rem;
+  }
+
+  .form-label {
+    display: block;
+    color: var(--text-gold);
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn {
+    padding: 12px 30px;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    box-shadow: var(--glow);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #000;
+    box-shadow: 0 0 60px rgba(16, 185, 129, 0.2);
+  }
+
+  .btn-success:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(205, 173, 119, 0.3);
+  }
+
+  .btn-success:hover:not(:disabled) {
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+  }
+
+  /* Trust Options */
+  .trust-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .trust-option {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .trust-option.featured {
+    border-color: var(--text-gold);
+    background: rgba(205, 173, 119, 0.05);
+  }
+
+  .trust-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-gold);
+  }
+
+  .trust-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .trust-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+
+  .trust-status {
+    color: var(--success);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .trust-note {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-style: italic;
+    margin-top: 0.5rem;
+  }
+
+  /* Legal Disclaimer */
+  .legal-disclaimer {
+    background: rgba(255, 107, 107, 0.05);
+    border: 1px solid var(--error);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .disclaimer-title {
+    color: var(--error);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+  }
+
+  .disclaimer-text {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  /* Checkbox Styles */
+  .checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .checkbox-input {
+    margin-top: 0.2rem;
+  }
+
+  .checkbox-label {
+    color: var(--text);
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .checkbox-label a {
+    color: var(--text-gold);
+    text-decoration: none;
+  }
+
+  .checkbox-label a:hover {
+    text-decoration: underline;
+  }
+
+  .validation-message {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .validation-message.error {
+    color: var(--error);
+  }
+
+  /* Success State */
+  .success-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    display: none;
+  }
+
+  .success-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    color: #10b981;
+  }
+
+  .success-title {
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  .success-subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .premium-header { padding: 0.8rem 0; }
+    .nav-container { padding: 0 1rem; }
+    .script-logo { font-size: 36px; }
+    .progress-container { margin-top: 80px; }
+    .create-card { padding: 2rem 1.5rem; }
+    .section-title { font-size: 1.7rem; }
+    .form-actions { flex-direction: column; gap: 1rem; }
+    .btn { width: 100%; text-align: center; }
+    .trust-options { grid-template-columns: 1fr; }
+  }
+</style>
+    
+</head>
+<body>
+  <div id="gold-particles"></div>
+  
+  <header class="premium-header">
+    <div class="nav-container">
+      <a href="{% url 'index' %}" class="script-logo" itemprop="url">Synergy</a>
+    </div>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+    </div>
+    <div class="progress-text">Step 4 of 4: Trust & Privacy</div>
+  </div>
+
+  <main class="profile-create-container">
+    <div class="create-card">
+      <h1 class="section-title">Trust & <span class="gold-accent">Privacy</span></h1>
+      <p class="section-subtitle">Finalize your profile and build trust with other members</p>
+
+      <!-- Success State (Hidden by default) -->
+      <div class="success-state" id="successState">
+        <div class="success-icon">✓</div>
+        <h2 class="success-title">Profile Created Successfully!</h2>
+        <p class="success-subtitle">Your profile is now being reviewed and will be active shortly.</p>
+        <a href="{% url 'dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
+      </div>
+
+      <!-- Form (Visible by default) -->
+      <form id="profileFormStep4" style="display: block;">
+        {% csrf_token %}
+        
+        <!-- Trust Building Options -->
+        <div class="form-group">
+          <label class="form-label">Build Profile Trust</label>
+          <p style="color: var(--text-muted); margin-bottom: 1rem;">Increase confidence with other members</p>
+          
+          <div class="trust-options">
+            <div class="trust-option featured">
+              <div class="trust-icon">✉️</div>
+              <div class="trust-title">Email Confirmed</div>
+              <div class="trust-desc">Required for all accounts to ensure basic communication</div>
+              <div class="trust-status">Will be completed after signup</div>
+            </div>
+            
+            <div class="trust-option">
+              <div class="trust-icon">🔗</div>
+              <div class="trust-title">Social Profiles</div>
+              <div class="trust-desc">Optional - Connect established social media accounts</div>
+              <div class="trust-note">Available in your dashboard later</div>
+            </div>
+          </div>
+
+          <!-- Legal Disclaimer -->
+          <div class="legal-disclaimer">
+            <div class="disclaimer-title">Important Safety Information</div>
+            <div class="disclaimer-text">
+              Profile trust features help members feel more confident but do not constitute identity verification, 
+              background checks, or safety guarantees. These features simply indicate that an email address has been 
+              confirmed or social media accounts have been linked. Always exercise caution when meeting people online, 
+              follow our safety guidelines, and meet in public places for initial meetings.
+            </div>
+          </div>
+        </div>
+
+        <!-- Privacy Settings -->
+        <div class="form-group">
+          <label class="form-label">Privacy Settings</label>
+          <div class="checkbox-group">
+            <input type="checkbox" id="show-profile" name="show_profile" class="checkbox-input" checked>
+            <label for="show-profile" class="checkbox-label">
+              <strong>Make my profile visible to other members</strong><br>
+              When disabled, your profile won't appear in search results
+            </label>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="show-distance" name="show_distance" class="checkbox-input" checked>
+            <label for="show-distance" class="checkbox-label">
+              <strong>Show my approximate distance</strong><br>
+              Members will see how far you are from them
+            </label>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="show-online" name="show_online" class="checkbox-input" checked>
+            <label for="show-online" class="checkbox-label">
+              <strong>Show when I'm online</strong><br>
+              Let members know when you're active on the platform
+            </label>
+          </div>
+        </div>
+
+        <!-- Notification Preferences -->
+        <div class="form-group">
+          <label class="form-label">Notification Preferences</label>
+          <div class="checkbox-group">
+            <input type="checkbox" id="notify-messages" name="notify_messages" class="checkbox-input" checked>
+            <label for="notify-messages" class="checkbox-label">
+              <strong>New message notifications</strong><br>
+              Get notified when you receive new messages
+            </label>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="notify-matches" name="notify_matches" class="checkbox-input" checked>
+            <label for="notify-matches" class="checkbox-label">
+              <strong>New match notifications</strong><br>
+              Get notified when someone likes your profile
+            </label>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="notify-promotions" name="notify_promotions" class="checkbox-input">
+            <label for="notify-promotions" class="checkbox-label">
+              <strong>Promotional emails</strong><br>
+              Receive updates about new features and events
+            </label>
+          </div>
+        </div>
+
+        <!-- Terms & Conditions with Enhanced Safety Language -->
+        <div class="form-group">
+          <div class="checkbox-group">
+            <input type="checkbox" id="terms" name="terms" class="checkbox-input" required>
+            <label for="terms" class="checkbox-label">
+              I agree to the <a href="{% url 'terms' %}" target="_blank">Terms of Service</a> and 
+              <a href="{% url 'privacy' %}" target="_blank">Privacy Policy</a>. 
+              <strong>I understand that profile trust features are for confidence-building only and do not 
+              constitute identity verification, background checks, or safety guarantees.</strong> 
+              I confirm that I am over 18 years old and am creating this profile for genuine dating purposes. 
+              I will exercise caution when interacting with other members and follow all safety guidelines.
+            </label>
+          </div>
+          <div class="validation-message" id="termsValidation"></div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <a href="{% url 'create_profile_step3' %}" class="btn btn-secondary">Back to Step 3</a>
+          <button type="button" id="completeProfileBtn" class="btn btn-success" disabled>Complete Profile</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Create gold particles
+      function createGoldParticles() {
+        const container = document.getElementById('gold-particles');
+        for (let i = 0; i < 15; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'gold-particle';
+          particle.style.left = Math.random() * 100 + 'vw';
+          particle.style.top = Math.random() * 100 + 'vh';
+          particle.style.animationDelay = Math.random() * 6 + 's';
+          container.appendChild(particle);
+        }
+      }
+      
+      createGoldParticles();
+
+      // TEMPORARY: For development/testing - remove in production
+      function checkStep3Complete() {
+        const step3Data = sessionStorage.getItem('profileStep3');
+        if (!step3Data) {
+          const mockStep3Data = {
+            arrangement_preferences: ["casual", "long_term"],
+            lifestyle_interests: ["travel", "fine_dining", "music"],
+            looking_for: "Looking for someone who shares similar interests and values",
+            age_range: "35",
+            distance_range: "50"
+          };
+          sessionStorage.setItem('profileStep3', JSON.stringify(mockStep3Data));
+          console.log('Created mock Step 3 data for testing');
+        }
+        return true;
+      }
+
+      // Terms checkbox validation
+      const termsCheckbox = document.getElementById('terms');
+      const completeBtn = document.getElementById('completeProfileBtn');
+      const termsValidation = document.getElementById('termsValidation');
+
+      termsCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+          completeBtn.disabled = false;
+          termsValidation.textContent = '';
+        } else {
+          completeBtn.disabled = true;
+          termsValidation.textContent = 'You must accept the Terms of Service to continue';
+          termsValidation.className = 'validation-message error';
+        }
+      });
+
+      // Checkbox change handlers
+      const checkboxes = document.querySelectorAll('.checkbox-input');
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', saveFormData);
+      });
+
+      // Save form data to session storage
+      function saveFormData() {
+        const formData = {
+          show_profile: document.getElementById('show-profile').checked,
+          show_distance: document.getElementById('show-distance').checked,
+          show_online: document.getElementById('show-online').checked,
+          notify_messages: document.getElementById('notify-messages').checked,
+          notify_matches: document.getElementById('notify-matches').checked,
+          notify_promotions: document.getElementById('notify-promotions').checked,
+          terms_accepted: document.getElementById('terms').checked
+        };
+        sessionStorage.setItem('profileStep4', JSON.stringify(formData));
+      }
+
+      // Load saved data
+      function loadFormData() {
+        const savedData = sessionStorage.getItem('profileStep4');
+        if (savedData) {
+          const formData = JSON.parse(savedData);
+          
+          // Load checkboxes
+          document.getElementById('show-profile').checked = formData.show_profile || true;
+          document.getElementById('show-distance').checked = formData.show_distance || true;
+          document.getElementById('show-online').checked = formData.show_online || true;
+          document.getElementById('notify-messages').checked = formData.notify_messages || true;
+          document.getElementById('notify-matches').checked = formData.notify_matches || true;
+          document.getElementById('notify-promotions').checked = formData.notify_promotions || false;
+          document.getElementById('terms').checked = formData.terms_accepted || false;
+
+          // Update complete button state
+          completeBtn.disabled = !formData.terms_accepted;
+        }
+      }
+
+      // Complete profile button handler
+      completeBtn.addEventListener('click', function() {
+        if (!this.disabled) {
+          // Collect all data from all steps
+          const step1Data = JSON.parse(sessionStorage.getItem('profileStep1') || '{}');
+          const step2Data = JSON.parse(sessionStorage.getItem('profileStep2') || '{}');
+          const step3Data = JSON.parse(sessionStorage.getItem('profileStep3') || '{}');
+          const step4Data = JSON.parse(sessionStorage.getItem('profileStep4') || '{}');
+
+          const completeProfileData = {
+            ...step1Data,
+            ...step2Data,
+            ...step3Data,
+            ...step4Data
+          };
+
+          console.log('Complete Profile Data:', completeProfileData);
+
+          // Simulate API call
+          simulateProfileCreation(completeProfileData);
+        }
+      });
+
+      // Simulate profile creation
+      function simulateProfileCreation(profileData) {
+        completeBtn.disabled = true;
+        completeBtn.textContent = 'Creating Profile...';
+
+        setTimeout(() => {
+          document.getElementById('profileFormStep4').style.display = 'none';
+          document.getElementById('successState').style.display = 'block';
+
+          // Clear session storage
+          sessionStorage.removeItem('profileStep1');
+          sessionStorage.removeItem('profileStep2');
+          sessionStorage.removeItem('profileStep3');
+          sessionStorage.removeItem('profileStep4');
+        }, 2000);
+      }
+
+      // Initialize
+      if (checkStep3Complete()) {
+        loadFormData();
+      }
+    });
+
+    const style = document.createElement('style');
+    style.textContent = `
+      .gold-particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: var(--brand);
+        border-radius: 50%;
+        animation: floatParticle 6s ease-in-out infinite;
+        opacity: 0.6;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      @keyframes floatParticle {
+        0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0; }
+        50% { opacity: 0.8; }
+        25%, 75% { transform: translateY(-20px) translateX(10px); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

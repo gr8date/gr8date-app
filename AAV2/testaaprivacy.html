@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | Adult Arrangements</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* 2025 Palette */
+            --bg-deep: #050505;
+            --bg-panel: #0a0a0a;
+            --text-primary: #ffffff;
+            --text-muted: #888888;
+
+            /* Champagne Chrome Gradient */
+            --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 100%);
+
+            /* Glassmorphism Styles */
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+            --blur: blur(20px);
+
+            /* Accents */
+            --accent-glow: 0 0 20px rgba(191, 149, 63, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        a:hover {
+            color: #bf953f;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 4rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: var(--glass-border);
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-button {
+            background: transparent;
+            border: var(--glass-border);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 10px rgba(191, 149, 63, 0.2);
+        }
+        
+        /* --- UTILITIES --- */
+        .gold-text {
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- LEGAL CONTENT LAYOUT --- */
+        .legal-wrapper {
+            padding: 6rem 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .legal-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .legal-header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .legal-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .legal-document {
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            border: var(--glass-border);
+            border-radius: 20px;
+            padding: 4rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .legal-document h2 {
+            font-family: 'Cinzel', serif;
+            color: #fcf6ba; /* Light gold */
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            border-bottom: 1px solid rgba(191, 149, 63, 0.3);
+            padding-bottom: 0.5rem;
+        }
+        
+        .legal-document h2:first-of-type {
+            margin-top: 0;
+        }
+
+        .legal-document h3 {
+            font-family: 'Cinzel', serif;
+            color: #fff;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .legal-document p {
+            color: #ddd;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .legal-document ul {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            color: #ddd;
+        }
+
+        .legal-document li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 4rem;
+            border-top: 1px solid #111;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        footer a {
+            color: #888;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* RESPONSIVE FIXES */
+        @media (max-width: 900px) {
+            nav {
+                padding: 1rem;
+            }
+            .legal-wrapper {
+                padding: 4rem 1rem;
+            }
+            .legal-document {
+                padding: 2rem;
+            }
+            .legal-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo">ADULT ARRANGEMENTS</a>
+        <div class="nav-actions">
+            <a href="/login" class="nav-button">Member Login</a>
+            <a href="/join" class="nav-button">Join Now</a>
+        </div>
+    </nav>
+
+    <section class="legal-wrapper">
+        <header class="legal-header">
+            <h1 class="gold-text">Privacy Policy</h1>
+            <p>Effective Date: December 4, 2025</p>
+        </header>
+
+        <div class="legal-document">
+            <p>Your privacy is paramount. <strong>Adult Arrangements</strong> is committed to protecting the privacy of our elite clientele. This policy outlines how we collect, use, disclose, and safeguard your information when you use our Service.</p>
+
+            <h2>1. Information We Collect</h2>
+            <p>We collect information necessary to provide and secure our sophisticated matching service.</p>
+            
+            <h3>1.1 Personal Information</h3>
+            <ul>
+                <li><strong>Registration Data:</strong> Name, email address, date of birth, and location.</li>
+                <li><strong>Profile Data:</strong> Photos, biographical information, interests, lifestyle, and detailed preferences for arrangements.</li>
+                <li><strong>Financial Data:</strong> Payment information (handled securely by third-party processors) and income verification details (for eligibility screening).</li>
+            </ul>
+
+            <h3>1.2 Verification Data</h3>
+            <ul>
+                <li>Government-issued ID or passport copies (used only for identity verification and then securely destroyed or pseudonymized).</li>
+                <li>Background check reports and results.</li>
+            </ul>
+
+            <h3>1.3 Usage and Technical Data</h3>
+            <p>Log files, IP address, device type, browser information, and usage patterns (e.g., profiles viewed, messages sent).</p>
+
+            <h2>2. How We Use Your Information</h2>
+            <p>We use the collected information for the following primary purposes:</p>
+            <ul>
+                <li><strong>Service Provision:</strong> To operate, maintain, and provide the features and functionality of the Service.</li>
+                <li><strong>Verification and Security:</strong> To verify your identity, conduct background checks, and ensure the safety and exclusivity of the community.</li>
+                <li><strong>Matching:</strong> To facilitate curated matches based on your stated preferences and lifestyle criteria.</li>
+                <li><strong>Communication:</strong> To send you service updates, membership status alerts, and promotional communications (which you can opt out of).</li>
+                <li><strong>Improvement:</strong> To monitor and analyze usage and trends to improve the Service and user experience.</li>
+            </ul>
+
+            <h2>3. Data Sharing and Disclosure</h2>
+            <p>We only share your data with third parties under strict conditions:</p>
+            <ul>
+                <li><strong>Service Providers:</strong> We engage trusted third-party companies (e.g., payment processors, hosting providers, identity verification services) to perform functions on our behalf. These parties are contractually obligated to protect your data.</li>
+                <li><strong>Legal Requirements:</strong> If required to do so by law, subpoena, or if we believe that such action is necessary to comply with the law and the reasonable requests of law enforcement.</li>
+                <li><strong>Business Transfers:</strong> In connection with a merger, sale of assets, or acquisition of all or a portion of our business.</li>
+            </ul>
+            <p><strong>We do not sell your personal information to third parties.</strong></p>
+
+            <h2>4. Data Security</h2>
+            <p>We implement commercially reasonable security measures designed to protect your information from unauthorized access, disclosure, alteration, or destruction. This includes encryption, firewalls, and secure socket layer (SSL) technology. However, no security system is impenetrable, and we cannot guarantee the absolute security of our systems.</p>
+
+            <h2>5. Your Rights and Choices</h2>
+            <h3>5.1 Profile Access</h3>
+            <p>You can review and update your profile information at any time through your account settings.</p>
+
+            <h3>5.2 Data Portability</h3>
+            <p>You may request a copy of the personal data we hold about you.</p>
+
+            <h3>5.3 Deletion</h3>
+            <p>You have the right to request the deletion of your personal data. We will fulfill this request, subject to any legal obligations to retain certain records.</p>
+
+            <h2>6. Contact Information</h2>
+            <p>If you have any questions or concerns about this Privacy Policy or your data, please contact us at:</p>
+            <p><strong>Email:</strong> <a href="mailto:support@adultarrangements.com">support@adultarrangements.com</a></p>
+        </div>
+    </section>
+
+    <footer>
+        <p>
+            © 2025 ADULT ARRANGEMENTS. REDEFINING LUXURY DATING. 18+ ONLY.
+        </p>
+        <p style="margin-top: 0.5rem;">
+            <a href="/terms">Terms</a> •
+            <a href="/privacy">Privacy</a> •
+            <a href="/safety">Safety &amp; Support</a>
+        </p>
+    </footer>
+
+</body>
+</html>

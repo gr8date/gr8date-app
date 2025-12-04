@@ -1,0 +1,1198 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Create Profile - Step 1 - Synergy</title>
+<meta name="description" content="Create your elite dating profile - Step 1: Basic Information & Photos" />
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --brand: #cdad7c;
+    --brand-dark: #a88a5a;
+    --brand-light: #e8d8b8;
+    --brand-soft: rgba(205, 173, 119, 0.18);
+    --brand-glow: rgba(205, 173, 119, 0.32);
+    --bg: #050507;
+    --bg-elevated: #121214;
+    --bg-card: rgba(18, 18, 20, 0.96);
+    --bg-soft: rgba(255, 255, 255, 0.02);
+    --border-subtle: rgba(205, 173, 119, 0.34);
+    --border-soft: rgba(255, 255, 255, 0.08);
+    --text: #ffffff;
+    --text-muted: #a0a0a5;
+    --text-soft: #8b8b90;
+    --text-gold: #cdad7c;
+    --error: #ff6b6b;
+    --success: #51cf66;
+    --radius-card: 24px;
+    --radius-soft: 16px;
+    --shadow-soft: 0 26px 50px rgba(0, 0, 0, 0.7);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: radial-gradient(circle at top left, #2a2a30 0, #050507 45%, #000 100%);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  #gold-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .premium-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(5, 5, 7, 0.96);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(205, 173, 119, 0.3);
+    z-index: 1000;
+  }
+
+  .nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .script-logo {
+    font-family: 'Allura', cursive;
+    font-size: 42px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #CDAD7F;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.1);
+    display: inline-block;
+    margin: 0;
+    padding: 5px 0;
+    transition: all 0.3s ease;
+  }
+
+  .script-logo:hover {
+    transform: scale(1.05);
+    text-shadow: 1px 1px 15px rgba(255, 255, 255, 0.2);
+  }
+
+  .progress-container {
+    max-width: 1100px;
+    margin: 96px auto 2rem;
+    padding: 0 1.5rem;
+  }
+
+  .progress-bar {
+    background: rgba(255, 255, 255, 0.06);
+    height: 8px;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(205, 173, 119, 0.42);
+    margin-bottom: 0.6rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 45%;
+    background: linear-gradient(90deg, var(--brand-light), var(--brand-dark));
+    box-shadow: 0 0 18px rgba(205, 173, 119, 0.55);
+    border-radius: 999px;
+  }
+
+  .progress-text {
+    text-align: center;
+    font-size: 0.86rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .profile-create-container {
+    max-width: 1100px;
+    margin: 0 auto 3rem;
+    padding: 0 1.5rem 3rem;
+  }
+
+  .create-card {
+    background: radial-gradient(circle at top left, rgba(255,255,255,0.04) 0, rgba(7,7,10,0.96) 40%, rgba(0,0,0,0.98) 100%);
+    border-radius: var(--radius-card);
+    padding: 2.8rem 2.6rem 2.7rem;
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-soft), 0 0 60px rgba(205, 173, 119, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .create-card::before {
+    content: '';
+    position: absolute;
+    inset: -40%;
+    background: radial-gradient(circle at top, rgba(205, 173, 119, 0.14), transparent 60%);
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .section-header {
+    margin-bottom: 2.2rem;
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: 2.1rem;
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #f9f9fa;
+    margin-bottom: 0.4rem;
+  }
+
+  .section-title span {
+    color: var(--text-gold);
+    font-weight: 500;
+  }
+
+  .section-subtitle {
+    color: var(--text-muted);
+    font-size: 0.98rem;
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  .form-section {
+    margin-bottom: 2.2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.8rem;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-gold);
+    margin-bottom: 0.55rem;
+    font-weight: 600;
+  }
+
+  .required {
+    color: var(--error);
+    margin-left: 0.1rem;
+  }
+
+  .form-input,
+  .form-select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--border-soft);
+    background: rgba(3, 3, 5, 0.9);
+    color: var(--text);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+
+  .form-input::placeholder {
+    color: #63636a;
+  }
+
+  .form-input:focus,
+  .form-select:focus {
+    border-color: var(--text-gold);
+    box-shadow: 0 0 0 1px rgba(205, 173, 119, 0.55);
+    background: rgba(5, 5, 9, 0.98);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.4rem 1.5rem;
+  }
+
+  .validation-message {
+    font-size: 0.8rem;
+    margin-top: 0.35rem;
+    color: var(--error);
+  }
+
+  .validation-message.success {
+    color: var(--success);
+  }
+
+  .form-tip {
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    margin-top: 0.4rem;
+  }
+
+  .pill-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.8rem;
+    color: var(--text-soft);
+  }
+
+  /* ERROR STYLING */
+  .form-group.field-error .form-input,
+  .form-group.field-error .form-select {
+    border-color: var(--error);
+    box-shadow: 0 0 0 1px rgba(255, 107, 107, 0.5);
+  }
+
+  .form-group.field-error .form-label {
+    color: var(--error);
+  }
+
+  .upload-card.field-error-border {
+    border-color: var(--error);
+    box-shadow: 0 0 0 1px rgba(255, 107, 107, 0.5);
+  }
+
+  .form-error-summary {
+    margin-top: 0.4rem;
+    margin-bottom: 0.6rem;
+    padding: 0.7rem 1rem;
+    border-radius: 999px;
+    font-size: 0.86rem;
+    border: 1px solid rgba(255, 107, 107, 0.6);
+    background: rgba(255, 107, 107, 0.08);
+    color: var(--error);
+    text-align: right;
+  }
+
+  /* PHOTO SECTION – TEXT ABOVE, CENTRED */
+
+  .photo-header {
+    text-align: center;
+    margin-bottom: 1.8rem;
+  }
+
+  .step-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.28rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid rgba(205, 173, 119, 0.5);
+    background: radial-gradient(circle at top left, rgba(205, 173, 119, 0.28), rgba(0, 0, 0, 0.95));
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--text-gold);
+    margin-bottom: 0.7rem;
+  }
+
+  .step-lead {
+    font-size: 1.05rem;
+    color: #f0f0f2;
+    margin-bottom: 0.45rem;
+  }
+
+  .step-copy {
+    font-size: 0.93rem;
+    color: var(--text-soft);
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .step-copy strong {
+    font-weight: 600;
+    color: var(--text-gold);
+  }
+
+  .step-media-column {
+    background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(10,10,12,0.96));
+    border-radius: 20px;
+    padding: 1.5rem 1.4rem 1.6rem;
+    border: 1px solid rgba(205, 173, 119, 0.32);
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.7);
+  }
+
+  .upload-grid-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(0, 1.2fr);
+    gap: 1.4rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .upload-card {
+    background: rgba(5, 5, 7, 0.96);
+    border-radius: 18px;
+    padding: 1rem 1.2rem 1.2rem;
+    border: 1px dashed rgba(205, 173, 119, 0.55);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .upload-card.dragover {
+    border-style: solid;
+    border-color: var(--text-gold);
+    box-shadow: 0 0 0 1px rgba(205, 173, 119, 0.5);
+    background: radial-gradient(circle at top, rgba(205, 173, 119, 0.12), rgba(5, 5, 7, 0.98));
+  }
+
+  .upload-main-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.1rem;
+  }
+
+  .upload-main-sub {
+    font-size: 0.86rem;
+    color: var(--text-soft);
+    margin-bottom: 0.9rem;
+  }
+
+  .upload-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .btn-upload {
+    padding: 0.65rem 1.3rem;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(135deg, var(--brand-light), var(--brand));
+    color: #000;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.55);
+  }
+
+  .btn-upload span {
+    font-size: 1.1rem;
+  }
+
+  .upload-hint {
+    font-size: 0.8rem;
+    color: var(--text-soft);
+  }
+
+  .upload-hint strong {
+    color: var(--text-gold);
+    font-weight: 500;
+  }
+
+  .photo-grid-container {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .thumb-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .thumb-tile {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    background: radial-gradient(circle at top left, rgba(205, 173, 119, 0.25), rgba(10, 10, 12, 0.98));
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .thumb-tile-main {
+    grid-column: span 3;
+    min-height: 260px;
+  }
+
+  .thumb-label {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    font-size: 0.72rem;
+    padding: 0.22rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.7);
+    color: var(--text-gold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    z-index: 2;
+  }
+
+  .thumb-placeholder {
+    font-size: 0.8rem;
+    color: var(--text-soft);
+    padding: 0 0.8rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .thumb-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Instagram-style cover */
+    z-index: 1;
+  }
+
+  .thumb-private .thumb-image {
+    filter: blur(6px);
+  }
+
+  .private-note {
+    font-size: 0.78rem;
+    color: var(--text-soft);
+    margin-top: 0.4rem;
+    text-align: center;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.8rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid rgba(205, 173, 119, 0.35);
+  }
+
+  .btn {
+    padding: 0.75rem 1.7rem;
+    border-radius: 999px;
+    border: none;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.25s ease;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-soft);
+    border: 1px solid rgba(205, 173, 119, 0.5);
+  }
+
+  .btn-secondary:hover {
+    color: var(--text-gold);
+    border-color: var(--text-gold);
+    box-shadow: 0 0 18px rgba(205, 173, 119, 0.35);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand-light), var(--brand-dark));
+    color: #000;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.7);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .btn-primary:not(:disabled):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 32px rgba(0, 0, 0, 0.8);
+  }
+
+  @media (max-width: 1024px) {
+    .form-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .nav-container {
+      padding: 0.8rem 1rem;
+    }
+    .script-logo {
+      font-size: 34px;
+    }
+    .progress-container {
+      margin-top: 82px;
+    }
+    .create-card {
+      padding: 2.1rem 1.6rem 2.1rem;
+      border-radius: 18px;
+    }
+    .upload-grid-main {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .form-actions {
+      flex-direction: column-reverse;
+      align-items: stretch;
+      gap: 0.8rem;
+    }
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+</head>
+<body>
+  <div id="gold-particles"></div>
+
+  <header class="premium-header">
+    <div class="nav-container">
+      <a href="{% url 'index' %}" class="script-logo" itemprop="url">Synergy</a>
+    </div>
+  </header>
+
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+    </div>
+    <div class="progress-text">Step 1 of 4: Basic Information & Photos</div>
+  </div>
+
+  <main class="profile-create-container">
+    <div class="create-card">
+      <div class="section-header">
+        <h1 class="section-title"><span>Step One</span> • First Impressions</h1>
+        <p class="section-subtitle">
+          Begin with the essentials: how you appear, your basic details, and the tone you want to set.
+        </p>
+      </div>
+
+      <form id="profileFormStep1" enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+
+        <!-- USERNAME -->
+        <section class="form-section">
+          <div class="form-group" id="fg_username">
+            <label class="form-label">Username <span class="required">*</span></label>
+            <input type="text"
+                   class="form-input"
+                   id="username"
+                   name="username"
+                   maxlength="20"
+                   pattern="[A-Za-z0-9_]+"
+                   required
+                   autocomplete="off"
+                   placeholder="Choose a unique username">
+            <div class="form-tip">
+              Letters, numbers and underscores only. This name will appear on your profile.
+            </div>
+            <div class="validation-message" id="usernameValidation"></div>
+          </div>
+        </section>
+
+        <!-- BASIC INFO -->
+        <section class="form-section">
+          <div class="form-group" id="fg_heading">
+            <label class="form-label">Profile Heading <span class="required">*</span></label>
+            <input type="text" class="form-input" id="profileHeading" name="profile_heading" maxlength="80" required placeholder="Brief headline that appears below your name">
+            <div class="form-tip">
+              <span class="pill-hint">Examples:</span> “Elegant, independent & open to meaningful connections”
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-grid">
+              <div class="form-group" id="fg_dob">
+                <label class="form-label">Date of Birth (private) <span class="required">*</span></label>
+                <input type="date" class="form-input" id="dateOfBirth" name="date_of_birth" required>
+                <div class="form-tip" style="margin-top:0.5rem;font-size:0.85rem;">
+                  Used only for age verification. Your date of birth is never displayed on your profile.
+                </div>
+                <label class="form-label" style="margin-top:1.2rem;">Age (shown on your profile) <span class="required">*</span></label>
+                <input type="number" class="form-input" id="ageInput" name="display_age" min="18" max="90" required>
+                <div class="validation-message" id="ageValidation"></div>
+              </div>
+              
+              <div class="form-group" id="fg_relationship">
+                <label class="form-label">Relationship Status <span class="required">*</span></label>
+                <select class="form-select" id="relationshipStatus" name="relationship_status" required>
+                  <option value="">Select your status</option>
+                  <option value="single">Single</option>
+                  <option value="divorced">Divorced</option>
+                  <option value="separated">Separated</option>
+                  <option value="complicated">Complicated</option>
+                  <option value="open_relationship">Open Relationship</option>
+                  <option value="rather_not_say">Rather Not Say</option>
+                </select>
+              </div>
+
+              <div class="form-group" id="fg_body_type">
+                <label class="form-label">Body Type <span class="required">*</span></label>
+                <select class="form-select" id="bodyType" name="body_type" required>
+                  <option value="">Select body type</option>
+                  <option value="slim">Slim</option>
+                  <option value="athletic">Athletic</option>
+                  <option value="average">Average</option>
+                  <option value="curvy">Curvy</option>
+                  <option value="few_extra_pounds">Few Extra Pounds</option>
+                  <option value="rather_not_say">Rather Not Say</option>
+                </select>
+              </div>
+
+              <div class="form-group" id="fg_smoker">
+                <label class="form-label">Smoker? <span class="required">*</span></label>
+                <select class="form-select" id="smoker" name="smoker" required>
+                  <option value="">Select</option>
+                  <option value="no">No</option>
+                  <option value="social">Social Smoker</option>
+                  <option value="yes">Yes</option>
+                </select>
+              </div>
+
+              <div class="form-group" id="fg_children">
+                <label class="form-label">Children <span class="required">*</span></label>
+                <select class="form-select" id="children" name="children" required>
+                  <option value="">Select</option>
+                  <option value="no">No</option>
+                  <option value="yes_not_living">Yes, not living with me</option>
+                  <option value="yes_living">Yes, living with me</option>
+                  <option value="rather_not_say">Rather Not Say</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Height</label>
+                <input type="text" class="form-input" id="height" name="height" placeholder="e.g. 175cm">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PHOTOS -->
+        <section class="form-section">
+          <div class="photo-header">
+            <div class="step-badge">Profile Photos</div>
+            <p class="step-lead">A refined gallery that reflects you at your best.</p>
+            <p class="step-copy">
+              Start with a clear, confident main photo. Additional photos can show different sides of your personality:
+              social occasions, travels, or relaxed moments. Private photos are softly blurred and only visible once you
+              grant someone access. Recommended: at least <strong>1 main photo</strong>, plus a few additional and private
+              images if you wish.
+            </p>
+          </div>
+
+          <div class="step-media-column">
+            <div class="upload-grid-main">
+              <!-- Main Profile Photo -->
+              <div class="upload-card" id="mainPhotoDrop">
+                <div class="upload-main-title">Main Profile Photo <span class="required">*</span></div>
+                <div class="upload-main-sub">This appears as your primary image in search and discovery.</div>
+                <div class="upload-actions">
+                  <button type="button" class="btn-upload" id="mainPhotoBtn">
+                    <span>＋</span> Upload photo
+                  </button>
+                  <span class="upload-hint">JPG or PNG, up to 8MB</span>
+                </div>
+              </div>
+
+              <!-- Additional Photos -->
+              <div class="upload-card" id="additionalPhotoDrop">
+                <div class="upload-main-title">Additional Photos</div>
+                <div class="upload-main-sub">Show a little more of your lifestyle and personality.</div>
+                <div class="upload-actions">
+                  <button type="button" class="btn-upload" id="additionalPhotoBtn">
+                    <span>＋</span> Add photos
+                  </button>
+                  <span class="upload-hint">Up to 8 photos</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hidden file inputs -->
+            <input type="file" id="mainPhotoInput" name="main_photo" accept="image/*" style="display:none">
+            <input type="file" id="additionalPhotoInput" name="additional_photos" accept="image/*" multiple style="display:none">
+            <input type="file" id="privatePhotoInput" name="private_photos" accept="image/*" multiple style="display:none">
+
+            <div class="photo-grid-container">
+              <div class="thumb-grid" id="photoThumbGrid">
+                <div class="thumb-tile thumb-tile-main" data-slot="main">
+                  <div class="thumb-label">Main</div>
+                  <div class="thumb-placeholder">Your main profile photo will appear here.</div>
+                </div>
+
+                <div class="thumb-tile" data-slot="additional-1">
+                  <div class="thumb-label">Additional</div>
+                  <div class="thumb-placeholder">Additional photo</div>
+                </div>
+                <div class="thumb-tile" data-slot="additional-2">
+                  <div class="thumb-label">Additional</div>
+                  <div class="thumb-placeholder">Additional photo</div>
+                </div>
+                <div class="thumb-tile" data-slot="additional-3">
+                  <div class="thumb-label">Additional</div>
+                  <div class="thumb-placeholder">Additional photo</div>
+                </div>
+
+                <div class="thumb-tile thumb-private" data-slot="private-1">
+                  <div class="thumb-label">Private</div>
+                  <div class="thumb-placeholder">Private image</div>
+                </div>
+                <div class="thumb-tile thumb-private" data-slot="private-2">
+                  <div class="thumb-label">Private</div>
+                  <div class="thumb-placeholder">Private image</div>
+                </div>
+                <div class="thumb-tile thumb-private" data-slot="private-3">
+                  <div class="thumb-label">Private</div>
+                  <div class="thumb-placeholder">Private image</div>
+                </div>
+                <div class="thumb-tile thumb-private" data-slot="private-4">
+                  <div class="thumb-label">Private</div>
+                  <div class="thumb-placeholder">Private image</div>
+                </div>
+                <div class="thumb-tile thumb-private" data-slot="private-5">
+                  <div class="thumb-label">Private</div>
+                  <div class="thumb-placeholder">Private image</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="private-note">
+              Private images remain blurred and require member permission to view.
+            </div>
+          </div>
+        </section>
+
+        <!-- ERROR SUMMARY & ACTIONS -->
+        <div id="formErrorSummary" class="form-error-summary" style="display:none;">
+          Please complete the highlighted fields to continue.
+        </div>
+
+        <div class="form-actions">
+          <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+          <!-- BUTTON NOW ALWAYS ENABLED IN HTML -->
+          <button type="submit" id="continueBtn" class="btn btn-primary">Continue to Step 2</button>
+        </div>
+        <p style="margin-top:1rem;font-size:0.9rem;color:var(--text-muted);text-align:right;">
+          Your profile will remain hidden until all 4 steps are completed.
+        </p>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Gold particles background
+      function createGoldParticles() {
+        const container = document.getElementById('gold-particles');
+        for (let i = 0; i < 16; i++) {
+          const p = document.createElement('div');
+          p.className = 'gold-particle';
+          p.style.left = Math.random() * 100 + 'vw';
+          p.style.top = Math.random() * 100 + 'vh';
+          p.style.animationDelay = (Math.random() * 6) + 's';
+          container.appendChild(p);
+        }
+      }
+
+      createGoldParticles();
+
+      const style = document.createElement('style');
+      style.textContent = `
+        .gold-particle {
+          position: absolute;
+          width: 3px;
+          height: 3px;
+          background: radial-gradient(circle, #ffe6b3 0%, #cdad7c 40%, transparent 70%);
+          border-radius: 50%;
+          animation: floatParticle 6s ease-in-out infinite;
+          opacity: 0.6;
+          pointer-events: none;
+        }
+        @keyframes floatParticle {
+          0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+          50% { opacity: 0.9; }
+          25%, 75% { transform: translateY(-20px) translateX(12px); }
+        }
+      `;
+      document.head.appendChild(style);
+
+      const usernameInput = document.getElementById('username');
+      const usernameValidation = document.getElementById('usernameValidation');
+      const headingInput = document.getElementById('profileHeading');
+      const dobInput = document.getElementById('dateOfBirth');
+      const ageInput = document.getElementById('ageInput');
+      const relationshipSelect = document.getElementById('relationshipStatus');
+      const bodyTypeSelect = document.getElementById('bodyType');
+      const smokerSelect = document.getElementById('smoker');
+      const childrenSelect = document.getElementById('children');
+      const continueBtn = document.getElementById('continueBtn');
+      const formErrorSummary = document.getElementById('formErrorSummary');
+
+      const fgUsername = document.getElementById('fg_username');
+      const fgHeading = document.getElementById('fg_heading');
+      const fgDob = document.getElementById('fg_dob');
+      const fgRelationship = document.getElementById('fg_relationship');
+      const fgBodyType = document.getElementById('fg_body_type');
+      const fgSmoker = document.getElementById('fg_smoker');
+      const fgChildren = document.getElementById('fg_children');
+
+      const mainPhotoInput = document.getElementById('mainPhotoInput');
+      const additionalPhotoInput = document.getElementById('additionalPhotoInput');
+      const privatePhotoInput = document.getElementById('privatePhotoInput');
+
+      const mainPhotoBtn = document.getElementById('mainPhotoBtn');
+      const additionalPhotoBtn = document.getElementById('additionalPhotoBtn');
+
+      const mainPhotoDrop = document.getElementById('mainPhotoDrop');
+      const additionalPhotoDrop = document.getElementById('additionalPhotoDrop');
+
+      let usernameAvailable = false;
+      let usernameCheckTimeout = null;
+      let mainPhotoSelected = false;
+
+      const csrfInput = document.querySelector('input[name=csrfmiddlewaretoken]');
+      const csrfToken = csrfInput ? csrfInput.value : '';
+
+      function clearFieldErrors() {
+        [fgUsername, fgHeading, fgDob, fgRelationship, fgBodyType, fgSmoker, fgChildren].forEach(group => {
+          if (group) group.classList.remove('field-error');
+        });
+        if (mainPhotoDrop) {
+          mainPhotoDrop.classList.remove('field-error-border');
+        }
+        formErrorSummary.style.display = 'none';
+      }
+
+      function validateRequired() {
+        const usernameFilled = usernameInput.value.trim().length > 0 && usernameAvailable;
+        const headingFilled = headingInput.value.trim().length > 0;
+        const dobFilled = dobInput.value.trim().length > 0;
+        const ageFilled = ageInput.value && !isNaN(parseInt(ageInput.value, 10));
+        const relationshipFilled = relationshipSelect.value.trim().length > 0;
+        const bodyFilled = bodyTypeSelect.value.trim().length > 0;
+        const smokerFilled = smokerSelect.value.trim().length > 0;
+        const childrenFilled = childrenSelect.value.trim().length > 0;
+
+        if (ageFilled) {
+          const ageVal = parseInt(ageInput.value, 10);
+          const ageValidation = document.getElementById('ageValidation');
+          if (ageVal < 18) {
+            ageValidation.textContent = 'You must be at least 18.';
+          } else {
+            ageValidation.textContent = '';
+          }
+        }
+
+        const allOk = usernameFilled && headingFilled && dobFilled && ageFilled &&
+                      relationshipFilled && bodyFilled && smokerFilled && childrenFilled &&
+                      mainPhotoSelected;
+
+        if (allOk) {
+          formErrorSummary.style.display = 'none';
+          clearFieldErrors();
+        }
+
+        // OPTION B: do NOT disable the button – always clickable
+        return allOk;
+      }
+
+      function showMissingFieldErrors() {
+        clearFieldErrors();
+
+        const usernameFilled = usernameInput.value.trim().length > 0 && usernameAvailable;
+        const headingFilled = headingInput.value.trim().length > 0;
+        const dobFilled = dobInput.value.trim().length > 0;
+        const ageFilled = ageInput.value && !isNaN(parseInt(ageInput.value, 10));
+        const relationshipFilled = relationshipSelect.value.trim().length > 0;
+        const bodyFilled = bodyTypeSelect.value.trim().length > 0;
+        const smokerFilled = smokerSelect.value.trim().length > 0;
+        const childrenFilled = childrenSelect.value.trim().length > 0;
+
+        const errorGroups = [];
+
+        if (!usernameFilled && fgUsername) {
+          fgUsername.classList.add('field-error');
+          errorGroups.push(fgUsername);
+        }
+        if (!headingFilled && fgHeading) {
+          fgHeading.classList.add('field-error');
+          errorGroups.push(fgHeading);
+        }
+        if ((!dobFilled || !ageFilled) && fgDob) {
+          fgDob.classList.add('field-error');
+          errorGroups.push(fgDob);
+        }
+        if (!relationshipFilled && fgRelationship) {
+          fgRelationship.classList.add('field-error');
+          errorGroups.push(fgRelationship);
+        }
+        if (!bodyFilled && fgBodyType) {
+          fgBodyType.classList.add('field-error');
+          errorGroups.push(fgBodyType);
+        }
+        if (!smokerFilled && fgSmoker) {
+          fgSmoker.classList.add('field-error');
+          errorGroups.push(fgSmoker);
+        }
+        if (!childrenFilled && fgChildren) {
+          fgChildren.classList.add('field-error');
+          errorGroups.push(fgChildren);
+        }
+        if (!mainPhotoSelected && mainPhotoDrop) {
+          mainPhotoDrop.classList.add('field-error-border');
+        }
+
+        if (errorGroups.length || !mainPhotoSelected) {
+          formErrorSummary.style.display = 'block';
+          const firstError = errorGroups.length ? errorGroups[0] : mainPhotoDrop;
+          if (firstError && firstError.scrollIntoView) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+      }
+
+      function checkUsernameAvailability() {
+        const value = usernameInput.value.trim();
+        usernameAvailable = false;
+
+        if (!value) {
+          usernameValidation.textContent = '';
+          usernameValidation.classList.remove('success');
+          validateRequired();
+          return;
+        }
+
+        const pattern = /^[A-Za-z0-9_]+$/;
+        if (!pattern.test(value)) {
+          usernameValidation.textContent = 'Use only letters, numbers and underscores.';
+          usernameValidation.classList.remove('success');
+          validateRequired();
+          return;
+        }
+
+        usernameValidation.textContent = 'Checking availability…';
+        usernameValidation.classList.remove('success');
+
+        fetch("{% url 'check_username' %}", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+          },
+          body: JSON.stringify({ username: value })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.available) {
+            usernameAvailable = true;
+            usernameValidation.textContent = 'Username is available.';
+            usernameValidation.classList.add('success');
+          } else {
+            usernameAvailable = false;
+            usernameValidation.textContent = 'That username is already taken. Please choose another.';
+            usernameValidation.classList.remove('success');
+          }
+          validateRequired();
+        })
+        .catch(() => {
+          usernameAvailable = false;
+          usernameValidation.textContent = 'Unable to check username right now. Please try again.';
+          usernameValidation.classList.remove('success');
+          validateRequired();
+        });
+      }
+
+      usernameInput.addEventListener('input', function () {
+        usernameAvailable = false;
+        usernameValidation.textContent = '';
+        usernameValidation.classList.remove('success');
+        if (usernameCheckTimeout) {
+          clearTimeout(usernameCheckTimeout);
+        }
+        usernameCheckTimeout = setTimeout(checkUsernameAvailability, 500);
+        validateRequired();
+      });
+
+      [headingInput, dobInput, ageInput, relationshipSelect, bodyTypeSelect, smokerSelect, childrenSelect].forEach(el => {
+        el.addEventListener('input', validateRequired);
+        el.addEventListener('change', validateRequired);
+      });
+
+      // Image helpers
+      function createImageInTile(tile, file, isPrivate) {
+        if (!file || !file.type.startsWith('image/')) return;
+        const maxSize = 8 * 1024 * 1024; // 8MB
+        if (file.size > maxSize) {
+          alert('Image is too large. Please choose one under 8MB.');
+          return;
+        }
+
+        const existingImg = tile.querySelector('img.thumb-image');
+        if (existingImg) existingImg.remove();
+
+        const placeholder = tile.querySelector('.thumb-placeholder');
+        if (placeholder) placeholder.style.display = 'none';
+
+        const img = document.createElement('img');
+        img.className = 'thumb-image';
+        img.src = URL.createObjectURL(file);
+        tile.appendChild(img);
+
+        if (isPrivate) {
+          tile.classList.add('thumb-private');
+        }
+
+        return true;
+      }
+
+      function handleMainPhoto(files) {
+        if (!files || !files.length) return;
+        const mainTile = document.querySelector('.thumb-tile[data-slot="main"]');
+        if (!mainTile) return;
+        const ok = createImageInTile(mainTile, files[0], false);
+        if (ok) {
+          mainPhotoSelected = true;
+          if (mainPhotoDrop) mainPhotoDrop.classList.remove('field-error-border');
+          validateRequired();
+        }
+      }
+
+      function handleAdditionalPhotos(files) {
+        if (!files || !files.length) return;
+        const additionalTiles = Array.from(document.querySelectorAll('.thumb-tile[data-slot^="additional-"]'));
+        let fileIndex = 0;
+        for (let i = 0; i < additionalTiles.length && fileIndex < files.length; i++) {
+          const tile = additionalTiles[i];
+          const hasImg = tile.querySelector('img.thumb-image');
+          if (hasImg) continue;
+          const ok = createImageInTile(tile, files[fileIndex], false);
+          if (ok) fileIndex++;
+        }
+      }
+
+      function handlePrivatePhotos(files) {
+        if (!files || !files.length) return;
+        const privateTiles = Array.from(document.querySelectorAll('.thumb-tile[data-slot^="private-"]'));
+        let fileIndex = 0;
+        for (let i = 0; i < privateTiles.length && fileIndex < files.length; i++) {
+          const tile = privateTiles[i];
+          const hasImg = tile.querySelector('img.thumb-image');
+          if (hasImg) continue;
+          const ok = createImageInTile(tile, files[fileIndex], true);
+          if (ok) fileIndex++;
+        }
+      }
+
+      if (mainPhotoBtn && mainPhotoInput) {
+        mainPhotoBtn.addEventListener('click', () => {
+          mainPhotoInput.click();
+        });
+        mainPhotoInput.addEventListener('change', () => {
+          handleMainPhoto(mainPhotoInput.files);
+        });
+      }
+
+      if (additionalPhotoBtn && additionalPhotoInput) {
+        additionalPhotoBtn.addEventListener('click', () => {
+          additionalPhotoInput.click();
+        });
+        additionalPhotoInput.addEventListener('change', () => {
+          handleAdditionalPhotos(additionalPhotoInput.files);
+        });
+      }
+
+      if (privatePhotoInput) {
+        const privateTiles = document.querySelectorAll('.thumb-tile[data-slot^="private-"]');
+        privateTiles.forEach(tile => {
+          tile.addEventListener('click', () => {
+            privatePhotoInput.click();
+          });
+        });
+        privatePhotoInput.addEventListener('change', () => {
+          handlePrivatePhotos(privatePhotoInput.files);
+        });
+      }
+
+      const uploadAreas = [
+        { drop: 'mainPhotoDrop', type: 'main' },
+        { drop: 'additionalPhotoDrop', type: 'additional' }
+      ];
+
+      uploadAreas.forEach(({ drop, type }) => {
+        const dropEl = document.getElementById(drop);
+        if (!dropEl) return;
+
+        ['dragenter', 'dragover'].forEach(evtName => {
+          dropEl.addEventListener(evtName, e => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropEl.classList.add('dragover');
+          });
+        });
+
+        ['dragleave', 'drop'].forEach(evtName => {
+          dropEl.addEventListener(evtName, e => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropEl.classList.remove('dragover');
+          });
+        });
+
+        dropEl.addEventListener('drop', e => {
+          const files = e.dataTransfer.files;
+          if (!files || !files.length) return;
+          if (type === 'main') {
+            if (mainPhotoInput) {
+              mainPhotoInput.files = files;
+            }
+            handleMainPhoto(files);
+          } else if (type === 'additional') {
+            if (additionalPhotoInput) {
+              additionalPhotoInput.files = files;
+            }
+            handleAdditionalPhotos(files);
+          }
+        });
+      });
+
+      const form = document.getElementById('profileFormStep1');
+      if (form) {
+        form.addEventListener('submit', function (e) {
+          const allOk = validateRequired();
+          if (!allOk) {
+            e.preventDefault();
+            showMissingFieldErrors();
+          } else {
+            formErrorSummary.style.display = 'none';
+          }
+        });
+      }
+
+      validateRequired();
+    });
+  </script>
+</body>
+</html>
+

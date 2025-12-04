@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSV Upload - Synergy Dating</title>
+</head>
+<body>
+    <h1>📁 Upload CSV File</h1>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color: {% if message.tags == 'error' %}red{% else %}green{% endif %};">
+                {{ message }}
+            </p>
+        {% endfor %}
+    {% endif %}
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="csv_file" accept=".csv" required>
+        <br><br>
+        <button type="submit">Upload CSV</button>
+    </form>
+    
+    {% if success %}
+        <hr>
+        <h3>File: {{ filename }}</h3>
+        <p>Total Rows: {{ total_rows }}</p>
+        
+        {% if headers %}
+            <h4>Preview (first 5 rows):</h4>
+            <table border="1" cellpadding="5">
+                <thead>
+                    <tr>
+                        {% for header in headers %}
+                            <th>{{ header }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                        <tr>
+                            {% for cell in row %}
+                                <td>{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% endif %}
+    
+    <hr>
+    <p><a href="/">← Back to Home</a></p>
+</body>
+</html>

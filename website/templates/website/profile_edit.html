@@ -1,0 +1,1305 @@
+<!-- profile_edit.html -->
+{% extends 'website/synergy_base_header.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  .edit-profile-container {
+    margin-top: 140px;
+    padding: 2rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Unsaved Changes Warning */
+  .unsaved-changes-warning {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid #f59e0b;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    color: var(--text);
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .unsaved-changes-warning.show {
+    display: flex;
+  }
+
+  .approval-notice {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid #f59e0b;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    color: var(--text);
+  }
+
+  .pending-changes-notice {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid #3b82f6;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    color: var(--text);
+  }
+
+  .form-status {
+    position: fixed;
+    top: 100px;
+    right: 2rem;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius);
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    display: none;
+    z-index: 1000;
+    max-width: 400px;
+  }
+
+  .form-status.show {
+    display: block;
+    animation: slideIn 0.3s ease;
+  }
+
+  .form-status.success {
+    border-left: 4px solid #10b981;
+  }
+
+  .form-status.error {
+    border-left: 4px solid #ef4444;
+  }
+
+  .form-status.info {
+    border-left: 4px solid #3b82f6;
+  }
+
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  .edit-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .edit-tab {
+    padding: 0.8rem 1.5rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+  }
+
+  .edit-tab.active {
+    background: var(--brand-soft);
+    color: #000;
+    border-color: var(--brand);
+  }
+
+  .tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .form-section {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-gold);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .form-label.required::after {
+    content: ' *';
+    color: #ef4444;
+  }
+
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-soft);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+  }
+
+  .form-input.error, .form-select.error, .form-textarea.error {
+    border-color: #ef4444;
+  }
+
+  .read-only-field {
+    background: rgba(255, 255, 255, 0.02) !important;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 2px rgba(205, 173, 124, 0.2);
+    outline: none;
+  }
+
+  .form-textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .error-message {
+    font-size: 0.8rem;
+    color: #ef4444;
+    margin-top: 0.25rem;
+    display: none;
+  }
+
+  .error-message.show {
+    display: block;
+  }
+
+  .char-count {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: right;
+    margin-top: 0.5rem;
+  }
+
+  .char-count.near-limit {
+    color: #f59e0b;
+  }
+
+  .char-count.over-limit {
+    color: #ef4444;
+  }
+
+  .field-note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+  }
+
+  .verification-badge {
+    color: #10b981;
+    font-weight: 600;
+  }
+
+  .photo-upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .photo-upload-zone.dragover {
+    border-color: var(--brand);
+    background: rgba(205, 173, 124, 0.05);
+  }
+
+  .current-photo {
+    display: inline-block;
+    margin: 0 1rem 1.5rem 0;
+    text-align: center;
+  }
+
+  .current-photo img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+  }
+
+  .current-photo span {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .current-photos-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .changes-summary {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+  }
+
+  .change-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .change-item:last-child {
+    border-bottom: none;
+  }
+
+  .change-field {
+    font-weight: 600;
+    color: var(--text-gold);
+  }
+
+  .preview-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn {
+    padding: 0.8rem 2rem;
+    border-radius: 999px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(205, 173, 124, 0.3);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  @media (max-width: 768px) {
+    .edit-profile-container {
+      padding: 1rem;
+      margin-top: 120px;
+    }
+
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .edit-tabs {
+      flex-direction: column;
+    }
+
+    .preview-actions {
+      flex-direction: column;
+    }
+
+    .btn {
+      width: 100%;
+    }
+
+    .unsaved-changes-warning {
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+    }
+
+    .unsaved-changes-warning > div:last-child {
+      justify-content: center;
+    }
+  }
+</style>
+
+<div class="edit-profile-container">
+  <h1 style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--text-gold);">Edit Profile</h1>
+  
+  <!-- Unsaved Changes Warning -->
+  <div class="unsaved-changes-warning" id="unsavedChangesWarning">
+    <div>
+      <strong>⚠️ You have unsaved changes</strong>
+      <p style="margin: 0.25rem 0 0 0;">Save your changes before leaving this page.</p>
+    </div>
+    <div style="display: flex; gap: 0.5rem;">
+      <button type="button" class="btn-secondary" onclick="saveAsDraft()">Save Draft</button>
+      <button type="button" class="btn-primary" onclick="submitForApproval()">Submit Now</button>
+    </div>
+  </div>
+  
+  <!-- Approval Notice -->
+  <div class="approval-notice">
+    <strong>⚠️ Profile Changes Require Approval</strong>
+    <p style="margin: 0.5rem 0 0 0;">All changes will be reviewed by our team before going live. Your current profile remains active during review.</p>
+  </div>
+
+  {% if pending_request %}
+  <!-- Pending Changes Notice -->
+  <div class="pending-changes-notice">
+    <h4 style="margin: 0 0 0.5rem 0; color: var(--text-gold);">🕒 Pending Changes</h4>
+    <p style="margin: 0 0 1rem 0;">You have changes waiting for admin approval submitted on {{ pending_request.submitted_at|date:"M j, Y g:i A" }}</p>
+    <button type="button" class="btn-secondary" onclick="viewPendingChanges()">View Pending Changes</button>
+  </div>
+  {% endif %}
+
+  <!-- Navigation Tabs -->
+  <div class="edit-tabs">
+    <button class="edit-tab active" data-tab="account">Account</button>
+    <button class="edit-tab" data-tab="basic">Basic Info</button>
+    <button class="edit-tab" data-tab="preferences">Preferences</button>
+    <button class="edit-tab" data-tab="photos">Photos</button>
+    <button class="edit-tab" data-tab="story">Story & Intent</button>
+    <button class="edit-tab" data-tab="lifestyle">Lifestyle</button>
+    <button class="edit-tab" data-tab="preview">Preview & Submit</button>
+  </div>
+
+  <!-- ACCOUNT TAB - READ ONLY INFORMATION -->
+  <div class="tab-content active" id="account-tab">
+    <form id="accountForm">
+      <div class="form-section">
+        <h3 style="color: var(--text-gold); margin-bottom: 1.5rem;">Account Information</h3>
+        <p style="color: var(--text-soft); margin-bottom: 1.5rem; font-style: italic;">
+          Account details cannot be changed for security reasons. These will be visible to admins during verification.
+        </p>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Username</label>
+            <input type="text" class="form-input read-only-field" value="{{ user_profile.username }}" readonly>
+            <div class="field-note">Username cannot be changed</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input read-only-field" value="{{ user_profile.user.email }}" readonly>
+            {% if user_profile.email_verified %}
+            <div class="field-note">
+              <span class="verification-badge">✓ Verified</span>
+            </div>
+            {% else %}
+            <div class="field-note">
+              <span style="color: #f59e0b;">● Not verified</span>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Date of Birth</label>
+            <input type="date" class="form-input read-only-field" value="{{ user_profile.date_of_birth|date:'Y-m-d' }}" readonly>
+            <div class="field-note">For age verification only</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Gender</label>
+            <input type="text" class="form-input read-only-field" 
+                   value="{% if user_profile.gender == 'male' %}Male{% elif user_profile.gender == 'female' %}Female{% elif user_profile.gender == 'non_binary' %}Non-binary{% elif user_profile.gender == 'transgender' %}Transgender{% elif user_profile.gender == 'other' %}Other{% else %}Prefer not to say{% endif %}" 
+                   readonly>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- BASIC INFO TAB - EDITABLE FIELDS -->
+  <div class="tab-content" id="basic-tab">
+    <form id="basicForm">
+      <div class="form-section">
+        <h3 style="color: var(--text-gold); margin-bottom: 1.5rem;">Basic Information</h3>
+        
+        <!-- Hidden DOB field that gets submitted for verification -->
+        <input type="hidden" name="date_of_birth" value="{{ user_profile.date_of_birth|date:'Y-m-d' }}">
+        
+        <div class="form-group">
+          <label class="form-label required">Profile Heading</label>
+          <input type="text" class="form-input" name="profile_heading" value="{% firstof user_profile.profile_heading '' %}" maxlength="80" required>
+          <div class="error-message" id="profile_heading_error">Profile heading is required</div>
+          <div class="field-note">Brief headline that appears below your name</div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label required">Display Age</label>
+            <input type="number" class="form-input" name="display_age" value="{% firstof user_profile.display_age 25 %}" min="18" max="100" required>
+            <div class="error-message" id="display_age_error">Display age is required (minimum 18)</div>
+            <div class="field-note">Age shown on your profile</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Relationship Status</label>
+            <select class="form-select" name="relationship_status" required>
+              <option value="">Select your status</option>
+              <option value="single" {% if user_profile.relationship_status == 'single' %}selected{% endif %}>Single</option>
+              <option value="divorced" {% if user_profile.relationship_status == 'divorced' %}selected{% endif %}>Divorced</option>
+              <option value="separated" {% if user_profile.relationship_status == 'separated' %}selected{% endif %}>Separated</option>
+              <option value="complicated" {% if user_profile.relationship_status == 'complicated' %}selected{% endif %}>Complicated</option>
+              <option value="open_relationship" {% if user_profile.relationship_status == 'open_relationship' %}selected{% endif %}>Open Relationship</option>
+              <option value="rather_not_say" {% if user_profile.relationship_status == 'rather_not_say' %}selected{% endif %}>Rather Not Say</option>
+            </select>
+            <div class="error-message" id="relationship_status_error">Relationship status is required</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Body Type</label>
+            <select class="form-select" name="body_type" required>
+              <option value="">Select body type</option>
+              <option value="slim" {% if user_profile.body_type == 'slim' %}selected{% endif %}>Slim</option>
+              <option value="athletic" {% if user_profile.body_type == 'athletic' %}selected{% endif %}>Athletic</option>
+              <option value="average" {% if user_profile.body_type == 'average' %}selected{% endif %}>Average</option>
+              <option value="curvy" {% if user_profile.body_type == 'curvy' %}selected{% endif %}>Curvy</option>
+              <option value="few_extra_pounds" {% if user_profile.body_type == 'few_extra_pounds' %}selected{% endif %}>Few Extra Pounds</option>
+              <option value="rather_not_say" {% if user_profile.body_type == 'rather_not_say' %}selected{% endif %}>Rather Not Say</option>
+            </select>
+            <div class="error-message" id="body_type_error">Body type is required</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Smoker?</label>
+            <select class="form-select" name="smoker" required>
+              <option value="">Select</option>
+              <option value="no" {% if user_profile.smoker == 'no' %}selected{% endif %}>No</option>
+              <option value="social" {% if user_profile.smoker == 'social' %}selected{% endif %}>Social Smoker</option>
+              <option value="yes" {% if user_profile.smoker == 'yes' %}selected{% endif %}>Yes</option>
+            </select>
+            <div class="error-message" id="smoker_error">This field is required</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Children</label>
+            <select class="form-select" name="children" required>
+              <option value="">Select</option>
+              <option value="no" {% if user_profile.children == 'no' %}selected{% endif %}>No</option>
+              <option value="yes_not_living" {% if user_profile.children == 'yes_not_living' %}selected{% endif %}>Yes, not living with me</option>
+              <option value="yes_living" {% if user_profile.children == 'yes_living' %}selected{% endif %}>Yes, living with me</option>
+              <option value="rather_not_say" {% if user_profile.children == 'rather_not_say' %}selected{% endif %}>Rather Not Say</option>
+            </select>
+            <div class="error-message" id="children_error">This field is required</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Height</label>
+            <input type="text" class="form-input" name="height" value="{% firstof user_profile.height '' %}" placeholder="e.g. 175cm or 5'9&quot;">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <input type="text" class="form-input" name="location" value="{% firstof user_profile.location '' %}" placeholder="e.g. New York, NY">
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- PREFERENCES TAB - EDITABLE FIELDS -->
+  <div class="tab-content" id="preferences-tab">
+    <form id="preferencesForm">
+      <div class="form-section">
+        <h3 style="color: var(--text-gold); margin-bottom: 1.5rem;">Dating Preferences</h3>
+        
+        <!-- Hidden gender field that gets submitted for admin verification -->
+        <input type="hidden" name="gender" value="{{ user_profile.gender }}">
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label required">Interested In</label>
+            <select class="form-select" name="interested_in" required>
+              <option value="">Select gender preference</option>
+              <option value="male" {% if user_profile.interested_in == 'male' %}selected{% endif %}>Men</option>
+              <option value="female" {% if user_profile.interested_in == 'female' %}selected{% endif %}>Women</option>
+              <option value="both" {% if user_profile.interested_in == 'both' %}selected{% endif %}>Men & Women</option>
+              <option value="all" {% if user_profile.interested_in == 'all' %}selected{% endif %}>All Genders</option>
+            </select>
+            <div class="error-message" id="interested_in_error">This field is required</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Age Range Preference</label>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <input type="number" class="form-input" name="age_min" value="{% firstof user_profile.age_min 18 %}" min="18" max="100" placeholder="Min" style="text-align: center;">
+              <span>to</span>
+              <input type="number" class="form-input" name="age_max" value="{% firstof user_profile.age_max 99 %}" min="18" max="100" placeholder="Max" style="text-align: center;">
+            </div>
+            <div class="field-note">Preferred age range for matches</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Relationship Goals</label>
+            <select class="form-select" name="relationship_goals">
+              <option value="">Select (optional)</option>
+              <option value="casual_dating" {% if user_profile.relationship_goals == 'casual_dating' %}selected{% endif %}>Casual Dating</option>
+              <option value="serious_relationship" {% if user_profile.relationship_goals == 'serious_relationship' %}selected{% endif %}>Serious Relationship</option>
+              <option value="marriage" {% if user_profile.relationship_goals == 'marriage' %}selected{% endif %}>Marriage</option>
+              <option value="friendship" {% if user_profile.relationship_goals == 'friendship' %}selected{% endif %}>Friendship</option>
+              <option value="open_to_see" {% if user_profile.relationship_goals == 'open_to_see' %}selected{% endif %}>Open to See</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Distance Preference</label>
+            <select class="form-select" name="distance_preference">
+              <option value="">Select (optional)</option>
+              <option value="10" {% if user_profile.distance_preference == '10' %}selected{% endif %}>Within 10 miles</option>
+              <option value="25" {% if user_profile.distance_preference == '25' %}selected{% endif %}>Within 25 miles</option>
+              <option value="50" {% if user_profile.distance_preference == '50' %}selected{% endif %}>Within 50 miles</option>
+              <option value="100" {% if user_profile.distance_preference == '100' %}selected{% endif %}>Within 100 miles</option>
+              <option value="any" {% if user_profile.distance_preference == 'any' %}selected{% endif %}>Any distance</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Photos Tab - UPDATED TO SHOW ACTUAL USER PHOTOS -->
+  <div class="tab-content" id="photos-tab">
+    <form id="photosForm" enctype="multipart/form-data">
+      <div class="form-section">
+        <h3 style="color: var(--text-gold); margin-bottom: 1.5rem;">Profile Photos</h3>
+        
+        <!-- Profile Photo Section -->
+        <div class="form-group">
+          <label class="form-label required">Profile Photo</label>
+          
+          <!-- Check if user has ANY photos to use as main -->
+          {% with user_photos=user_profile.userprofileimage_set.all %}
+            {% if user_photos %}
+              <!-- Use first photo as main -->
+              <div class="current-photo">
+                <img src="{{ user_photos.0.image_url }}" alt="Current profile photo" id="currentMainPhoto">
+                <span>Current Profile Photo</span>
+                <div style="margin-top: 10px; font-size: 0.8rem; color: var(--text-soft);">
+                  Using first uploaded photo as profile photo
+                </div>
+              </div>
+            {% else %}
+              <div class="current-photo">
+                <img src="{% static 'images/default-profile.jpg' %}" alt="Default photo" id="currentMainPhoto">
+                <span>No profile photo yet</span>
+              </div>
+            {% endif %}
+          {% endwith %}
+          
+          <div class="photo-upload-zone" id="mainPhotoDrop">
+            <p>Drag & drop a new profile photo or click to browse</p>
+            <input type="file" name="profile_photo" accept="image/*" style="display: none;" id="mainPhotoInput">
+            <button type="button" class="btn-secondary" onclick="document.getElementById('mainPhotoInput').click()">Upload Profile Photo</button>
+          </div>
+          <div class="error-message" id="profile_photo_error">Profile photo is required</div>
+          <div class="field-note">This will be your primary profile photo. JPG or PNG, up to 8MB.</div>
+        </div>
+
+        <!-- Additional Photos Section -->
+        <div class="form-group">
+          <label class="form-label">Additional Photos</label>
+          
+          <div id="currentAdditionalPhotos" class="current-photos-grid">
+            {% for image in user_profile.userprofileimage_set.all %}
+              <div class="current-photo">
+                <img src="{{ image.image_url }}" alt="Photo {{ forloop.counter }}" data-id="{{ image.id }}">
+                <!-- Hidden field to preserve this image -->
+                <input type="hidden" name="keep_image_{{ image.id }}" value="{{ image.id }}">
+                <!-- Delete checkbox -->
+                <div style="margin-top: 10px;">
+                  <label style="font-size: 0.8rem; color: #ef4444;">
+                    <input type="checkbox" name="delete_image_{{ image.id }}" value="1" 
+                           onclick="toggleImageDelete(this, {{ image.id }})">
+                    Delete
+                  </label>
+                </div>
+                <span>Photo {{ forloop.counter }}</span>
+              </div>
+            {% empty %}
+              <p style="color: var(--text-soft); font-style: italic;">No photos uploaded yet.</p>
+            {% endfor %}
+          </div>
+          
+          <div class="photo-upload-zone" id="additionalPhotoDrop">
+            <p>Drag & drop additional photos or click to browse</p>
+            <input type="file" name="additional_photos" accept="image/*" multiple style="display: none;" id="additionalPhotoInput">
+            <button type="button" class="btn-secondary" onclick="document.getElementById('additionalPhotoInput').click()">Add More Photos</button>
+          </div>
+          <div class="field-note">You can add multiple photos. Check "Delete" to remove current photos. First photo will be used as your main profile photo.</div>
+        </div>
+
+        <!-- Private Images Note (if any exist) -->
+        {% with private_count=user_profile.privateimage_set.count %}
+          {% if private_count > 0 %}
+          <div class="form-group">
+            <div style="background: rgba(205, 173, 124, 0.1); border: 1px solid rgba(205, 173, 124, 0.3); border-radius: 12px; padding: 1rem;">
+              <p style="color: var(--text-gold); margin: 0; font-size: 0.9rem;">
+                <strong>Note:</strong> You have {{ private_count }} private image(s). 
+                Private images cannot be edited here for security reasons.
+              </p>
+            </div>
+          </div>
+          {% endif %}
+        {% endwith %}
+      </div>
+    </form>
+  </div>
+
+  <!-- Story & Intent Tab -->
+  <div class="tab-content" id="story-tab">
+    <form id="storyForm">
+      <div class="form-section">
+        <h3 style="color: var(--text-gold); margin-bottom: 1.5rem;">Your Story & Intent</h3>
+        
+        <div class="form-group">
+          <label class="form-label required">About You</label>
+          <textarea class="form-textarea" name="about_you" rows="6" maxlength="2000" required placeholder="Share a refined snapshot of who you are—your lifestyle, interests and what makes you, you.">{% firstof user_profile.about_you '' %}</textarea>
+          <div class="error-message" id="about_you_error">About you section is required</div>
+          <div class="char-count" id="aboutYouCount">{% if user_profile.about_you %}{{ user_profile.about_you|length }}{% else %}0{% endif %}/2000 characters</div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label required">What You're Looking For</label>
+          <textarea class="form-textarea" name="looking_for" rows="6" maxlength="2000" required placeholder="Describe the type of person and connection you're open to. Think energy, lifestyle and expectations.">{% firstof user_profile.looking_for '' %}</textarea>
+          <div class="error-message" id="looking_for_error">This field is required</div>
+          <div class="char-count" id="lookingForCount">{% if user_profile.looking_for %}{{ user_profile.looking_for|length }}{% else %}0{% endif %}/2000 characters</div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Occupation</label>
+            <input type="text" class="form-input" name="occupation" value="{% firstof user_profile.occupation '' %}" placeholder="e.g. Finance, Creative, Entrepreneur">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Industry</label>
+            <input type="text" class="form-input" name="industry" value="{% firstof user_profile.industry '' %}" placeholder="Optional, if you'd like to share">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Education</label>
+            <select class="form-select" name="education">
+              <option value="">Select (optional)</option>
+              <option value="high_school" {% if user_profile.education == 'high_school' %}selected{% endif %}>High School</option>
+              <option value="trade_certification" {% if user_profile.education == 'trade_certification' %}selected{% endif %}>Trade / Certification</option>
+              <option value="bachelor" {% if user_profile.education == 'bachelor' %}selected{% endif %}>Bachelor Degree</option>
+              <option value="postgraduate" {% if user_profile.education == 'postgraduate' %}selected{% endif %}>Postgraduate</option>
+              <option value="doctorate" {% if user_profile.education == 'doctorate' %}selected{% endif %}>Doctorate</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Annual Income (optional)</label>
+            <select class="form-select" name="income">
+              <option value="">Prefer not to say</option>
+              <option value="under_100k" {% if user_profile.income == 'under_100k' %}selected{% endif %}>Under $100k</option>
+              <option value="100_200k" {% if user_profile.income == '100_200k' %}selected{% endif %}>$100k–$200k</option>
+              <option value="200_400k" {% if user_profile.income == '200_400k' %}selected{% endif %}>$200k–$400k</option>
+              <option value="400_800k" {% if user_profile.income == '400_800k' %}selected{% endif %}>$400k–$800k</option>
+              <option value="800k_plus" {% if user_profile.income == '800k_plus' %}selected{% endif %}>$800k+</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Lifestyle Tab -->
+  <div class="tab-content" id="lifestyle-tab">
+    <form id="lifestyleForm">
+      <div class="form-section">
+        <h3 style="color: var(--text-gold); margin-bottom: 1.5rem;">Lifestyle & Preferences</h3>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label required">Ideal Meeting Style</label>
+            <select class="form-select" name="meeting_style" required>
+              <option value="">Select one</option>
+              <option value="casual_coffee" {% if user_profile.meeting_style == 'casual_coffee' %}selected{% endif %}>Casual coffee or drink</option>
+              <option value="fine_dining" {% if user_profile.meeting_style == 'fine_dining' %}selected{% endif %}>Fine dining experience</option>
+              <option value="daytime_meet" {% if user_profile.meeting_style == 'daytime_meet' %}selected{% endif %}>Daytime meet (lunch, walk, gallery)</option>
+              <option value="evening_occasions" {% if user_profile.meeting_style == 'evening_occasions' %}selected{% endif %}>Evening occasions & events</option>
+              <option value="get_to_know_first" {% if user_profile.meeting_style == 'get_to_know_first' %}selected{% endif %}>Prefer to get to know each other first</option>
+            </select>
+            <div class="error-message" id="meeting_style_error">This field is required</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Preferred Frequency</label>
+            <select class="form-select" name="meeting_frequency" required>
+              <option value="">Select one</option>
+              <option value="once_month" {% if user_profile.meeting_frequency == 'once_month' %}selected{% endif %}>Once a month</option>
+              <option value="twice_month" {% if user_profile.meeting_frequency == 'twice_month' %}selected{% endif %}>Twice a month</option>
+              <option value="weekly" {% if user_profile.meeting_frequency == 'weekly' %}selected{% endif %}>Weekly</option>
+              <option value="multiple_week" {% if user_profile.meeting_frequency == 'multiple_week' %}selected{% endif %}>Multiple times per week</option>
+              <option value="flexible" {% if user_profile.meeting_frequency == 'flexible' %}selected{% endif %}>Flexible / depends on chemistry</option>
+            </select>
+            <div class="error-message" id="meeting_frequency_error">This field is required</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Availability</label>
+            <select class="form-select" name="availability" required>
+              <option value="">Select one</option>
+              <option value="weeknights" {% if user_profile.availability == 'weeknights' %}selected{% endif %}>Mostly weeknights</option>
+              <option value="weekends" {% if user_profile.availability == 'weekends' %}selected{% endif %}>Mostly weekends</option>
+              <option value="days" {% if user_profile.availability == 'days' %}selected{% endif %}>Mostly weekdays (daytime)</option>
+              <option value="travel_often" {% if user_profile.availability == 'travel_often' %}selected{% endif %}>Travel often, schedule varies</option>
+              <option value="very_flexible" {% if user_profile.availability == 'very_flexible' %}selected{% endif %}>Very flexible</option>
+            </select>
+            <div class="error-message" id="availability_error">This field is required</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Travel</label>
+            <select class="form-select" name="travel">
+              <option value="">Select (optional)</option>
+              <option value="rarely" {% if user_profile.travel == 'rarely' %}selected{% endif %}>Prefer to stay local</option>
+              <option value="sometimes" {% if user_profile.travel == 'sometimes' %}selected{% endif %}>Open to occasional travel</option>
+              <option value="often" {% if user_profile.travel == 'often' %}selected{% endif %}>Travel often and enjoy it</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Drinking</label>
+            <select class="form-select" name="drinking" required>
+              <option value="">Select one</option>
+              <option value="no" {% if user_profile.drinking == 'no' %}selected{% endif %}>Do not drink</option>
+              <option value="social" {% if user_profile.drinking == 'social' %}selected{% endif %}>Socially</option>
+              <option value="regular" {% if user_profile.drinking == 'regular' %}selected{% endif %}>Regularly</option>
+            </select>
+            <div class="error-message" id="drinking_error">This field is required</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Exercise & Wellness</label>
+            <select class="form-select" name="exercise" required>
+              <option value="">Select one</option>
+              <option value="rarely" {% if user_profile.exercise == 'rarely' %}selected{% endif %}>Not a focus at the moment</option>
+              <option value="sometimes" {% if user_profile.exercise == 'sometimes' %}selected{% endif %}>A few times a month</option>
+              <option value="weekly" {% if user_profile.exercise == 'weekly' %}selected{% endif %}>1–3 times per week</option>
+              <option value="often" {% if user_profile.exercise == 'often' %}selected{% endif %}>4+ times per week</option>
+            </select>
+            <div class="error-message" id="exercise_error">This field is required</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Dining & Social Preferences</label>
+            <input type="text" class="form-input" name="dining" value="{% firstof user_profile.dining '' %}" placeholder="e.g. Fine dining, wine bars, hidden local spots">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Other Lifestyle Notes</label>
+            <input type="text" class="form-input" name="lifestyle_notes" value="{% firstof user_profile.lifestyle_notes '' %}" placeholder="Anything else helpful to know (optional)">
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Preview Tab -->
+  <div class="tab-content" id="preview-tab">
+    <div class="form-section">
+      <h3 style="color: var(--text-gold); margin-bottom: 1.5rem;">Preview & Submit Changes</h3>
+      
+      <div class="changes-summary">
+        <h4 style="margin-bottom: 1rem;">Changes Summary</h4>
+        <div id="changesList">
+          <!-- Changes will be populated here -->
+        </div>
+      </div>
+
+      <div class="preview-actions">
+        <button type="button" class="btn-secondary" onclick="saveAsDraft()">Save Draft</button>
+        <button type="button" class="btn-primary" id="submitForApproval" onclick="submitForApproval()">Submit for Approval</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Form Status Notification -->
+<div class="form-status" id="formStatus"></div>
+
+<script>
+// Global state
+let hasUnsavedChanges = false;
+let formData = {};
+let draftSaved = false;
+
+// Tab switching
+document.querySelectorAll('.edit-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.edit-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    tab.classList.add('active');
+    const tabId = tab.getAttribute('data-tab');
+    document.getElementById(`${tabId}-tab`).classList.add('active');
+    
+    // Update changes summary when preview tab is opened
+    if (tabId === 'preview') {
+      updateChangesSummary();
+      validateAllForms();
+    }
+  });
+});
+
+// Character counting
+document.querySelectorAll('textarea').forEach(textarea => {
+  const counterId = textarea.name + 'Count';
+  const counter = document.getElementById(counterId);
+  
+  if (counter) {
+    const updateCounter = () => {
+      const length = textarea.value.length;
+      counter.textContent = `${length}/${textarea.maxLength} characters`;
+      counter.className = 'char-count';
+      
+      if (length > textarea.maxLength * 0.9) {
+        counter.classList.add('near-limit');
+      }
+      if (length > textarea.maxLength) {
+        counter.classList.add('over-limit');
+      }
+    };
+    
+    textarea.addEventListener('input', updateCounter);
+    updateCounter(); // Initialize
+  }
+});
+
+// Real-time validation
+function setupFormValidation() {
+  // Required field validation
+  document.querySelectorAll('input[required], select[required], textarea[required]').forEach(field => {
+    field.addEventListener('blur', () => validateField(field));
+    field.addEventListener('input', () => {
+      validateField(field);
+      trackChanges();
+    });
+  });
+  
+  // Optional fields still track changes
+  document.querySelectorAll('input:not([required]), select:not([required]), textarea:not([required])').forEach(field => {
+    field.addEventListener('input', trackChanges);
+  });
+}
+
+function validateField(field) {
+  const errorElement = document.getElementById(`${field.name}_error`);
+  
+  // Special validation for display age (must be at least 18)
+  if (field.name === 'display_age' && field.value) {
+    if (parseInt(field.value) < 18) {
+      field.classList.add('error');
+      if (errorElement) {
+        errorElement.textContent = 'Display age must be at least 18';
+        errorElement.classList.add('show');
+      }
+      return false;
+    }
+  }
+  
+  // Required field validation
+  if (field.hasAttribute('required') && !field.value.trim()) {
+    field.classList.add('error');
+    if (errorElement) {
+      errorElement.textContent = `${field.labels[0]?.textContent.replace('*', '').trim()} is required`;
+      errorElement.classList.add('show');
+    }
+    return false;
+  } else {
+    field.classList.remove('error');
+    if (errorElement) errorElement.classList.remove('show');
+    return true;
+  }
+}
+
+function validateAllForms() {
+  let isValid = true;
+  const requiredFields = document.querySelectorAll('input[required], select[required], textarea[required]');
+  
+  requiredFields.forEach(field => {
+    if (!validateField(field)) {
+      isValid = false;
+    }
+  });
+  
+  return isValid;
+}
+
+// Track changes for unsaved changes warning
+function trackChanges() {
+  if (!hasUnsavedChanges) {
+    hasUnsavedChanges = true;
+    document.getElementById('unsavedChangesWarning').classList.add('show');
+  }
+}
+
+// Image deletion toggle
+function toggleImageDelete(checkbox, imageId) {
+    trackChanges();
+    if (checkbox.checked) {
+        showNotification(`Photo marked for deletion`, 'info');
+    }
+}
+
+// Photo upload handling
+function setupPhotoUpload() {
+  const mainPhotoInput = document.getElementById('mainPhotoInput');
+  const mainPhotoDrop = document.getElementById('mainPhotoDrop');
+  const currentMainPhoto = document.getElementById('currentMainPhoto');
+
+  // Main photo upload
+  mainPhotoInput.addEventListener('change', function(e) {
+    if (this.files && this.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentMainPhoto.src = e.target.result;
+        trackChanges();
+      };
+      reader.readAsDataURL(this.files[0]);
+    }
+  });
+
+  // Drag and drop for main photo
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    mainPhotoDrop.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    mainPhotoDrop.addEventListener(eventName, highlight, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    mainPhotoDrop.addEventListener(eventName, unhighlight, false);
+  });
+
+  function highlight() {
+    mainPhotoDrop.classList.add('dragover');
+  }
+
+  function unhighlight() {
+    mainPhotoDrop.classList.remove('dragover');
+  }
+
+  mainPhotoDrop.addEventListener('drop', handleDrop, false);
+
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    mainPhotoInput.files = files;
+    
+    if (files && files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentMainPhoto.src = e.target.result;
+        trackChanges();
+      };
+      reader.readAsDataURL(files[0]);
+    }
+  }
+}
+
+// Changes tracking and summary
+function updateChangesSummary() {
+  const changesList = document.getElementById('changesList');
+  const changes = [];
+  
+  // Collect changes from all forms
+  const forms = ['basicForm', 'storyForm', 'lifestyleForm', 'preferencesForm'];
+  forms.forEach(formId => {
+    const form = document.getElementById(formId);
+    if (form) {
+      const formData = new FormData(form);
+      for (let [name, value] of formData.entries()) {
+        if (name !== 'profile_photo' && name !== 'additional_photos') {
+          const currentValue = getCurrentValue(name);
+          if (value !== currentValue && value !== '') {
+            changes.push({
+              field: name,
+              current: currentValue,
+              new: value
+            });
+          }
+        }
+      }
+    }
+  });
+  
+  // Check for photo deletions
+  document.querySelectorAll('input[name^="delete_image_"]:checked').forEach(checkbox => {
+    const imageId = checkbox.name.replace('delete_image_', '');
+    changes.push({
+      field: `photo_${imageId}`,
+      current: 'Will be deleted',
+      new: 'Removed from profile'
+    });
+  });
+  
+  // Check for new photo uploads
+  const mainPhotoInput = document.getElementById('mainPhotoInput');
+  if (mainPhotoInput.files && mainPhotoInput.files[0]) {
+    changes.push({
+      field: 'profile_photo',
+      current: 'New upload',
+      new: 'New profile photo'
+    });
+  }
+  
+  const additionalPhotoInput = document.getElementById('additionalPhotoInput');
+  if (additionalPhotoInput.files && additionalPhotoInput.files.length > 0) {
+    changes.push({
+      field: 'additional_photos',
+      current: `Adding ${additionalPhotoInput.files.length} new photo(s)`,
+      new: 'New additional photos'
+    });
+  }
+  
+  // Display changes
+  if (changes.length === 0) {
+    changesList.innerHTML = '<p>No changes made yet.</p>';
+  } else {
+    changesList.innerHTML = changes.map(change => `
+      <div class="change-item">
+        <span class="change-field">${formatFieldName(change.field)}</span>
+        <span>${formatValue(change.new)}</span>
+      </div>
+    `).join('');
+  }
+}
+
+function getCurrentValue(fieldName) {
+  // This would typically come from your initial data
+  // For now, we'll get it from the form inputs
+  const input = document.querySelector(`[name="${fieldName}"]`);
+  return input ? input.defaultValue : '';
+}
+
+function formatFieldName(fieldName) {
+  return fieldName.split('_').map(word => 
+    word.charAt(0).toUpperCase() + word.slice(1)
+  ).join(' ');
+}
+
+function formatValue(value) {
+  if (value.length > 50) {
+    return value.substring(0, 50) + '...';
+  }
+  return value;
+}
+
+// Form submission
+function submitForApproval() {
+  if (!validateAllForms()) {
+    showNotification('Please fix all validation errors before submitting.', 'error');
+    // Switch to first tab with errors
+    document.querySelector('.edit-tab.active').classList.remove('active');
+    document.querySelector('.tab-content.active').classList.remove('active');
+    document.querySelector('.edit-tab[data-tab="basic"]').classList.add('active');
+    document.getElementById('basic-tab').classList.add('active');
+    return;
+  }
+  
+  const formData = new FormData();
+  
+  // Collect data from all forms
+  const basicForm = document.getElementById('basicForm');
+  const storyForm = document.getElementById('storyForm');
+  const lifestyleForm = document.getElementById('lifestyleForm');
+  const photosForm = document.getElementById('photosForm');
+  const preferencesForm = document.getElementById('preferencesForm');
+  
+  // Add form data
+  [basicForm, storyForm, lifestyleForm, photosForm, preferencesForm].forEach(form => {
+    if (form) {
+      const data = new FormData(form);
+      for (let [key, value] of data.entries()) {
+        if (value instanceof File) {
+          formData.append(key, value);
+        } else if (value !== '') {
+          formData.append(key, value);
+        }
+      }
+    }
+  });
+  
+  // Submit for approval
+  fetch('/api/profile/edit-request/', {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-CSRFToken': '{{ csrf_token }}'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      showNotification('✅ Changes submitted for approval! You will receive an email once reviewed.', 'success');
+      hasUnsavedChanges = false;
+      document.getElementById('unsavedChangesWarning').classList.remove('show');
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } else {
+      showNotification('❌ Error submitting changes: ' + data.error, 'error');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    showNotification('❌ Network error submitting changes', 'error');
+  });
+}
+
+function saveAsDraft() {
+  // Collect all form data
+  const forms = ['basicForm', 'storyForm', 'lifestyleForm', 'preferencesForm'];
+  const draftData = {};
+  
+  forms.forEach(formId => {
+    const form = document.getElementById(formId);
+    if (form) {
+      const formData = new FormData(form);
+      for (let [key, value] of formData.entries()) {
+        if (value !== '') {
+          draftData[key] = value;
+        }
+      }
+    }
+  });
+  
+  // Save to localStorage
+  localStorage.setItem('profileEditDraft', JSON.stringify(draftData));
+  localStorage.setItem('profileEditDraftTimestamp', new Date().toISOString());
+  
+  draftSaved = true;
+  showNotification('💾 Draft saved successfully', 'info');
+  
+  // Clear unsaved changes warning temporarily
+  hasUnsavedChanges = false;
+  document.getElementById('unsavedChangesWarning').classList.remove('show');
+  
+  // Reset the flag after a short delay
+  setTimeout(() => {
+    hasUnsavedChanges = true;
+    document.getElementById('unsavedChangesWarning').classList.add('show');
+  }, 3000);
+}
+
+function loadDraft() {
+  const draftData = localStorage.getItem('profileEditDraft');
+  if (draftData) {
+    const data = JSON.parse(draftData);
+    
+    // Populate form fields with draft data
+    for (const [key, value] of Object.entries(data)) {
+      const field = document.querySelector(`[name="${key}"]`);
+      if (field) {
+        field.value = value;
+        
+        // Trigger validation and character count updates
+        if (field.tagName === 'TEXTAREA') {
+          const event = new Event('input');
+          field.dispatchEvent(event);
+        }
+      }
+    }
+    
+    const timestamp = localStorage.getItem('profileEditDraftTimestamp');
+    showNotification(`📝 Draft loaded from ${new Date(timestamp).toLocaleString()}`, 'info');
+  }
+}
+
+function viewPendingChanges() {
+  // Navigate to pending changes view or show modal
+  alert('Showing pending changes...');
+}
+
+// Notification function
+function showNotification(message, type = 'info') {
+  const notification = document.getElementById('formStatus');
+  notification.textContent = message;
+  notification.className = `form-status ${type} show`;
+  
+  setTimeout(() => {
+    notification.classList.remove('show');
+  }, 5000);
+}
+
+// Prevent accidental navigation away with unsaved changes
+window.addEventListener('beforeunload', (e) => {
+  if (hasUnsavedChanges && !draftSaved) {
+    e.preventDefault();
+    e.returnValue = '';
+    return 'You have unsaved changes. Are you sure you want to leave?';
+  }
+});
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+  setupPhotoUpload();
+  setupFormValidation();
+  
+  // Load draft if available
+  loadDraft();
+  
+  // Initialize character counts
+  document.querySelectorAll('textarea').forEach(textarea => {
+    const event = new Event('input');
+    textarea.dispatchEvent(event);
+  });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,395 @@
+{% extends 'website/synergy_base_header.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  /* COPY ALL THE SAME CSS FROM profile_detail_public.html */
+  :root {
+    --brand: #cdad7c;
+    --brand-dark: #a88a5a;
+    /* ... all the same CSS variables ... */
+  }
+
+  /* ... all the same CSS styles ... */
+
+  .profile-actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1.8rem;
+  }
+
+  .btn {
+    padding: 0.9rem 1.3rem;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    box-shadow: 0 14px 35px rgba(205, 173, 119, 0.45);
+    flex: 1.1;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(148, 163, 184, 0.8);
+    flex: 1;
+  }
+
+  /* ... rest of the same CSS ... */
+</style>
+
+<div class="profile-container">
+  <a href="{% url 'dashboard' %}" class="back-button">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+         xmlns="http://www.w3.org/2000/svg" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    Back to Dashboard
+  </a>
+
+  <section class="profile-details">
+    <!-- SAME PROFILE CONTENT AS PUBLIC VERSION -->
+    <div class="profile-image-section">
+      <div class="profile-main-image"
+        {% if profile.profile_image %}
+          style="background-image:url('{{ profile.profile_image }}');"
+        {% elif profile.profile_image_url %}
+          style="background-image:url('{{ profile.profile_image_url }}');"
+        {% else %}
+          style="background-image:url('{% static 'images/default-profile.jpg' %}');"
+        {% endif %}>
+      </div>
+
+      {% if profile.additional_images %}
+      <div class="gallery-section">
+        <h3 class="section-title">Gallery</h3>
+        <div class="gallery-grid">
+          {% for image_url in profile.additional_images %}
+            {% if image_url %}
+              <div class="gallery-item" style="background-image:url('{{ image_url }}');"></div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if profile.has_private_images %}
+      <div class="private-gallery-section">
+        <div class="private-gallery-header">
+          <span class="private-gallery-title">Private Gallery</span>
+          <svg class="private-gallery-lock" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <div class="private-gallery-grid">
+          <div class="private-gallery-item"></div>
+          <div class="private-gallery-item"></div>
+          <div class="private-gallery-item"></div>
+          <div class="private-gallery-item"></div>
+        </div>
+        
+        <div class="private-gallery-actions">
+          <button class="request-access-btn" id="request-access-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            Request Access
+          </button>
+        </div>
+        
+        <p class="private-gallery-note">
+          Private gallery available to trusted members.<br>
+          Request access with a personalised message.
+        </p>
+      </div>
+      {% endif %}
+    </div>
+
+    <article class="profile-info-section">
+      <div class="profile-info-section-inner">
+        <header class="profile-header">
+          <h1 class="profile-name-large">{{ profile.display_name|default:profile.username|default:profile.profile_name|upper }}</h1>
+          <p class="profile-details-large">
+            {{ profile.age|default:"Not provided" }} • {{ profile.location|default:"Location not provided" }}
+          </p>
+          {% if profile.heading %}
+            <p class="profile-bio-large">"{{ profile.heading }}"</p>
+          {% elif profile.story and profile.story != "No story provided yet." %}
+            <p class="profile-bio-large">"{{ profile.story|truncatewords:20 }}"</p>
+          {% endif %}
+        </header>
+
+        <!-- SAME PROFILE INFO SECTIONS -->
+        <section class="arrangement-section">
+          <h3 class="section-title">What I'm Seeking</h3>
+          {% if profile.seeking and profile.seeking != "Not specified" %}
+            <div class="arrangement-tags-large">
+              <span class="arrangement-tag-large">{{ profile.seeking }}</span>
+            </div>
+          {% elif profile.looking_for %}
+            <div class="arrangement-tags-large">
+              <span class="arrangement-tag-large">{{ profile.looking_for }}</span>
+            </div>
+          {% else %}
+            <div class="arrangement-tags-large">
+              <span class="arrangement-tag-large">Not specified</span>
+            </div>
+          {% endif %}
+        </section>
+
+        <div class="divider-line"></div>
+
+        <section class="about-section">
+          <h3 class="section-title">About Me</h3>
+          <div class="about-columns">
+            <div class="about-content">
+              {% if profile.description and profile.description != "No description provided yet." %}
+                <p>{{ profile.description }}</p>
+              {% elif profile.story and profile.story != "No story provided yet." %}
+                <p>{{ profile.story }}</p>
+              {% else %}
+                <p>No description provided yet.</p>
+              {% endif %}
+              
+              {% if profile.relationship_status and profile.relationship_status != "Not provided" %}
+                <p>
+                  <strong>Relationship Status:</strong>
+                  {{ profile.relationship_status }}
+                </p>
+              {% endif %}
+              
+              {% if profile.seeking and profile.seeking != "Not specified" %}
+                <p>
+                  <strong>Looking For:</strong>
+                  {{ profile.seeking }}
+                </p>
+              {% elif profile.looking_for %}
+                <p>
+                  <strong>Looking For:</strong>
+                  {{ profile.looking_for }}
+                </p>
+              {% endif %}
+            </div>
+
+            <aside>
+              <h3 class="section-title">Lifestyle &amp; Details</h3>
+              <div class="lifestyle-tags">
+                {% if profile.body_type and profile.body_type != "Not provided" %}
+                  <span class="pill-subtle">Body • {{ profile.body_type }}</span>
+                {% endif %}
+                
+                {% if profile.children and profile.children != "Not provided" %}
+                  <span class="pill-subtle">Children • {{ profile.children }}</span>
+                {% elif profile.has_children %}
+                  <span class="pill-subtle">Children • Has children</span>
+                {% endif %}
+                
+                {% if profile.smoker and profile.smoker != "Not provided" %}
+                  <span class="pill-subtle">Smoker • {{ profile.smoker }}</span>
+                {% elif profile.is_smoker %}
+                  <span class="pill-subtle">Smoker • Yes</span>
+                {% endif %}
+                
+                {% if profile.height and profile.height != "Not provided" %}
+                  <span class="pill-subtle">Height • {{ profile.height }}</span>
+                {% endif %}
+                
+                {% if profile.gender and profile.gender != "Not provided" %}
+                  <span class="pill-subtle">Gender • {{ profile.gender }}</span>
+                {% endif %}
+                
+                {% if not profile.body_type and not profile.children and not profile.smoker and not profile.height and not profile.gender %}
+                  <span class="pill-subtle">No lifestyle details provided</span>
+                {% endif %}
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <!-- MEMBER-ONLY: REAL FUNCTIONALITY BUTTONS -->
+        <div class="profile-actions">
+          <button class="btn btn-primary" id="send-message-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Send Message
+          </button>
+          
+          <button class="btn btn-secondary" id="like-button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            Add to Favourites
+          </button>
+          
+          <button class="btn btn-secondary" id="block-button" style="background: linear-gradient(135deg, #dc2626, #ef4444); color: white;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12"></path>
+            </svg>
+            Block User
+          </button>
+        </div>
+
+        {% if prev_id or next_id %}
+        <div class="profile-nav-bottom">
+          {% if prev_id %}
+            <a href="{% url 'profile_detail_member' prev_id %}" class="profile-nav-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+              Prev
+            </a>
+          {% endif %}
+          {% if next_id %}
+            <a href="{% url 'profile_detail_member' next_id %}" class="profile-nav-btn">
+              Next
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </a>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </article>
+  </section>
+</div>
+
+<!-- SAME LIGHTBOX CODE -->
+
+<script>
+  // SAME LIGHTBOX JAVASCRIPT
+
+  // MEMBER-ONLY: REAL FUNCTIONALITY
+  document.addEventListener('DOMContentLoaded', function () {
+    const sendMessageBtn = document.getElementById('send-message-btn');
+    if (sendMessageBtn) {
+      sendMessageBtn.addEventListener('click', function() {
+        const userId = {{ profile.user_id }};
+        window.location.href = `/messages/${userId}/`;
+      });
+    }
+
+    const likeButton = document.getElementById('like-button');
+    if (likeButton) {
+      likeButton.addEventListener('click', function() {
+        likeProfile();
+      });
+    }
+
+    const blockButton = document.getElementById('block-button');
+    if (blockButton) {
+      blockButton.addEventListener('click', function() {
+        blockProfile();
+      });
+    }
+
+    const requestAccessBtn = document.getElementById('request-access-btn');
+    if (requestAccessBtn) {
+      requestAccessBtn.addEventListener('click', function() {
+        requestPrivateAccess();
+      });
+    }
+
+    function requestPrivateAccess() {
+      alert('Access request sent! The member will review your request.');
+      // Real API call would go here
+    }
+
+    function likeProfile() {
+      const userId = {{ profile.user_id }};
+      const likeButton = document.getElementById('like-button');
+      
+      likeButton.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        </svg>
+        Loading...
+      `;
+      likeButton.disabled = true;
+      
+      fetch(`/api/like/${userId}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          showNotification('Profile liked!', 'success');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error liking profile', 'error');
+      })
+      .finally(() => {
+        likeButton.disabled = false;
+        likeButton.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+          Add to Favourites
+        `;
+      });
+    }
+
+    function blockProfile() {
+      const userId = {{ profile.user_id }};
+      const blockButton = document.getElementById('block-button');
+      
+      blockButton.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        </svg>
+        Loading...
+      `;
+      blockButton.disabled = true;
+      
+      fetch(`/api/block/${userId}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          showNotification('User blocked successfully', 'success');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error blocking user', 'error');
+      })
+      .finally(() => {
+        blockButton.disabled = false;
+        blockButton.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"></path>
+          </svg>
+          Block User
+        `;
+      });
+    }
+  });
+</script>
+{% endblock %}

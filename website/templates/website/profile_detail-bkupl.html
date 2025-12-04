@@ -1,0 +1,1190 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Synergy — {{ username }}'s Profile</title>
+<meta name="description" content="Where sophisticated connection meets meaningful relationships. Premium dating for discerning singles." />
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --brand: #cdad7c;
+    --brand-dark: #a88a5a;
+    --brand-soft: #e7d3af;
+    --bg: #050509;
+    --bg-soft: #090b12;
+    --bg-elevated: #0b0e18;
+    --card: rgba(15, 23, 42, 0.96);
+    --card-soft: rgba(15, 23, 42, 0.9);
+    --text: #f9fafb;
+    --text-soft: #9ca3af;
+    --text-muted: #6b7280;
+    --text-gold: #f5e6c5;
+    --border: rgba(148, 163, 184, 0.45);
+    --border-soft: rgba(148, 163, 184, 0.2);
+    --shadow-soft: 0 20px 60px rgba(15, 23, 42, 0.9);
+    --shadow-strong: 0 30px 80px rgba(0, 0, 0, 0.95);
+    --radius: 20px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: radial-gradient(circle at top, #111827 5%, #020617 45%, #000 100%);
+    color: var(--text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  #gold-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Header / nav */
+  .premium-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 1000;
+    padding: 1rem 0;
+  }
+
+  .nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .script-logo {
+    font-family: 'Allura', cursive;
+    font-size: 42px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #CDAD7F;
+    text-decoration: none;
+    text-transform: none;
+    text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.1);
+    display: inline-block;
+    margin: 0;
+    padding: 5px 0;
+    transition: all 0.3s ease;
+  }
+
+  .script-logo:hover {
+    transform: scale(1.05);
+    text-shadow: 1px 1px 15px rgba(255, 255, 255, 0.2);
+  }
+
+  .nav-icons {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .nav-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-soft);
+    transition: all 0.3s ease;
+    padding: 0.5rem 0.8rem;
+    border-radius: 12px;
+    position: relative;
+    min-width: 70px;
+  }
+
+  .nav-icon:hover {
+    color: var(--text);
+    background: rgba(205, 173, 119, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .nav-icon.active {
+    color: var(--text-gold);
+    background: rgba(205, 173, 119, 0.15);
+  }
+
+  .nav-icon.active::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--text-gold);
+    border-radius: 50%;
+  }
+
+  .icon-svg {
+    width: 20px;
+    height: 20px;
+    margin-bottom: 0.3rem;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .icon-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .mobile-nav-toggle {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .mobile-nav-toggle .line {
+    width: 100%;
+    height: 3px;
+    background: var(--text-gold);
+    transition: all 0.3s ease;
+    transform-origin: center;
+  }
+
+  .mobile-nav {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: rgba(3, 7, 18, 0.98);
+    padding: 0.75rem 1.25rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: none;
+  }
+
+  .mobile-nav.open {
+    display: block;
+  }
+
+  .mobile-nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .mobile-nav-link {
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    text-decoration: none;
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--border-soft);
+  }
+
+  /* Profile layout */
+  .profile-container {
+    margin-top: 100px;
+    padding: 2rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-gold);
+    text-decoration: none;
+    margin-bottom: 2rem;
+    padding: 0.8rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: all 0.3s ease;
+  }
+
+  .back-button:hover {
+    background: rgba(205, 173, 119, 0.1);
+    transform: translateX(-5px);
+  }
+
+  .profile-details {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 3rem;
+    align-items: flex-start;
+  }
+
+  .profile-image-section {
+    position: relative;
+  }
+
+  .profile-main-image {
+    width: 100%;
+    height: 500px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 24px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    cursor: pointer;
+  }
+
+  .profile-main-image::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top, rgba(248, 250, 252, 0.2), transparent 55%);
+    mix-blend-mode: soft-light;
+    opacity: 0.7;
+  }
+
+  .profile-main-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at bottom, rgba(15, 23, 42, 0.7), transparent 50%);
+  }
+
+  .profile-badge-large {
+    position: absolute;
+    top: 1.2rem;
+    left: 1.2rem;
+    background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.98));
+    color: #bbf7d0;
+    padding: 0.35rem 0.9rem 0.35rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: 1px solid rgba(74, 222, 128, 0.8);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .profile-badge-large::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #22c55e;
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25);
+  }
+
+  .profile-badge-large span {
+    opacity: 0.9;
+  }
+
+  .profile-badge-elitetag {
+    position: absolute;
+    bottom: 1.3rem;
+    left: 1.4rem;
+    background: linear-gradient(90deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.5));
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.8);
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+   	color: var(--text-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .profile-badge-elitetag svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--text-soft);
+  }
+
+  .gallery-section {
+    margin-top: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+
+  .gallery-item {
+    position: relative;
+    width: 100%;
+    padding-top: 70%;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+  }
+
+  .gallery-item::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.7), transparent 45%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .gallery-item:hover::after {
+    opacity: 1;
+  }
+
+  .profile-info-section {
+    background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.96));
+    border-radius: var(--radius);
+    border: 1px solid rgba(148, 163, 184, 0.55);
+    box-shadow: var(--shadow-strong);
+    padding: 2.1rem 2.4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .profile-info-section::before {
+    content: "";
+    position: absolute;
+    top: -120px;
+    right: -120px;
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, rgba(205, 173, 124, 0.14), transparent 70%);
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .profile-info-section-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .profile-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .profile-name-large {
+    font-size: 2.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .profile-details-large {
+    margin: 0.6rem 0 0.3rem;
+    color: var(--text-soft);
+    font-size: 0.9rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .profile-bio-large {
+    margin: 0.6rem 0 0;
+    color: var(--text-gold);
+    font-size: 1rem;
+    line-height: 1.8;
+    font-style: italic;
+  }
+
+  .arrangement-section {
+    margin-top: 1.6rem;
+  }
+
+  .arrangement-tags-large {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .arrangement-tag-large {
+    padding: 0.7rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.7);
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.98));
+  }
+
+  .arrangement-tag-large strong {
+    color: var(--text-gold);
+    font-weight: 600;
+  }
+
+  .divider-line {
+    margin: 1.6rem 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.7), transparent);
+  }
+
+  .about-section {
+    margin-top: 1.4rem;
+  }
+
+  .about-section h3 {
+    margin: 0 0 0.8rem;
+  }
+
+  .about-content p {
+    margin: 0 0 0.7rem;
+    color: var(--text-soft);
+    line-height: 1.8;
+    font-size: 0.96rem;
+  }
+
+  .about-content strong {
+    color: var(--text-gold);
+    font-weight: 600;
+  }
+
+  .about-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  .lifestyle-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .pill-subtle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    font-size: 0.8rem;
+    color: var(--text-soft);
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 1));
+  }
+
+  .pill-subtle svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .private-note {
+    margin: 0.4rem 0 0;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .profile-actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1.8rem;
+  }
+
+  .btn {
+    padding: 0.9rem 1.3rem;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    box-shadow: 0 14px 35px rgba(205, 173, 119, 0.45);
+    flex: 1.1;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(148, 163, 184, 0.8);
+    flex: 1;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6);
+  }
+
+  .profile-nav-bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.9rem;
+    margin-top: 2rem;
+  }
+
+  .profile-nav-btn {
+    flex: 1;
+    text-align: center;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    padding: 0.7rem 1.2rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: 1px solid rgba(0, 0, 0, 0.6);
+    box-shadow: 0 10px 25px rgba(205, 173, 119, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .profile-nav-btn:hover {
+    background: var(--brand-dark);
+    transform: translateY(-2px);
+  }
+
+  /* Lightbox overlay */
+  .lightbox-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.94);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1500;
+  }
+
+  .lightbox-overlay.open {
+    display: flex;
+  }
+
+  .lightbox-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+
+  .lightbox-image {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 20px;
+    box-shadow: var(--shadow-strong);
+    display: block;
+  }
+
+  .lightbox-close, .lightbox-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(148, 163, 184, 0.7);
+    color: #f9fafb;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+  }
+
+  .lightbox-close {
+    top: -50px;
+    right: 0;
+    transform: none;
+  }
+
+  .lightbox-arrow.prev {
+    left: -55px;
+  }
+
+  .lightbox-arrow.next {
+    right: -55px;
+  }
+
+  @media (max-width: 1100px) {
+    .nav-icons {
+      gap: 1rem;
+    }
+
+    .nav-icon {
+      padding: 0.5rem 0.6rem;
+      min-width: 65px;
+    }
+
+    .icon-label {
+      font-size: 0.65rem;
+    }
+  }
+
+  @media (max-width: 968px) {
+    .profile-details {
+      grid-template-columns: 1fr;
+    }
+
+    .profile-main-image {
+      height: 400px;
+    }
+
+    /* Mobile: stack logo and keep icons on a single row under the logo */
+    .nav-container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+    }
+
+    .nav-icons {
+      display: flex;
+      width: 100%;
+      margin-top: 0.35rem;
+      gap: 0.7rem;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+    }
+
+    .nav-icons::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-icons {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .nav-icon {
+      min-width: 60px;
+      padding: 0.35rem 0.4rem;
+    }
+
+    .icon-svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .icon-label {
+      font-size: 0.6rem;
+    }
+
+    /* Hide hamburger/menu on this page for mobile */
+    .mobile-nav-toggle,
+    .mobile-nav {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .nav-container {
+      padding: 0 1rem;
+    }
+
+    .script-logo {
+      font-size: 36px;
+    }
+
+    .profile-container {
+      padding: 1rem;
+      margin-top: 80px;
+    }
+
+    .profile-name-large {
+      font-size: 2.5rem;
+    }
+
+    .gallery-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .profile-actions {
+      flex-direction: column;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .script-logo {
+      font-size: 36px;
+    }
+
+    .profile-name-large {
+      font-size: 2rem;
+    }
+
+    .arrangement-tags-large {
+      gap: 0.5rem;
+    }
+
+    .arrangement-tag-large {
+      padding: 0.8rem 1rem;
+      font-size: 0.9rem;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="gold-particles"></div>
+
+<header class="premium-header">
+  <div class="nav-container">
+    <a href="{% url 'index' %}" class="script-logo">Synergy</a>
+
+    <nav class="nav-icons">
+      <a href="#" class="nav-icon">
+        <svg class="icon-svg" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <span class="icon-label">SEARCH</span>
+      </a>
+      <a href="#" class="nav-icon">
+        <svg class="icon-svg" viewBox="0 0 24 24">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span class="icon-label">MESSAGES</span>
+      </a>
+      <a href="#" class="nav-icon">
+        <svg class="icon-svg" viewBox="0 0 24 24">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <span class="icon-label">INTERESTS</span>
+      </a>
+      <a href="#" class="nav-icon">
+        <svg class="icon-svg" viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+          <path d="M2 17l10 5 10-5"></path>
+          <path d="M2 12l10 5 10-5"></path>
+        </svg>
+        <span class="icon-label">PREMIUM</span>
+      </a>
+      <a href="#" class="nav-icon">
+        <svg class="icon-svg" viewBox="0 0 24 24">
+          <path d="M12 2l1.8 4.1L18 7l-3 3 0.7 4.3L12 12.5 8.3 14.3 9 10 6 7l4.2-.9z"></path>
+        </svg>
+        <span class="icon-label">HOT DATES</span>
+      </a>
+      <a href="#" class="nav-icon">
+        <svg class="icon-svg" viewBox="0 0 24 24">
+          <path d="M4 21v-7l9-4 7 4v7"></path>
+          <path d="M9 21v-8"></path>
+        </svg>
+        <span class="icon-label">POST DATE</span>
+      </a>
+    </nav>
+
+    <button class="mobile-nav-toggle" aria-label="Toggle navigation">
+      <span class="line"></span>
+      <span class="line"></span>
+    </button>
+  </div>
+
+  <div class="mobile-nav">
+    <div class="mobile-nav-links">
+      <a href="#" class="mobile-nav-link">Search</a>
+      <a href="#" class="mobile-nav-link">Messages</a>
+      <a href="#" class="mobile-nav-link">Interests</a>
+      <a href="#" class="mobile-nav-link">Premium</a>
+      <a href="#" class="mobile-nav-link">Hot Dates</a>
+      <a href="#" class="mobile-nav-link">Post Date</a>
+    </div>
+  </div>
+</header>
+
+<main class="profile-container">
+  {% if from_discover and not request.user.is_authenticated %}
+    <a href="{% url 'discover' %}" class="back-button">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+           xmlns="http://www.w3.org/2000/svg" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Back to Discover
+    </a>
+  {% else %}
+    <a href="javascript:history.back()" class="back-button">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+           xmlns="http://www.w3.org/2000/svg" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Back
+    </a>
+  {% endif %}
+
+  <section class="profile-details">
+    <!-- LEFT: IMAGES -->
+    <div class="profile-image-section">
+      <div class="profile-main-image"
+        {% if profile.profile_image %}
+          style="background-image:url('{{ profile.profile_image }}');"
+        {% endif %}
+      >
+        {% if is_elite %}
+          <div class="profile-badge-large">
+            <span></span>
+            <span>ONLINE NOW</span>
+          </div>
+          <div class="profile-badge-elitetag">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2l7 7-7 13L5 9z"></path>
+            </svg>
+            <span>Synergy Elite</span>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Gallery -->
+      <div class="gallery-section">
+        <h3 class="section-title">Gallery</h3>
+        <div class="gallery-grid">
+          {% if profile.additional_image_1 %}
+            <div class="gallery-item" style="background-image:url('{{ profile.additional_image_1 }}');"></div>
+          {% endif %}
+          {% if profile.additional_image_2 %}
+            <div class="gallery-item" style="background-image:url('{{ profile.additional_image_2 }}');"></div>
+          {% endif %}
+          {% if profile.additional_image_3 %}
+            <div class="gallery-item" style="background-image:url('{{ profile.additional_image_3 }}');"></div>
+          {% endif %}
+          {% if profile.additional_image_4 %}
+            <div class="gallery-item" style="background-image:url('{{ profile.additional_image_4 }}');"></div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: INFO -->
+    <article class="profile-info-section">
+      <div class="profile-info-section-inner">
+        <header class="profile-header">
+          <h1 class="profile-name-large">{{ username|default:"LALA19"|upper }}</h1>
+          <p class="profile-details-large">
+            {% if profile.age %}
+              {{ profile.age|floatformat:0 }}
+            {% else %}
+              19
+            {% endif %}
+            {% if profile.location %} • {{ profile.location }}{% else %} • Sydney, NSW{% endif %}
+            {% if profile.relationship_status %} • {{ profile.relationship_status }}{% endif %}
+          </p>
+          <p class="profile-bio-large">
+            {% if profile.profile_heading %}
+              "{{ profile.profile_heading }}"
+            {% else %}
+              "Chic, curious and selectively social. I love being around ambition and a little mischief."
+            {% endif %}
+          </p>
+        </header>
+
+        <!-- Arrangement -->
+        <section class="arrangement-section">
+          <h3 class="section-title">Arrangement Preferences</h3>
+          <div class="arrangement-tags-large">
+            {% if profile.arrangement_preferences %}
+              <span class="arrangement-tag-large">{{ profile.arrangement_preferences }}</span>
+            {% else %}
+              <span class="arrangement-tag-large">Casual Dating</span>
+              <span class="arrangement-tag-large">Chemistry First</span>
+              <span class="arrangement-tag-large">Exclusive If It Works</span>
+            {% endif %}
+          </div>
+        </section>
+
+        <div class="divider-line"></div>
+
+        <!-- About / Lifestyle -->
+        <section class="about-section">
+          <h3 class="section-title">About Me</h3>
+          <div class="about-columns">
+            <div class="about-content">
+              <p>
+                {% if profile.my_story %}
+                  {{ profile.my_story }}
+                {% else %}
+                  I’m at my best when I’m laughing over a beautifully mixed drink, dressed up for a night out, or planning my next weekend escape. I’m feminine, warm, and know what I want – someone who appreciates both my playful side and my softer, more thoughtful moments.
+                {% endif %}
+              </p>
+              <p>
+                <strong>My Passions:</strong>
+                {% if profile.lifestyle_interests %}
+                  {{ profile.lifestyle_interests }}
+                {% else %}
+                  Dressing up for dinner, discovering new rooftop bars, lazy Sundays, spontaneous hotel nights and any excuse to wear heels.
+                {% endif %}
+              </p>
+              <p>
+                <strong>Looking For:</strong>
+                {% if profile.looking_for %}
+                  {{ profile.looking_for }}
+                {% else %}
+                  A generous, emotionally intelligent man who enjoys spoiling and being spoiled in return. Someone who values discretion, wit, and a real connection.
+                {% endif %}
+              </p>
+            </div>
+
+            <aside>
+              <h3 class="section-title">Lifestyle &amp; Details</h3>
+              <div class="lifestyle-tags">
+                {% if profile.body_type %}
+                  <span class="pill-subtle">Body • {{ profile.body_type }}</span>
+                {% endif %}
+                {% if profile.children %}
+                  <span class="pill-subtle">Children • {{ profile.children }}</span>
+                {% endif %}
+                {% if profile.smoker %}
+                  <span class="pill-subtle">Smoker • {{ profile.smoker }}</span>
+                {% endif %}
+                {% if not profile.body_type and not profile.children and not profile.smoker %}
+                  <span class="pill-subtle">Petite</span>
+                  <span class="pill-subtle">No Children</span>
+                  <span class="pill-subtle">Non-Smoker</span>
+                {% endif %}
+              </div>
+
+              {% if profile.private_image_1 or profile.private_image_2 or profile.private_image_3 or profile.private_image_4 or profile.private_image_5 %}
+                <p class="private-note">
+                  Private gallery available to trusted members. Request access with a personalised message.
+                </p>
+              {% endif %}
+            </aside>
+          </div>
+        </section>
+
+        <div class="divider-line"></div>
+
+        <!-- Connection style -->
+        <section class="arrangement-section">
+          <h3 class="section-title">Connection Style</h3>
+          <div class="lifestyle-tags">
+            {% if profile.communication_style %}
+              <span class="pill-subtle">{{ profile.communication_style }}</span>
+            {% endif %}
+            {% if profile.life_priorities %}
+              <span class="pill-subtle">{{ profile.life_priorities }}</span>
+            {% endif %}
+            {% if profile.core_values %}
+              <span class="pill-subtle">{{ profile.core_values }}</span>
+            {% endif %}
+            {% if not profile.communication_style and not profile.life_priorities and not profile.core_values %}
+              <span class="pill-subtle">Honest</span>
+              <span class="pill-subtle">Playful</span>
+              <span class="pill-subtle">Ambitious</span>
+            {% endif %}
+          </div>
+        </section>
+
+        <!-- Buttons -->
+        <div class="profile-actions">
+          <button class="btn btn-primary">Send Message</button>
+          <button class="btn btn-secondary">Add to Favourites</button>
+        </div>
+
+        <!-- Prev / Next -->
+        {% if prev_id or next_id %}
+        <div class="profile-nav-bottom">
+          {% if prev_id %}
+            <a href="{% url 'profile_detail' prev_id %}{% if from_discover and not request.user.is_authenticated %}?from=discover{% endif %}" class="profile-nav-btn">&lt; Prev</a>
+          {% endif %}
+          {% if next_id %}
+            <a href="{% url 'profile_detail' next_id %}{% if from_discover and not request.user.is_authenticated %}?from=discover{% endif %}" class="profile-nav-btn">Next &gt;</a>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </article>
+  </section>
+</main>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightbox-overlay">
+  <div class="lightbox-content">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</button>
+    <button class="lightbox-arrow prev" id="lightbox-prev" aria-label="Previous">&#8249;</button>
+    <img src="" alt="Profile image" class="lightbox-image" id="lightbox-image">
+    <button class="lightbox-arrow next" id="lightbox-next" aria-label="Next">&#8250;</button>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const mobileToggle = document.querySelector('.mobile-nav-toggle');
+    const mobileNav = document.querySelector('.mobile-nav');
+
+    if (mobileToggle && mobileNav) {
+      mobileToggle.addEventListener('click', function () {
+        mobileNav.classList.toggle('open');
+      });
+    }
+
+    const mainImageDiv = document.querySelector('.profile-main-image');
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    const lightbox = document.getElementById('lightbox-overlay');
+    const lightboxImg = document.getElementById('lightbox-image');
+    const btnClose = document.getElementById('lightbox-close');
+    const btnPrev = document.getElementById('lightbox-prev');
+    const btnNext = document.getElementById('lightbox-next');
+
+    function extractUrl(bg) {
+      if (!bg) return '';
+      const start = bg.indexOf('url(');
+      if (start === -1) return '';
+      const end = bg.indexOf(')', start + 4);
+      if (end === -1) return '';
+      let inside = bg.slice(start + 4, end).trim();
+      if (
+        (inside.startsWith('"') && inside.endsWith('"')) ||
+        (inside.startsWith("'") && inside.endsWith("'"))
+      ) {
+        inside = inside.slice(1, -1);
+      }
+      return inside;
+    }
+
+    const imageUrls = [];
+    if (mainImageDiv) {
+      const mainUrl = extractUrl(mainImageDiv.style.backgroundImage);
+      if (mainUrl) imageUrls.push(mainUrl);
+    }
+    galleryItems.forEach(item => {
+      const url = extractUrl(item.style.backgroundImage);
+      if (url) imageUrls.push(url);
+    });
+
+    let currentIndex = 0;
+
+    function showImage(idx) {
+      if (!imageUrls.length) return;
+      if (idx < 0) idx = imageUrls.length - 1;
+      if (idx >= imageUrls.length) idx = 0;
+      currentIndex = idx;
+      lightboxImg.src = imageUrls[currentIndex];
+    }
+
+    function openLightbox(idx) {
+      if (!imageUrls.length) return;
+      showImage(idx);
+      lightbox.classList.add('open');
+    }
+
+    if (mainImageDiv && imageUrls.length) {
+      mainImageDiv.addEventListener('click', function (e) {
+        e.preventDefault();
+        openLightbox(0);
+      });
+    }
+
+    galleryItems.forEach((item, i) => {
+      item.addEventListener('click', function (e) {
+        e.preventDefault();
+        const offset = mainImageDiv ? 1 : 0;
+        openLightbox(i + offset);
+      });
+    });
+
+    if (btnClose) {
+      btnClose.addEventListener('click', function () {
+        lightbox.classList.remove('open');
+        lightboxImg.src = '';
+      });
+    }
+
+    if (btnPrev) {
+      btnPrev.addEventListener('click', function (e) {
+        e.stopPropagation();
+        showImage(currentIndex - 1);
+      });
+    }
+
+    if (btnNext) {
+      btnNext.addEventListener('click', function (e) {
+        e.stopPropagation();
+        showImage(currentIndex + 1);
+      });
+    }
+
+    if (lightbox) {
+      lightbox.addEventListener('click', function (e) {
+        if (e.target === lightbox) {
+          lightbox.classList.remove('open');
+          lightboxImg.src = '';
+        }
+      });
+    }
+
+    const container = document.getElementById('gold-particles');
+    if (container) {
+      for (let i = 0; i < 16; i++) {
+        const p = document.createElement('div');
+        p.className = 'gold-particle';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.top = Math.random() * 100 + 'vh';
+        p.style.animationDelay = Math.random() * 6 + 's';
+        container.appendChild(p);
+      }
+
+      const style = document.createElement('style');
+      style.textContent = `
+      .gold-particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: var(--brand);
+        border-radius: 50%;
+        animation: floatParticle 6s ease-in-out infinite;
+        opacity: 0.6;
+        pointer-events: none;
+        z-index: 0;
+      }
+      @keyframes floatParticle {
+        0%, 100% {
+          transform: translateY(0px) translateX(0px);
+          opacity: 0;
+        }
+        50% {
+          opacity: 0.8;
+        }
+        25%, 75% {
+          transform: translateY(-20px) translateX(10px);
+        }
+      }
+    `;
+      document.head.appendChild(style);
+    }
+  });
+</script>
+</body>
+</html>
+

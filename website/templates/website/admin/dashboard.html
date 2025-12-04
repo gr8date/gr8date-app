@@ -1,0 +1,288 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 4px solid #3498db;
+}
+.stat-card.warning {
+    border-left-color: #e74c3c;
+}
+.stat-card.success {
+    border-left-color: #2ecc71;
+}
+.stat-value {
+    font-size: 2em;
+    font-weight: bold;
+    color: #2c3e50;
+}
+.stat-label {
+    color: #7f8c8d;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+.legal-warning {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+.legal-warning strong {
+    display: block;
+    margin-bottom: 5px;
+}
+.activity-log, .message-log {
+    background: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+.activity-log table, .message-log table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.activity-log th, .message-log th {
+    background: #f8f9fa;
+    padding: 10px;
+    text-align: left;
+    border-bottom: 2px solid #dee2e6;
+}
+.activity-log td, .message-log td {
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+.activity-log tr:hover, .message-log tr:hover {
+    background: #f8f9fa;
+}
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+.badge-success {
+    background: #d4edda;
+    color: #155724;
+}
+.badge-warning {
+    background: #fff3cd;
+    color: #856404;
+}
+.badge-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+.quick-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+.quick-actions a.button {
+    display: inline-block;
+    padding: 10px 15px;
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+}
+.quick-actions a.button:hover {
+    background: #2980b9;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="legal-warning">
+    <strong>⚖️ LEGAL COMPLIANCE MODE ACTIVE</strong>
+    <div>
+        • All messages are permanently stored for legal compliance<br>
+        • User activities are fully logged with IP addresses<br>
+        • "Deleted" messages are only hidden from users<br>
+        • Data retention policy: INDEFINITE<br>
+        • Law enforcement cooperation: ENABLED
+    </div>
+</div>
+
+<div class="dashboard-stats">
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.total_users }}</div>
+        <div class="stat-label">Total Users</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.active_users }}</div>
+        <div class="stat-label">Active Users</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.total_messages }}</div>
+        <div class="stat-label">Total Messages</div>
+    </div>
+    <div class="stat-card warning">
+        <div class="stat-value">{{ stats.deleted_messages }}</div>
+        <div class="stat-label">"Deleted" Messages*</div>
+        <small>*Only hidden from users, still in database</small>
+    </div>
+    <div class="stat-card success">
+        <div class="stat-value">{{ stats.activities_today }}</div>
+        <div class="stat-label">Activities Today</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.pending_profile_requests }}</div>
+        <div class="stat-label">Pending Profile Requests</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.upcoming_dates }}</div>
+        <div class="stat-label">Upcoming Dates</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.new_users_today }}</div>
+        <div class="stat-label">New Users Today</div>
+    </div>
+</div>
+
+<div class="activity-log">
+    <h2>📊 Recent User Activities (Last 20)</h2>
+    {% if recent_activities %}
+    <table>
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>User</th>
+                <th>Activity</th>
+                <th>Target</th>
+                <th>IP Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for activity in recent_activities %}
+            <tr>
+                <td>{{ activity.created_at|date:"H:i:s" }}</td>
+                <td>
+                    <a href="{% url 'admin:auth_user_change' activity.user.id %}">
+                        {{ activity.user.username }}
+                    </a>
+                </td>
+                <td>
+                    <span class="badge badge-{% if 'login' in activity.activity_type %}success{% elif 'delete' in activity.activity_type %}danger{% else %}warning{% endif %}">
+                        {{ activity.get_activity_type_display }}
+                    </span>
+                </td>
+                <td>
+                    {% if activity.target_user %}
+                        <a href="{% url 'admin:auth_user_change' activity.target_user.id %}">
+                            {{ activity.target_user.username }}
+                        </a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>{{ activity.ip_address|default:"-" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div style="text-align: right; margin-top: 10px;">
+        <a href="{% url 'admin:website_useractivitylog_changelist' %}" class="button">View All Activity Logs</a>
+    </div>
+    {% else %}
+    <p>No recent activities found.</p>
+    {% endif %}
+</div>
+
+<div class="message-log">
+    <h2>💬 Recent Messages (Last 10)</h2>
+    {% if recent_messages %}
+    <table>
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Sender</th>
+                <th>Receiver</th>
+                <th>Message Preview</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for message in recent_messages %}
+            <tr>
+                <td>{{ message.created_at|date:"H:i:s" }}</td>
+                <td>
+                    <a href="{% url 'admin:auth_user_change' message.sender.id %}">
+                        {{ message.sender.username }}
+                    </a>
+                </td>
+                <td>
+                    {% if message.receiver %}
+                        <a href="{% url 'admin:auth_user_change' message.receiver.id %}">
+                            {{ message.receiver.username }}
+                        </a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>{{ message.content|truncatechars:50 }}</td>
+                <td>
+                    {% if message.is_deleted_for_sender and message.is_deleted_for_receiver %}
+                        <span class="badge badge-danger">Deleted for Both</span>
+                    {% elif message.is_deleted_for_sender %}
+                        <span class="badge badge-warning">Deleted for Sender</span>
+                    {% elif message.is_deleted_for_receiver %}
+                        <span class="badge badge-warning">Deleted for Receiver</span>
+                    {% else %}
+                        <span class="badge badge-success">Active</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div style="text-align: right; margin-top: 10px;">
+        <a href="{% url 'admin:website_message_changelist' %}" class="button">View All Messages</a>
+    </div>
+    {% else %}
+    <p>No recent messages found.</p>
+    {% endif %}
+</div>
+
+<div class="module">
+    <h2>🚀 Quick Actions</h2>
+    <div class="quick-actions">
+        <a href="{% url 'admin:website_message_changelist' %}" class="button">View All Messages</a>
+        <a href="{% url 'admin:website_useractivitylog_changelist' %}" class="button">View Activity Logs</a>
+        <a href="{% url 'admin:auth_user_changelist' %}" class="button">View All Users</a>
+        <a href="{% url 'admin:website_conversation_changelist' %}" class="button">View Conversations</a>
+        <a href="{% url 'admin:website_dateevent_changelist' %}" class="button">View Dates</a>
+        <a href="{% url 'admin:website_profileeditrequest_changelist' %}" class="button">View Profile Requests</a>
+    </div>
+</div>
+
+<div class="module">
+    <h2>🔍 Search & Export</h2>
+    <p>Use these links for legal compliance data requests:</p>
+    <div class="quick-actions">
+        <a href="{% url 'admin:website_message_changelist' %}?q=" class="button">Search Messages</a>
+        <a href="{% url 'admin:website_useractivitylog_changelist' %}" class="button">Search Activities</a>
+        <a href="{% url 'export_user_data' %}" target="_blank" class="button">Export User Data (JSON)</a>
+    </div>
+    <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
+        <small>Note: For legal data requests, use the export endpoint at: <code>/api/legal/export-user-data/&lt;user_id&gt;/</code></small>
+    </p>
+</div>
+{% endblock %}

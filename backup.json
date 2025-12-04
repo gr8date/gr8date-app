@@ -1,0 +1,9 @@
+🔧 LOCAL DEVELOPMENT SETTINGS LOADED
+DEBUG = True
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', '.onrender.com', 'synergy-dating.com', 'www.synergy-dating.com']
+DATABASE = SQLite
+STATIC FILES = Local
+⚖️ LEGAL COMPLIANCE MODE: ACTIVE
+  • Message Retention: FOREVER
+  • Activity Logging: ENABLED
+  • Data Export: ENABLED

@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Discover Elite Members — Synergy Dating | Premium Matchmaking</title>
+<meta name="description" content="Browse curated profiles of sophisticated professionals and high-value singles. Discover Synergy's elite members and explore what premium dating really looks like." />
+<meta name="keywords" content="elite dating, premium matchmaking, high value singles, professional dating, luxury dating, discreet relationships, exclusive dating platform" />
+<meta name="author" content="Synergy Dating" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="Discover Elite Members — Synergy Dating | Premium Matchmaking">
+<meta property="og:description" content="Browse curated profiles of sophisticated professionals seeking meaningful relationships through Synergy Dating's exclusive platform.">
+<meta property="og:url" content="https://synergy-dating.com/discover-elite-members/">
+<meta property="og:image" content="https://synergy-dating.com/static/images/synergy-og-image.jpg">
+<meta property="og:type" content="website">
+
+<!-- Twitter -->
+<meta property="twitter:title" content="Discover Elite Members — Synergy Dating | Premium Matchmaking">
+<meta property="twitter:description" content="Browse curated profiles of sophisticated professionals seeking meaningful relationships through Synergy Dating's exclusive platform.">
+<meta property="twitter:image" content="https://synergy-dating.com/static/images/synergy-twitter-image.jpg">
+
+<link rel="canonical" href="https://synergy-dating.com/discover-elite-members/">
+
+<link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="/static/images/apple-touch-icon.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --brand: #cdad7c;
+    --brand-dark: #a88a5a;
+    --brand-light: #e8d8b8;
+    --bg: #050607;
+    --bg-alt: #020617;
+    --card: #101320;
+    --text: #f9fafb;
+    --text-muted: #9ca3af;
+    --text-soft: #6b7280;
+    --text-gold: #f5e2b3;
+    --border: rgba(148, 163, 184, 0.35);
+    --radius-lg: 20px;
+    --shadow-soft: 0 18px 50px rgba(0, 0, 0, 0.65);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(circle at top, #111827 10%, #020617 55%, #000000 100%);
+    color: var(--text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  #gold-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .premium-header {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    background: radial-gradient(circle at top, rgba(15,23,42,0.96), rgba(2,6,23,0.98));
+    border-bottom: 1px solid rgba(148,163,184,0.35);
+    backdrop-filter: blur(18px);
+  }
+
+  .nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .script-logo {
+    font-family: 'Allura', cursive;
+    font-size: 42px;
+    font-weight: 400;
+    color: #CDAD7F;
+    text-decoration: none;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.1);
+    display: inline-block;
+    margin: 0;
+    padding: 5px 0;
+    transition: all 0.3s ease;
+  }
+
+  .script-logo:hover {
+    transform: scale(1.05);
+    text-shadow: 1px 1px 15px rgba(255, 255, 255, 0.2);
+  }
+
+  .mobile-header-auth {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .btn-mobile-login,
+  .btn-mobile-join {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid rgba(148,163,184,0.6);
+    text-decoration: none;
+    color: var(--text-soft);
+  }
+
+  .btn-mobile-join {
+    border-color: var(--brand);
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    box-shadow: 0 10px 30px rgba(205, 173, 124, 0.4);
+  }
+
+  .btn-mobile-login:hover {
+    background: rgba(15,23,42,0.9);
+  }
+
+  .btn-mobile-join:hover {
+    transform: translateY(-1px);
+  }
+
+  .hamburger-menu {
+    display: none;
+  }
+
+  .inner-page-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 7.5rem 1.5rem 4rem;
+    position: relative;
+    z-index: 2;
+    min-height: 70vh;
+  }
+
+  .section-title {
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-weight: 600;
+    text-align: center;
+    margin: 0 0 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .section-title .gold-accent {
+    color: var(--text-gold);
+    text-shadow: 0 0 18px rgba(205, 173, 124, 0.4);
+  }
+
+  .section-subtitle {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    text-align: center;
+    max-width: 620px;
+    margin: 0 auto 2.4rem;
+    line-height: 1.7;
+  }
+
+  .filter-bar {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2.4rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 0.65rem 1.6rem;
+    background: transparent;
+    color: var(--text-soft);
+    border-radius: 999px;
+    border: 1px solid rgba(148,163,184,0.55);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+  }
+
+  .filter-btn:hover {
+    color: var(--text);
+    border-color: var(--brand);
+  }
+
+  .filter-btn.active {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    border-color: var(--brand);
+    box-shadow: 0 10px 30px rgba(205, 173, 124, 0.5);
+  }
+
+  .profile-grid-discover {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2.1rem;
+  }
+
+  .profile-card-discover {
+    background: radial-gradient(circle at top, #111827, #020617);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  }
+
+  .profile-card-discover:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.75);
+    border-color: rgba(205, 173, 124, 0.8);
+  }
+
+  .profile-card-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .profile-image-discover {
+    width: 100%;
+    height: 340px;
+    background-size: cover;
+    background-position: center;
+    filter: grayscale(20%);
+    transition: filter 0.35s ease, transform 0.35s ease;
+  }
+
+  .profile-card-discover:hover .profile-image-discover {
+    filter: grayscale(0);
+    transform: scale(1.03);
+  }
+
+  .elite-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    background: radial-gradient(circle at top left, rgba(248,250,252,0.1), rgba(15,23,42,0.95));
+    border: 1px solid rgba(248,250,252,0.7);
+    font-size: 0.7rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  .elite-badge span.dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: #22c55e;
+    margin-right: 5px;
+  }
+
+  .profile-info-discover {
+    padding: 1.5rem 1.6rem 1.4rem;
+  }
+
+  .profile-name-discover {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--text-gold);
+    margin: 0 0 0.4rem;
+  }
+
+  .profile-detail-discover {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .profile-tagline-discover {
+    color: var(--text-soft);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .luxury-footer {
+    background: rgba(0, 0, 0, 0.85);
+    padding: 3rem 1.5rem 1.8rem;
+    border-top: 1px solid var(--border);
+    margin-top: 4rem;
+  }
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    color: var(--text-soft);
+    font-size: 0.85rem;
+  }
+
+  .footer-top-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-links a {
+    color: var(--text-soft);
+    text-decoration: none;
+  }
+
+  .footer-links a:hover {
+    color: var(--text-gold);
+  }
+
+  .footer-bottom-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    color: var(--text-soft);
+  }
+
+  @media (max-width: 768px) {
+    .nav-container {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .inner-page-content {
+      padding-top: 7rem;
+      padding-bottom: 3rem;
+    }
+
+    .profile-grid-discover {
+      grid-template-columns: 1fr;
+    }
+
+    .footer-top-row,
+    .footer-bottom-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="gold-particles"></div>
+
+<header class="premium-header">
+  <div class="nav-container">
+    <a href="{% url 'index' %}" class="script-logo">Synergy</a>
+
+    <div class="mobile-header-auth">
+      <a href="{% url 'login' %}" class="btn-mobile-login">Sign In</a>
+      <a href="{% url 'join' %}" class="btn-mobile-join">Join</a>
+    </div>
+
+    <button class="hamburger-menu" aria-label="Toggle navigation menu">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </button>
+  </div>
+</header>
+
+<main class="inner-page-content">
+  <h1 class="section-title">
+    Discover <span class="gold-accent">Elite Members</span>
+  </h1>
+  <p class="section-subtitle">
+    A curated preview of the calibre of singles you'll meet inside Synergy. These profiles are a showcase — when you join, you'll unlock the full, live member pool.
+  </p>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all">All Members</button>
+    <button class="filter-btn" data-filter="women">Women</button>
+    <button class="filter-btn" data-filter="men">Men</button>
+  </div>
+
+  <div class="profile-grid-discover">
+    <!-- Elite Women -->
+    {% for woman in elite_women %}
+    <article class="profile-card-discover" data-gender="women">
+      <a href="{% url 'profile_detail_public' woman.user_id %}?from=discover" class="profile-card-link">
+        <div class="profile-image-discover"
+          {% if woman.profile_image %}
+            style="background-image:url('{{ woman.profile_image }}');"
+          {% else %}
+            style="background-image:url('https://placehold.co/800x800/111827/cdad7c?text=Elite+Member');"
+          {% endif %}>
+        </div>
+        <div class="elite-badge">
+          <span class="dot"></span> ELITE
+        </div>
+        <div class="profile-info-discover">
+          <h2 class="profile-name-discover">
+            {% if woman.age %}
+              {{ woman.age }}
+            {% else %}
+              30
+            {% endif %}
+            • {{ woman.location|default:"Australia" }}
+          </h2>
+          <p class="profile-detail-discover">
+            {% if woman.profile_heading %}
+              {{ woman.profile_heading }}
+            {% else %}
+              Elite Member
+            {% endif %}
+          </p>
+          <p class="profile-tagline-discover">
+            {% if woman.story %}
+              "{{ woman.story|truncatechars:100 }}"
+            {% else %}
+              A glimpse of the kind of women you'll meet when you join Synergy.
+            {% endif %}
+          </p>
+        </div>
+      </a>
+    </article>
+    {% endfor %}
+
+    <!-- Elite Men -->
+    {% for man in elite_men %}
+    <article class="profile-card-discover" data-gender="men">
+      <a href="{% url 'profile_detail_public' man.user_id %}?from=discover" class="profile-card-link">
+        <div class="profile-image-discover"
+          {% if man.profile_image %}
+            style="background-image:url('{{ man.profile_image }}');"
+          {% else %}
+            style="background-image:url('https://placehold.co/800x800/111827/cdad7c?text=Elite+Member');"
+          {% endif %}>
+        </div>
+        <div class="elite-badge">
+          <span class="dot"></span> ELITE
+        </div>
+        <div class="profile-info-discover">
+          <h2 class="profile-name-discover">
+            {% if man.age %}
+              {{ man.age }}
+            {% else %}
+              38
+            {% endif %}
+            • {{ man.location|default:"Australia" }}
+          </h2>
+          <p class="profile-detail-discover">
+            {% if man.profile_heading %}
+              {{ man.profile_heading }}
+            {% else %}
+              Elite Member
+            {% endif %}
+          </p>
+          <p class="profile-tagline-discover">
+            {% if man.story %}
+              "{{ man.story|truncatechars:100 }}"
+            {% else %}
+              A preview of the calibre of men you'll interact with as a Synergy member.
+            {% endif %}
+          </p>
+        </div>
+      </a>
+    </article>
+    {% endfor %}
+  </div>
+</main>
+
+<footer class="luxury-footer">
+  <div class="footer-content">
+    <div class="footer-top-row">
+      <div>Synergy Dating &mdash; Premium, curated connections across Australia.</div>
+      <div class="footer-links">
+        <a href="{% url 'privacy' %}">Privacy</a>
+        <a href="{% url 'terms' %}">Terms</a>
+        <a href="{% url 'safety' %}">Safety</a>
+        <a href="{% url 'contact' %}">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom-row">
+      <div>&copy; {{ now|date:"Y" }} Synergy Dating. All rights reserved.</div>
+      <div>Discreet &bull; Verified &bull; Australia</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Gold particles
+    function createGoldParticles() {
+      const container = document.getElementById('gold-particles');
+      if (!container) return;
+      for (let i = 0; i < 18; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'gold-particle';
+        particle.style.left = Math.random() * 100 + 'vw';
+        particle.style.top = Math.random() * 100 + 'vh';
+        particle.style.animationDelay = Math.random() * 8 + 's';
+        container.appendChild(particle);
+      }
+    }
+    createGoldParticles();
+
+    // Filter buttons
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.profile-card-discover');
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.getAttribute('data-filter');
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        cards.forEach(card => {
+          const gender = card.getAttribute('data-gender');
+          if (filter === 'all' || gender === filter) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Gold particle style
+    const style = document.createElement('style');
+    style.textContent = `
+      .gold-particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: var(--brand);
+        border-radius: 50%;
+        animation: floatParticle 8s ease-in-out infinite;
+        opacity: 0.6;
+        pointer-events: none;
+        z-index: 1;
+      }
+      @keyframes floatParticle {
+        0%, 100% {
+          transform: translateY(0px) translateX(0px);
+          opacity: 0;
+        }
+        50% {
+          opacity: 0.9;
+        }
+        25%, 75% {
+          transform: translateY(-22px) translateX(8px);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  });
+</script>
+</body>
+</html>

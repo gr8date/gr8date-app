@@ -1,0 +1,1163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  {# Make title overridable #}
+  <title>{% block title %}Synergy — Elite Dating Experience{% endblock %}</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand: #cdad7c;
+      --brand-dark: #a88a5a;
+      --brand-soft: #e7d3af;
+      --bg: #050509;
+      --bg-soft: #090b12;
+      --bg-elevated: #0b0e18;
+      --card: rgba(15, 23, 42, 0.96);
+      --card-soft: rgba(15, 23, 42, 0.9);
+      --text: #f9fafb;
+      --text-soft: #9ca3af;
+      --text-muted: #6b7280;
+      --text-gold: #f5e6c5;
+      --border: rgba(148, 163, 184, 0.45);
+      --border-soft: rgba(148, 163, 184, 0.2);
+      --shadow-soft: 0 20px 60px rgba(15, 23, 42, 0.9);
+      --shadow-strong: 0 30px 80px rgba(0, 0, 0, 0.95);
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: radial-gradient(circle at top, #111827 5%, #020617 45%, #000 100%);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* FIX: Add padding to body to account for fixed header */
+    body {
+      padding-top: 140px; /* This is the key fix */
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding-top: 140px; /* Reduced for mobile */
+      }
+    }
+
+    #gold-particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Header */
+    .premium-header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      padding: 1rem 0;
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .script-logo {
+      font-family: 'Allura', cursive;
+      font-size: 42px;
+      font-weight: 400;
+      letter-spacing: 1px;
+      color: #CDAD7F;
+      text-decoration: none;
+      text-transform: none;
+      text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.1);
+      display: inline-block;
+      margin: 0;
+      padding: 5px 0;
+      transition: all 0.3s ease;
+    }
+
+    .script-logo:hover {
+      transform: scale(1.05);
+      text-shadow: 1px 1px 15px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Mobile Header Top - NEW */
+    .mobile-header-top {
+      display: none;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .mobile-logo {
+      font-family: 'Allura', cursive;
+      font-size: 32px;
+      font-weight: 400;
+      letter-spacing: 1px;
+      color: #CDAD7F;
+      text-decoration: none;
+      text-transform: none;
+      text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .mobile-logo:hover {
+      transform: scale(1.05);
+      text-shadow: 1px 1px 15px rgba(255, 255, 255, 0.2);
+    }
+
+    /* RETURN TO PROFILE BUTTON STYLES */
+    .return-to-profile-container {
+      display: none;
+      margin: 0 0.5rem;
+    }
+
+    .return-to-profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #cdad7f, #a88a5a);
+      color: white !important;
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 20px;
+      font-weight: 500;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .return-to-profile-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(205, 173, 127, 0.4);
+    }
+
+    .return-to-profile-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: white;
+      stroke-width: 2.5;
+    }
+
+    .mobile-return-to-profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: linear-gradient(135deg, #cdad7f, #a88a5a);
+      color: white !important;
+      text-decoration: none;
+      padding: 0.5rem 0.8rem;
+      border-radius: 16px;
+      font-weight: 500;
+      font-size: 0.7rem;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .mobile-return-to-profile-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(205, 173, 127, 0.4);
+    }
+
+    .mobile-return-to-profile-btn svg {
+      width: 12px;
+      height: 12px;
+      stroke: white;
+      stroke-width: 2.5;
+    }
+
+    /* Desktop Navigation */
+    .nav-icons {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #cdad7f;
+      transition: all 0.3s ease;
+      padding: 0.5rem 0.8rem;
+      border-radius: 12px;
+      position: relative;
+      min-width: 70px;
+    }
+
+    .nav-icon:hover {
+      color: #e7d3af;
+      background: rgba(205, 173, 119, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .icon-svg {
+      width: 20px;
+      height: 20px;
+      margin-bottom: 0.3rem;
+      stroke: #cdad7f;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .nav-icon:hover .icon-svg {
+      stroke: #e7d3af;
+    }
+
+    .icon-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* Mobile Navigation */
+    .mobile-nav-icons {
+      display: none;
+      width: 100%;
+      justify-content: space-between;
+      padding: 0 0.5rem;
+    }
+
+    .mobile-nav-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #cdad7f;
+      transition: all 0.3s ease;
+      padding: 0.5rem 0.3rem;
+      border-radius: 12px;
+      position: relative;
+      min-width: 60px;
+      flex: 1;
+      max-width: 20%;
+    }
+
+    .mobile-nav-icon:hover {
+      color: #e7d3af;
+      background: rgba(205, 173, 119, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .mobile-icon-svg {
+      width: 18px;
+      height: 18px;
+      margin-bottom: 0.3rem;
+      stroke: #cdad7f;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .mobile-nav-icon:hover .mobile-icon-svg {
+      stroke: #e7d3af;
+    }
+
+    .mobile-icon-label {
+      font-size: 0.65rem;
+      font-weight: 500;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* Badge Styling */
+    .nav-badge {
+      position: absolute;
+      top: 4px;
+      right: 8px;
+      background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+      color: white;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      min-width: 18px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(255, 107, 107, 0.4);
+      display: none;
+      transition: all 0.3s ease;
+    }
+
+    .mobile-nav-badge {
+      position: absolute;
+      top: 2px;
+      right: 4px;
+      background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+      color: white;
+      font-size: 0.55rem;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 10px;
+      min-width: 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(255, 107, 107, 0.4);
+      display: none;
+      transition: all 0.3s ease;
+    }
+
+    .nav-badge.has-notifications,
+    .mobile-nav-badge.has-notifications {
+      display: block;
+      animation: pulse 2s infinite;
+    }
+
+    .nav-badge.no-pulse,
+    .mobile-nav-badge.no-pulse {
+      animation: none;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); box-shadow: 0 2px 12px rgba(255, 107, 107, 0.6); }
+      100% { transform: scale(1); }
+    }
+
+    /* Logout Confirmation Modal */
+    .logout-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .logout-modal.open {
+      display: flex;
+    }
+
+    .logout-modal-content {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      max-width: 450px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-strong);
+      position: relative;
+    }
+
+    .logout-modal-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 1.5rem;
+      background: rgba(205, 173, 124, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--brand);
+    }
+
+    .logout-modal-icon svg {
+      width: 30px;
+      height: 30px;
+      stroke: var(--brand);
+    }
+
+    .logout-modal-title {
+      font-size: 1.5rem;
+      color: var(--text-gold);
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .logout-modal-message {
+      color: var(--text-soft);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .logout-modal-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .logout-btn {
+      padding: 0.8rem 2rem;
+      border-radius: 999px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      min-width: 120px;
+    }
+
+    .logout-btn.confirm {
+      background: linear-gradient(135deg, #dc2626, #ef4444);
+      color: white;
+      box-shadow: 0 10px 25px rgba(220, 38, 38, 0.3);
+    }
+
+    .logout-btn.cancel {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .logout-btn.confirm:hover {
+      background: linear-gradient(135deg, #b91c1c, #dc2626);
+      box-shadow: 0 15px 30px rgba(220, 38, 38, 0.4);
+    }
+
+    .logout-btn.cancel:hover {
+      background: rgba(148, 163, 184, 0.1);
+    }
+
+    /* Logout Button in Navigation */
+    .logout-nav-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #cdad7f;
+      transition: all 0.3s ease;
+      padding: 0.5rem 0.8rem;
+      border-radius: 12px;
+      position: relative;
+      min-width: 70px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+    }
+
+    .logout-nav-icon:hover {
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .logout-nav-icon:hover .icon-svg {
+      stroke: #ef4444;
+    }
+
+    .mobile-logout-nav-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #cdad7f;
+      transition: all 0.3s ease;
+      padding: 0.5rem 0.3rem;
+      border-radius: 12px;
+      position: relative;
+      min-width: 60px;
+      flex: 1;
+      max-width: 20%;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+    }
+
+    .mobile-logout-nav-icon:hover {
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .mobile-logout-nav-icon:hover .mobile-icon-svg {
+      stroke: #ef4444;
+    }
+
+    /* Notification Styles */
+    .notification {
+      position: fixed;
+      top: 120px;
+      right: 20px;
+      background: var(--card);
+      color: var(--text);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-strong);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      animation: slideIn 0.3s ease;
+    }
+
+    .notification-success {
+      border-color: #51cf66;
+    }
+
+    .notification-error {
+      border-color: #ff6b6b;
+    }
+
+    .notification-info {
+      border-color: var(--brand);
+    }
+
+    .notification button {
+      background: none;
+      border: none;
+      color: var(--text-soft);
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* FIX: Main content spacing */
+    main {
+      position: relative;
+      z-index: 2;
+      min-height: calc(100vh - 140px);
+    }
+
+    /* Responsive */
+    @media (max-width: 968px) {
+      .nav-icons {
+        display: none;
+      }
+      
+      .mobile-header-top {
+        display: flex;
+      }
+      
+      .mobile-nav-icons {
+        display: flex;
+      }
+      
+      .nav-container {
+        padding: 0 1rem;
+      }
+
+      .back-nav-btn { 
+        display: none; 
+      }
+
+      /* HIDE THE DESKTOP CENTERED LOGO IN MOBILE VIEW */
+      .header-top {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding-top: 140px; /* Reduced for mobile */
+      }
+
+      .script-logo {
+        font-size: 36px;
+      }
+
+      .mobile-logo {
+        font-size: 28px;
+      }
+
+      .logout-modal-content {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+      }
+
+      .logout-modal-actions {
+        flex-direction: column;
+      }
+
+      .logout-btn {
+        min-width: 100%;
+      }
+
+      .notification {
+        right: 10px;
+        left: 10px;
+        top: 100px;
+      }
+
+      .mobile-nav-icon,
+      .mobile-logout-nav-icon {
+        min-width: 55px;
+        padding: 0.4rem 0.2rem;
+      }
+
+      .mobile-icon-label {
+        font-size: 0.6rem;
+      }
+
+      main {
+        min-height: calc(100vh - 140px); /* Adjusted for reduced header height */
+      }
+    }
+  </style>
+  
+  {# 🔑 ADD THIS - allows pages to add their own CSS #}
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+<div id="gold-particles"></div>
+
+<!-- Logout Confirmation Modal -->
+<div class="logout-modal" id="logoutModal">
+  <div class="logout-modal-content">
+    <div class="logout-modal-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+        <polyline points="16 17 21 12 16 7"></polyline>
+        <line x1="21" y1="12" x2="9" y2="12"></line>
+      </svg>
+    </div>
+    <h2 class="logout-modal-title">Confirm Logout</h2>
+    <p class="logout-modal-message">
+      Are you sure you want to log out?<br>
+      You'll need to sign in again to access your account.
+    </p>
+    <div class="logout-modal-actions">
+      <button class="logout-btn cancel" onclick="closeLogoutModal()">Cancel</button>
+      <form method="post" action="{% url 'logout' %}" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="logout-btn confirm">Log Out</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<header class="premium-header">
+  <div class="nav-container">
+    <!-- Desktop Top Row: Logo (Hidden on Mobile) -->
+    <div class="header-top" style="display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 10px;">
+      <a href="{% if user.is_authenticated %}/dashboard/{% else %}/{% endif %}" class="script-logo">Synergy</a>
+    </div>
+
+    <!-- Desktop Navigation Icons -->
+    <nav class="nav-icons">
+      <!-- RETURN TO PROFILE BUTTON (Desktop) -->
+      <div class="return-to-profile-container" id="return-to-profile-container">
+        <button class="return-to-profile-btn" id="return-to-profile-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span id="return-to-profile-text">Return to Profile</span>
+        </button>
+      </div>
+      
+      <a href="{% url 'dashboard' %}" class="nav-icon">
+        <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.3-4.3"/>
+        </svg>
+        <span class="icon-label">DISCOVER</span>
+      </a>
+      
+      {% if user.is_authenticated %}
+        <!-- LOGGED-IN: Real functionality -->
+        <a href="{% url 'messages_list' %}" class="nav-icon">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span class="icon-label">INBOX</span>
+          <span class="nav-badge" id="inbox-badge">0</span>
+        </a>
+        
+        <a href="{% url 'matches_list' %}" class="nav-icon">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+          </svg>
+          <span class="icon-label">LIKES</span>
+          <span class="nav-badge" id="likes-badge">0</span>
+        </a>
+        
+        <a href="{% url 'dates_list' %}" class="nav-icon">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          <span class="icon-label">DATES</span>
+          <span class="nav-badge" id="dates-badge">0</span>
+        </a>
+        
+        <a href="{% url 'profile_edit' %}" class="nav-icon">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span class="icon-label">PROFILE</span>
+        </a>
+
+        <!-- Desktop Logout Button -->
+        <button class="logout-nav-icon" onclick="openLogoutModal()">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span class="icon-label">LOGOUT</span>
+        </button>
+      {% else %}
+        <!-- NON-LOGGED-IN: Join redirects -->
+        <a href="/join/" class="nav-icon">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span class="icon-label">INBOX</span>
+        </a>
+        
+        <a href="/join/" class="nav-icon">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+          </svg>
+          <span class="icon-label">LIKES</span>
+        </a>
+        
+        <a href="/join/" class="nav-icon">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          <span class="icon-label">DATES</span>
+        </a>
+        
+        <a href="/join/" class="nav-icon">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span class="icon-label">PROFILE</span>
+        </a>
+
+        <!-- Login Button for non-logged-in users -->
+        <a href="/login/" class="nav-icon">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+          </svg>
+          <span class="icon-label">LOGIN</span>
+        </a>
+      {% endif %}
+    </nav>
+
+    <!-- Mobile Header Top - NEW STRUCTURE -->
+    <div class="mobile-header-top">
+      <!-- Logo on left -->
+      <a href="{% if user.is_authenticated %}/dashboard/{% else %}/{% endif %}" class="mobile-logo">
+        Synergy
+      </a>
+      
+      <!-- Return to Profile button on right -->
+      <div class="return-to-profile-container" id="mobile-return-to-profile-container">
+        <button class="mobile-return-to-profile-btn" id="mobile-return-to-profile-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span id="mobile-return-to-profile-text">Return</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Icons -->
+    <nav class="mobile-nav-icons">
+      <a href="{% url 'dashboard' %}" class="mobile-nav-icon">
+        <svg class="mobile-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.3-4.3"/>
+        </svg>
+        <span class="mobile-icon-label">DISCOVER</span>
+      </a>
+      
+      {% if user.is_authenticated %}
+        <!-- LOGGED-IN: Real functionality -->
+        <a href="{% url 'messages_list' %}" class="mobile-nav-icon">
+          <svg class="mobile-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span class="mobile-icon-label">INBOX</span>
+          <span class="mobile-nav-badge" id="mobile-inbox-badge">0</span>
+        </a>
+        
+        <a href="{% url 'matches_list' %}" class="mobile-nav-icon">
+          <svg class="mobile-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+          </svg>
+          <span class="mobile-icon-label">LIKES</span>
+          <span class="mobile-nav-badge" id="mobile-likes-badge">0</span>
+        </a>
+        
+        <a href="{% url 'dates_list' %}" class="mobile-nav-icon">
+          <svg class="mobile-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          <span class="mobile-icon-label">DATES</span>
+          <span class="mobile-nav-badge" id="mobile-dates-badge">0</span>
+        </a>
+        
+        <!-- Profile and Logout for Mobile -->
+        <a href="{% url 'profile_edit' %}" class="mobile-nav-icon">
+          <svg class="mobile-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span class="mobile-icon-label">PROFILE</span>
+        </a>
+
+        <!-- Mobile Logout Button -->
+        <button class="mobile-logout-nav-icon" onclick="openLogoutModal()">
+          <svg class="mobile-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span class="mobile-icon-label">LOGOUT</span>
+        </button>
+      {% else %}
+        <!-- NON-LOGGED-IN: Join redirects -->
+        <a href="/join/" class="mobile-nav-icon">
+          <svg class="mobile-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span class="mobile-icon-label">INBOX</span>
+        </a>
+        
+        <a href="/join/" class="mobile-nav-icon">
+          <svg class="mobile-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+          </svg>
+          <span class="mobile-icon-label">LIKES</span>
+        </a>
+        
+        <a href="/join/" class="mobile-nav-icon">
+          <svg class="mobile-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          <span class="mobile-icon-label">DATES</span>
+        </a>
+        
+        <a href="/join/" class="mobile-nav-icon">
+          <svg class="mobile-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span class="mobile-icon-label">PROFILE</span>
+        </a>
+
+        <!-- Login Button for non-logged-in users -->
+        <a href="/login/" class="mobile-nav-icon">
+          <svg class="mobile-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+          </svg>
+          <span class="mobile-icon-label">LOGIN</span>
+        </a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+
+<main>
+  {% block content %}
+  {% endblock %}
+</main>
+
+<script>
+  // Profile Navigation Context System
+  class ProfileNavigation {
+      constructor() {
+          this.storageKey = 'profileNavigationContext';
+          this.expiryHours = 2;
+          this.init();
+      }
+
+      init() {
+          // Check if we should show return button on page load
+          this.updateReturnButtonVisibility();
+          
+          // Set up click handlers for return buttons
+          document.getElementById('return-to-profile-btn')?.addEventListener('click', (e) => {
+              e.preventDefault();
+              this.returnToProfile();
+          });
+          
+          document.getElementById('mobile-return-to-profile-btn')?.addEventListener('click', (e) => {
+              e.preventDefault();
+              this.returnToProfile();
+          });
+      }
+
+      // Store profile context when viewing a profile
+      storeProfileContext(profileId, profileUrl, profileName = '') {
+          const context = {
+              profileId,
+              profileUrl,
+              profileName,
+              timestamp: new Date().getTime(),
+              expiry: this.expiryHours * 60 * 60 * 1000 // 2 hours in milliseconds
+          };
+          
+          localStorage.setItem(this.storageKey, JSON.stringify(context));
+          this.updateReturnButtonVisibility();
+      }
+
+      // Clear context (call when leaving profile naturally)
+      clearProfileContext() {
+          localStorage.removeItem(this.storageKey);
+          this.updateReturnButtonVisibility();
+      }
+
+      // Get stored context if valid
+      getValidContext() {
+          try {
+              const stored = localStorage.getItem(this.storageKey);
+              if (!stored) return null;
+
+              const context = JSON.parse(stored);
+              const now = new Date().getTime();
+              
+              // Check if context is expired
+              if (now - context.timestamp > context.expiry) {
+                  this.clearProfileContext();
+                  return null;
+              }
+              
+              return context;
+          } catch (error) {
+              console.error('Error reading profile context:', error);
+              this.clearProfileContext();
+              return null;
+          }
+      }
+
+      // Navigate back to stored profile
+      returnToProfile() {
+          const context = this.getValidContext();
+          if (context && context.profileUrl) {
+              window.location.href = context.profileUrl;
+          } else {
+              this.clearProfileContext();
+              // Fallback to dashboard if no valid context
+              window.location.href = '/dashboard/';
+          }
+      }
+
+      // Show/hide return button based on context and current page
+      updateReturnButtonVisibility() {
+          const container = document.getElementById('return-to-profile-container');
+          const mobileContainer = document.getElementById('mobile-return-to-profile-container');
+          
+          if (!container || !mobileContainer) return;
+
+          const context = this.getValidContext();
+          const isProfilePage = window.location.pathname.includes('/profile/');
+          
+          // Show button if we have valid context AND we're not currently on a profile page
+          if (context && !isProfilePage) {
+              container.style.display = 'block';
+              mobileContainer.style.display = 'block';
+              
+              // Update button text with profile name if available
+              if (context.profileName) {
+                  const textElement = document.getElementById('return-to-profile-text');
+                  const mobileTextElement = document.getElementById('mobile-return-to-profile-text');
+                  
+                  if (textElement) {
+                      textElement.textContent = `Return to ${context.profileName}`;
+                  }
+                  if (mobileTextElement) {
+                      mobileTextElement.textContent = `Return to ${context.profileName}`;
+                  }
+              }
+          } else {
+              container.style.display = 'none';
+              mobileContainer.style.display = 'none';
+          }
+      }
+  }
+
+  // Initialize the system
+  const profileNavigation = new ProfileNavigation();
+
+  // Make available globally for use in profile pages
+  window.profileNavigation = profileNavigation;
+
+  // UPDATED BADGE SYSTEM - Uses combined notification endpoint
+  document.addEventListener('DOMContentLoaded', function() {
+    // Gold particles (keep existing)
+    const container = document.getElementById('gold-particles');
+    if (container) {
+      for (let i = 0; i < 15; i++) {
+        const p = document.createElement('div');
+        p.className = 'gold-particle';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.top = Math.random() * 100 + 'vh';
+        p.style.animationDelay = Math.random() * 6 + 's';
+        container.appendChild(p);
+      }
+    }
+
+    // Add gold particle styles
+    const style = document.createElement('style');
+    style.textContent = `
+      .gold-particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: var(--brand);
+        border-radius: 50%;
+        animation: floatParticle 6s ease-in-out infinite;
+        opacity: 0.6;
+        pointer-events: none;
+        z-index: 0;
+      }
+      @keyframes floatParticle {
+        0%, 100% {
+          transform: translateY(0px) translateX(0px);
+          opacity: 0;
+        }
+        50% {
+          opacity: 0.8;
+        }
+        25%, 75% {
+          transform: translateY(-20px) translateX(10px);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Function to update badge display
+    function updateBadgeDisplay(type, count) {
+      const badge = document.getElementById(`${type}-badge`);
+      const mobileBadge = document.getElementById(`mobile-${type}-badge`);
+      
+      if (badge) {
+        if (count > 0) {
+          badge.textContent = count;
+          badge.className = 'nav-badge has-notifications';
+        } else {
+          badge.className = 'nav-badge';
+          badge.textContent = '0';
+        }
+      }
+      
+      if (mobileBadge) {
+        if (count > 0) {
+          mobileBadge.textContent = count;
+          mobileBadge.className = 'mobile-nav-badge has-notifications';
+        } else {
+          mobileBadge.className = 'mobile-nav-badge';
+          mobileBadge.textContent = '0';
+        }
+      }
+    }
+
+    // NEW: Combined badge update function
+    function updateAllBadges() {
+      // Only update badges for logged-in users
+      {% if user.is_authenticated %}
+      fetch('/api/notification-counts/')
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        // Update each badge using the combined data
+        updateBadgeDisplay('inbox', data.messages || 0);
+        updateBadgeDisplay('likes', data.likes || 0);
+        updateBadgeDisplay('dates', data.dates || 0);
+        
+        // Log for debugging
+        console.log('Badge updates:', data);
+      })
+      .catch(error => {
+        console.error('Error updating badges:', error);
+      });
+      {% endif %}
+    }
+
+    // Only start badge updates for logged-in users
+    {% if user.is_authenticated %}
+    updateAllBadges();
+    setInterval(updateAllBadges, 3000);
+    {% endif %}
+  });
+
+  // Keep existing modal functions
+  function openLogoutModal() {
+    const modal = document.getElementById('logoutModal');
+    if (modal) {
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeLogoutModal() {
+    const modal = document.getElementById('logoutModal');
+    if (modal) {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  }
+
+  document.addEventListener('click', function(event) {
+    const modal = document.getElementById('logoutModal');
+    if (modal && modal.classList.contains('open') && event.target === modal) {
+      closeLogoutModal();
+    }
+  });
+
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') closeLogoutModal();
+  });
+</script>
+
+{# 🔑 ADD THIS - allows pages to add their own JavaScript #}
+{% block extra_js %}{% endblock %}
+</body>
+</html>

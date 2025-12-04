@@ -1,0 +1,1196 @@
+{% extends 'website/synergy_base_header.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  .matches-container {
+    margin-top: 160px; /* Increased from 100px to prevent header overlap */
+    padding: 2rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--text);
+  }
+
+  .gold-accent {
+    color: var(--text-gold);
+    font-weight: 600;
+  }
+
+  .matches-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    padding: 0.8rem 1.5rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-soft);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+  }
+
+  .tab.active {
+    background: rgba(205, 173, 119, 0.1);
+    border-color: var(--brand);
+    color: var(--text-gold);
+  }
+
+  .tab-badge {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+  }
+
+  .tab-icon {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+  }
+
+  .matches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    min-height: 300px;
+  }
+
+  .match-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .match-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--brand);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .match-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .match-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid var(--brand);
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .match-avatar::after {
+    content: attr(data-initials);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--text);
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: none;
+  }
+
+  .match-avatar.loading {
+    background: var(--bg-elevated);
+  }
+
+  .match-avatar.loading::after {
+    display: block;
+  }
+
+  .match-info {
+    flex: 1;
+  }
+
+  .match-info h3 {
+    color: var(--text-gold);
+    margin-bottom: 0.3rem;
+    font-size: 1.2rem;
+  }
+
+  .match-details {
+    color: var(--text-soft);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .match-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+
+  .match-tag {
+    background: var(--bg-elevated);
+    color: var(--text-soft);
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    border: 1px solid var(--border);
+  }
+
+  .match-status {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .status-mutual {
+    background: linear-gradient(135deg, #51cf66, #69db7c);
+    color: white;
+  }
+
+  .status-new {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+    color: white;
+  }
+
+  .status-pending {
+    background: linear-gradient(135deg, #ffd43b, #ffec99);
+    color: #000;
+  }
+
+  .status-viewed {
+    background: var(--bg-elevated);
+    color: var(--text-soft);
+    border: 1px solid var(--border);
+  }
+
+  .status-blocked {
+    background: linear-gradient(135deg, #868e96, #adb5bd);
+    color: white;
+  }
+
+  /* Action Buttons */
+  .match-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .btn {
+    padding: 0.6rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    font-weight: 600;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-warning {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+    color: white;
+    font-weight: 600;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(205, 173, 119, 0.2);
+  }
+
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-icon {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+  }
+
+  /* Empty State */
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+    display: none;
+  }
+
+  .empty-state.show {
+    display: block;
+  }
+
+  .empty-icon {
+    width: 48px;
+    height: 48px;
+    stroke: var(--text-muted);
+    opacity: 0.5;
+    margin: 0 auto 1rem;
+  }
+
+  .empty-state h3 {
+    color: var(--text-soft);
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-state p {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-discover {
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #000;
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    transition: all 0.3s ease;
+  }
+
+  .btn-discover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(205, 173, 119, 0.3);
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Loading State */
+  .loading-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border);
+    border-top: 3px solid var(--brand);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Notification Styles */
+  .notification {
+    position: fixed;
+    top: 120px;
+    right: 20px;
+    background: var(--card);
+    color: var(--text);
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--brand);
+    box-shadow: var(--shadow-strong);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: slideIn 0.3s ease;
+  }
+  
+  .notification button {
+    background: none;
+    border: none;
+    color: var(--text-soft);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .notification-success {
+    border-color: #51cf66;
+    background: rgba(81, 207, 102, 0.1);
+  }
+  
+  .notification-error {
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .matches-container {
+      margin-top: 180px; /* Increased from 140px to prevent header overlap */
+      padding: 1rem;
+    }
+
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .page-title {
+      font-size: 1.8rem;
+    }
+
+    .matches-tabs {
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+
+    .tab {
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .matches-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .match-header {
+      gap: 0.8rem;
+    }
+
+    .match-avatar {
+      width: 60px;
+      height: 60px;
+    }
+
+    .match-actions {
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      min-width: 80px;
+    }
+    
+    .notification {
+      top: 100px;
+      right: 10px;
+      left: 10px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .matches-container {
+      margin-top: 180px; /* Consistent with larger mobile */
+      padding: 0.8rem;
+    }
+
+    .matches-tabs {
+      flex-direction: row; /* Keep horizontal on small mobile */
+      overflow-x: auto;
+    }
+
+    .tab {
+      justify-content: center;
+      min-width: 120px;
+    }
+
+    .match-actions {
+      flex-direction: row; /* Keep buttons side by side */
+    }
+
+    .btn {
+      width: auto;
+      flex: 1;
+    }
+
+    .page-title {
+      font-size: 1.6rem;
+      text-align: center;
+      width: 100%;
+    }
+  }
+
+  /* Extra small devices */
+  @media (max-width: 360px) {
+    .matches-container {
+      margin-top: 180px; /* Increased from 140px to prevent header overlap */
+      padding: 0.5rem;
+    }
+
+    .tab {
+      padding: 0.5rem 0.8rem;
+      font-size: 0.8rem;
+      min-width: 110px;
+    }
+
+    .match-card {
+      padding: 1rem;
+    }
+
+    .match-avatar {
+      width: 50px;
+      height: 50px;
+    }
+
+    .btn {
+      padding: 0.5rem 0.8rem;
+      font-size: 0.75rem;
+    }
+  }
+</style>
+
+<div class="matches-container">
+  <div class="page-header">
+    <h1 class="page-title">Your <span class="gold-accent">Matches</span></h1>
+  </div>
+
+  <!-- Tabs -->
+  <div class="matches-tabs" role="tablist" aria-label="Match categories">
+    <button class="tab active" data-tab="mutual" role="tab" aria-selected="true" aria-controls="mutual-tab">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+      </svg>
+      Mutual Matches
+      <span class="tab-badge" id="mutual-badge" aria-label="{{ mutual_count|default:0 }} mutual matches">{{ mutual_count|default:0 }}</span>
+    </button>
+    <button class="tab" data-tab="likes-you" role="tab" aria-selected="false" aria-controls="likes-you-tab">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+      Likes You
+      <span class="tab-badge" id="likes-badge" aria-label="{{ likes_received_count|default:0 }} likes received">{{ likes_received_count|default:0 }}</span>
+    </button>
+    <button class="tab" data-tab="you-liked" role="tab" aria-selected="false" aria-controls="you-liked-tab">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+      You Liked
+      <span class="tab-badge" id="liked-badge" aria-label="{{ you_liked_count|default:0 }} profiles liked">{{ you_liked_count|default:0 }}</span>
+    </button>
+    <button class="tab" data-tab="blocked" role="tab" aria-selected="false" aria-controls="blocked-tab">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M18 6L6 18"/>
+      </svg>
+      Blocked
+      <span class="tab-badge" id="blocked-badge" aria-label="{{ blocked_count|default:0 }} blocked profiles">{{ blocked_count|default:0 }}</span>
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" id="loading-state" style="display: none;" aria-live="polite" aria-busy="true">
+    <div class="loading-spinner" aria-hidden="true"></div>
+    <p>Loading your matches...</p>
+  </div>
+
+  <!-- Mutual Matches Tab -->
+  <div class="matches-grid" id="mutual-tab" role="tabpanel" aria-labelledby="mutual-tab">
+    {% for profile in mutual_profiles %}
+    <div class="match-card" data-user-id="{{ profile.user_id }}">
+      <div class="match-header">
+        <div class="match-avatar" 
+             style="background-image: url('{{ profile.profile_image }}')"
+             data-initials="{{ profile.profile_name|default:profile.user_id|first|upper }}"
+             role="img"
+             aria-label="Profile picture of {{ profile.profile_name|default:'User' }}">
+          {% if not profile.profile_image %}
+            <span class="sr-only">{{ profile.profile_name|default:profile.user_id|first|upper }}</span>
+          {% endif %}
+        </div>
+        <div class="match-info">
+          <h3>{{ profile.profile_name|default:'User' }}</h3>
+          <p class="match-details">{{ profile.age }} • {{ profile.location }}</p>
+          <div class="match-tags">
+            {% if profile.seeking and profile.seeking != "Not specified" %}
+              <span class="match-tag">{{ profile.seeking }}</span>
+            {% endif %}
+            {% if profile.relationship_status and profile.relationship_status != "Not provided" %}
+              <span class="match-tag">{{ profile.relationship_status }}</span>
+            {% endif %}
+          </div>
+        </div>
+        <span class="match-status {% if profile.is_new %}status-mutual{% else %}status-viewed{% endif %}">
+          {% if profile.is_new %}Mutual{% else %}Viewed{% endif %}
+        </span>
+      </div>
+      {% if profile.heading %}
+        <p style="color: var(--text-soft); font-size: 0.9rem; margin-bottom: 1rem;">"{{ profile.heading }}"</p>
+      {% endif %}
+      <div class="match-actions">
+        <button class="btn btn-primary" onclick="sendMessage('{{ profile.profile_name|default:"User" }}')" aria-label="Send message to {{ profile.profile_name|default:'User' }}">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          Message
+        </button>
+        <button class="btn btn-secondary view-profile-btn" data-user-id="{{ profile.user_id }}" data-type="mutual" aria-label="View profile of {{ profile.profile_name|default:'User' }}">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          View
+        </button>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty-state show" id="empty-mutual" aria-live="polite">
+      <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+      </svg>
+      <h3>No Mutual Matches</h3>
+      <p>When you and another member like each other, they'll appear here.</p>
+      <a href="{% url 'dashboard' %}" class="btn-discover">Discover Members</a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Likes You Tab -->
+  <div class="matches-grid" id="likes-you-tab" role="tabpanel" aria-labelledby="likes-you-tab" style="display: none;" hidden>
+    {% for profile in likes_received_profiles %}
+    <div class="match-card" data-user-id="{{ profile.user_id }}">
+      <div class="match-header">
+        <div class="match-avatar" 
+             style="background-image: url('{{ profile.profile_image }}')"
+             data-initials="{{ profile.profile_name|default:profile.user_id|first|upper }}"
+             role="img"
+             aria-label="Profile picture of {{ profile.profile_name|default:'User' }}">
+          {% if not profile.profile_image %}
+            <span class="sr-only">{{ profile.profile_name|default:profile.user_id|first|upper }}</span>
+          {% endif %}
+        </div>
+        <div class="match-info">
+          <h3>{{ profile.profile_name|default:'User' }}</h3>
+          <p class="match-details">{{ profile.age }} • {{ profile.location }}</p>
+          <div class="match-tags">
+            {% if profile.seeking and profile.seeking != "Not specified" %}
+              <span class="match-tag">{{ profile.seeking }}</span>
+            {% endif %}
+            {% if profile.relationship_status and profile.relationship_status != "Not provided" %}
+              <span class="match-tag">{{ profile.relationship_status }}</span>
+            {% endif %}
+          </div>
+        </div>
+        <span class="match-status {% if profile.is_new %}status-new{% else %}status-viewed{% endif %}">
+          {% if profile.is_new %}New{% else %}Viewed{% endif %}
+        </span>
+      </div>
+      {% if profile.heading %}
+        <p style="color: var(--text-soft); font-size: 0.9rem; margin-bottom: 1rem;">"{{ profile.heading }}"</p>
+      {% endif %}
+      <div class="match-actions">
+        <button class="btn btn-primary like-back-btn" data-user-id="{{ profile.user_id }}" aria-label="Like back {{ profile.profile_name|default:'User' }}">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+          Like Back
+        </button>
+        <button class="btn btn-secondary view-profile-btn" data-user-id="{{ profile.user_id }}" data-type="like" aria-label="View profile of {{ profile.profile_name|default:'User' }}">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          View
+        </button>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty-state show" id="empty-likes-you" aria-live="polite">
+      <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+      <h3>No New Likes</h3>
+      <p>When people like your profile, they'll appear here.</p>
+      <a href="{% url 'dashboard' %}" class="btn-discover">Discover Members</a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- You Liked Tab -->
+  <div class="matches-grid" id="you-liked-tab" role="tabpanel" aria-labelledby="you-liked-tab" style="display: none;" hidden>
+    {% for profile in liked_profiles %}
+    <div class="match-card" data-user-id="{{ profile.user_id }}">
+      <div class="match-header">
+        <div class="match-avatar" 
+             style="background-image: url('{{ profile.profile_image }}')"
+             data-initials="{{ profile.profile_name|default:profile.user_id|first|upper }}"
+             role="img"
+             aria-label="Profile picture of {{ profile.profile_name|default:'User' }}">
+          {% if not profile.profile_image %}
+            <span class="sr-only">{{ profile.profile_name|default:profile.user_id|first|upper }}</span>
+          {% endif %}
+        </div>
+        <div class="match-info">
+          <h3>{{ profile.profile_name|default:'User' }}</h3>
+          <p class="match-details">{{ profile.age }} • {{ profile.location }}</p>
+          <div class="match-tags">
+            {% if profile.seeking and profile.seeking != "Not specified" %}
+              <span class="match-tag">{{ profile.seeking }}</span>
+            {% endif %}
+            {% if profile.relationship_status and profile.relationship_status != "Not provided" %}
+              <span class="match-tag">{{ profile.relationship_status }}</span>
+            {% endif %}
+          </div>
+        </div>
+        <span class="match-status status-pending">Liked</span>
+      </div>
+      {% if profile.heading %}
+        <p style="color: var(--text-soft); font-size: 0.9rem; margin-bottom: 1rem;">"{{ profile.heading }}"</p>
+      {% endif %}
+      <div class="match-actions">
+        <button class="btn btn-primary" onclick="sendMessage('{{ profile.profile_name|default:"User" }}')" aria-label="Send message to {{ profile.profile_name|default:'User' }}">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          Message
+        </button>
+        <button class="btn btn-secondary" onclick="viewProfile({{ profile.user_id }})" aria-label="View profile of {{ profile.profile_name|default:'User' }}">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          View
+        </button>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty-state show" id="empty-you-liked" aria-live="polite">
+      <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+      <h3>No Profiles Liked Yet</h3>
+      <p>Start liking profiles to see them here.</p>
+      <a href="{% url 'dashboard' %}" class="btn-discover">Discover Members</a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Blocked Tab -->
+  <div class="matches-grid" id="blocked-tab" role="tabpanel" aria-labelledby="blocked-tab" style="display: none;" hidden>
+    {% for profile in blocked_profiles %}
+    <div class="match-card" data-user-id="{{ profile.user_id }}">
+      <div class="match-header">
+        <div class="match-avatar" 
+             style="background-image: url('{{ profile.profile_image }}')"
+             data-initials="{{ profile.profile_name|default:profile.user_id|first|upper }}"
+             role="img"
+             aria-label="Profile picture of {{ profile.profile_name|default:'User' }}">
+          {% if not profile.profile_image %}
+            <span class="sr-only">{{ profile.profile_name|default:profile.user_id|first|upper }}</span>
+          {% endif %}
+        </div>
+        <div class="match-info">
+          <h3>{{ profile.profile_name|default:'User' }}</h3>
+          <p class="match-details">{{ profile.age }} • {{ profile.location }}</p>
+          <div class="match-tags">
+            {% if profile.seeking and profile.seeking != "Not specified" %}
+              <span class="match-tag">{{ profile.seeking }}</span>
+            {% endif %}
+            {% if profile.relationship_status and profile.relationship_status != "Not provided" %}
+              <span class="match-tag">{{ profile.relationship_status }}</span>
+            {% endif %}
+          </div>
+        </div>
+        <span class="match-status status-blocked">Blocked</span>
+      </div>
+      {% if profile.heading %}
+        <p style="color: var(--text-soft); font-size: 0.9rem; margin-bottom: 1rem;">"{{ profile.heading }}"</p>
+      {% endif %}
+      <div class="match-actions">
+        <button class="btn btn-warning unblock-btn" data-user-id="{{ profile.user_id }}" aria-label="Unblock {{ profile.profile_name|default:'User' }}">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M15 9l-6 6"/>
+            <path d="M9 9l6 6"/>
+          </svg>
+          Unblock
+        </button>
+        <button class="btn btn-secondary view-profile-btn" data-user-id="{{ profile.user_id }}" data-type="blocked" aria-label="View profile of {{ profile.profile_name|default:'User' }}">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          View
+        </button>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty-state show" id="empty-blocked" aria-live="polite">
+      <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M18 6L6 18"/>
+      </svg>
+      <h3>No Blocked Profiles</h3>
+      <p>When you block someone, they'll appear here.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  // Initialize the page
+  document.addEventListener('DOMContentLoaded', function() {
+    setupEventListeners();
+    updateBadgeCounts();
+    enhanceAccessibility();
+  });
+
+  function setupEventListeners() {
+    // Tab functionality with accessibility
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabName = this.getAttribute('data-tab');
+        switchTab(tabName);
+      });
+      
+      // Add keyboard support for tabs
+      tab.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const tabName = this.getAttribute('data-tab');
+          switchTab(tabName);
+        }
+      });
+    });
+
+    // Like back buttons
+    document.querySelectorAll('.like-back-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const userId = this.dataset.userId;
+        likeBack(userId);
+      });
+    });
+
+    // Unblock buttons
+    document.querySelectorAll('.unblock-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const userId = this.dataset.userId;
+        unblockUser(userId);
+      });
+    });
+
+    // View profile buttons with notification tracking
+    document.querySelectorAll('.view-profile-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const userId = this.dataset.userId;
+        const type = this.dataset.type;
+        
+        // Mark the notification as viewed before redirecting
+        markNotificationViewed(userId, type);
+      });
+    });
+  }
+
+  function switchTab(tabName) {
+    // Update tab selection
+    document.querySelectorAll('.tab').forEach(tab => {
+      const isActive = tab.getAttribute('data-tab') === tabName;
+      tab.classList.toggle('active', isActive);
+      tab.setAttribute('aria-selected', isActive);
+      tab.setAttribute('tabindex', isActive ? '0' : '-1');
+    });
+    
+    // Show/hide tab content
+    const tabContents = ['mutual', 'likes-you', 'you-liked', 'blocked'];
+    tabContents.forEach(tab => {
+      const element = document.getElementById(`${tab}-tab`);
+      const isVisible = tab === tabName;
+      element.style.display = isVisible ? 'grid' : 'none';
+      if (isVisible) {
+        element.removeAttribute('hidden');
+      } else {
+        element.setAttribute('hidden', 'true');
+      }
+      
+      // Update ARIA attributes
+      element.setAttribute('aria-hidden', !isVisible);
+    });
+    
+    // Update URL hash without page reload
+    window.history.replaceState(null, null, `#${tabName}`);
+  }
+
+  function enhanceAccessibility() {
+    // Add screen reader only class if not exists
+    if (!document.querySelector('.sr-only')) {
+      const style = document.createElement('style');
+      style.textContent = `
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+    
+    // Add loading state to images
+    document.querySelectorAll('.match-avatar').forEach(avatar => {
+      const imgUrl = avatar.style.backgroundImage.replace(/url\(['"]?(.*?)['"]?\)/, '$1');
+      if (imgUrl && imgUrl !== 'none') {
+        const img = new Image();
+        img.src = imgUrl;
+        img.onload = () => {
+          avatar.classList.remove('loading');
+        };
+        img.onerror = () => {
+          avatar.classList.add('loading');
+          avatar.style.backgroundImage = 'none';
+        };
+        avatar.classList.add('loading');
+      } else {
+        avatar.classList.add('loading');
+        avatar.style.backgroundImage = 'none';
+      }
+    });
+  }
+
+  function markNotificationViewed(userId, type) {
+    let endpoint = '';
+    
+    if (type === 'like') {
+      endpoint = `/api/like/viewed/${userId}/`;
+    } else if (type === 'mutual') {
+      endpoint = `/api/mutual-match/viewed/${userId}/`;
+    } else {
+      // For blocked type, just redirect
+      window.location.href = `/profile/${userId}/`;
+      return;
+    }
+    
+    fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'Content-Type': 'application/json',
+      },
+    }).then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        // Update the badge counts immediately
+        updateBadgeCounts();
+        // Then redirect to the profile
+        setTimeout(() => {
+          window.location.href = `/profile/${userId}/`;
+        }, 100);
+      } else {
+        // If API fails, still redirect but don't update count
+        window.location.href = `/profile/${userId}/`;
+      }
+    })
+    .catch(error => {
+      console.error('Error marking notification as viewed:', error);
+      // Still redirect even if API call fails
+      window.location.href = `/profile/${userId}/`;
+    });
+  }
+
+  function updateBadgeCounts() {
+    // Show loading state
+    const loadingState = document.getElementById('loading-state');
+    loadingState.style.display = 'block';
+    
+    // Fetch updated counts from server
+    fetch('/api/likes-counts/')
+      .then(response => response.json())
+      .then(data => {
+        // Update badge elements with new counts
+        const mutualBadge = document.getElementById('mutual-badge');
+        const likesBadge = document.getElementById('likes-badge');
+        const likedBadge = document.getElementById('liked-badge');
+        const blockedBadge = document.getElementById('blocked-badge');
+        
+        if (mutualBadge) {
+          mutualBadge.textContent = data.mutual;
+          mutualBadge.setAttribute('aria-label', `${data.mutual} mutual matches`);
+        }
+        if (likesBadge) {
+          likesBadge.textContent = data.likes_received;
+          likesBadge.setAttribute('aria-label', `${data.likes_received} likes received`);
+        }
+        if (likedBadge) {
+          likedBadge.textContent = data.liked;
+          likedBadge.setAttribute('aria-label', `${data.liked} profiles liked`);
+        }
+        if (blockedBadge) {
+          blockedBadge.textContent = data.blocked;
+          blockedBadge.setAttribute('aria-label', `${data.blocked} blocked profiles`);
+        }
+        
+        // Hide badges if count is 0
+        ['mutual', 'likes', 'liked', 'blocked'].forEach(type => {
+          const badge = document.getElementById(`${type}-badge`);
+          if (badge && badge.textContent === '0') {
+            badge.style.display = 'none';
+          } else if (badge) {
+            badge.style.display = 'inline-block';
+          }
+        });
+
+        // Update global notification badge in header if it exists
+        const totalBadge = document.querySelector('.notification-badge, .nav-badge');
+        if (totalBadge) {
+          totalBadge.textContent = data.total;
+          if (data.total === 0) {
+            totalBadge.style.display = 'none';
+          } else {
+            totalBadge.style.display = 'flex';
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Error updating badge counts:', error);
+        showNotification('Error updating match counts', 'error');
+      })
+      .finally(() => {
+        loadingState.style.display = 'none';
+      });
+  }
+
+  function sendMessage(userName) {
+    // Show notification
+    showNotification(`Opening chat with ${userName}`);
+    // In a real app, this would open a chat window
+    // window.location.href = `/chat/${userId}/`;
+  }
+
+  function likeBack(userId) {
+    const button = document.querySelector(`.like-back-btn[data-user-id="${userId}"]`);
+    if (button) {
+      button.disabled = true;
+      button.innerHTML = `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg> Liking...`;
+    }
+    
+    // Like the user back (this would create a mutual match)
+    fetch(`/api/like/${userId}/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        showNotification('Liked back! You now have a mutual match!', 'success');
+        // Update counts and reload the tab after delay
+        setTimeout(() => {
+          updateBadgeCounts();
+          // Remove the card from "Likes You" tab
+          const card = document.querySelector(`.match-card[data-user-id="${userId}"]`);
+          if (card) {
+            card.style.opacity = '0';
+            card.style.transform = 'translateX(-100%)';
+            setTimeout(() => {
+              card.remove();
+              // Check if empty state should be shown
+              const tab = document.getElementById('likes-you-tab');
+              const cards = tab.querySelectorAll('.match-card');
+              if (cards.length === 0) {
+                const emptyState = document.getElementById('empty-likes-you');
+                if (emptyState) emptyState.classList.add('show');
+              }
+            }, 300);
+          }
+        }, 1000);
+      } else {
+        showNotification('Error liking back', 'error');
+        if (button) {
+          button.disabled = false;
+          button.innerHTML = `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg> Like Back`;
+        }
+      }
+    })
+    .catch(error => {
+      console.error('Error liking back:', error);
+      showNotification('Error liking back', 'error');
+      if (button) {
+        button.disabled = false;
+        button.innerHTML = `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg> Like Back`;
+      }
+    });
+  }
+
+  function unblockUser(userId) {
+    const button = document.querySelector(`.unblock-btn[data-user-id="${userId}"]`);
+    const card = document.querySelector(`.match-card[data-user-id="${userId}"]`);
+    
+    if (button) {
+      button.disabled = true;
+      button.innerHTML = `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6"/><path d="M9 9l6 6"/></svg> Unblocking...`;
+    }
+    
+    fetch(`/api/unblock/${userId}/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        showNotification('User unblocked successfully', 'success');
+        
+        // Remove the card from UI
+        if (card) {
+          card.style.opacity = '0';
+          card.style.transform = 'translateX(-100%)';
+          setTimeout(() => {
+            card.remove();
+            
+            // Update blocked badge count
+            const blockedBadge = document.getElementById('blocked-badge');
+            if (blockedBadge) {
+              const currentCount = parseInt(blockedBadge.textContent);
+              blockedBadge.textContent = Math.max(0, currentCount - 1);
+              if (blockedBadge.textContent === '0') {
+                blockedBadge.style.display = 'none';
+              }
+            }
+            
+            // Check if empty state should be shown
+            const tab = document.getElementById('blocked-tab');
+            const cards = tab.querySelectorAll('.match-card');
+            if (cards.length === 0) {
+              const emptyState = document.getElementById('empty-blocked');
+              if (emptyState) emptyState.classList.add('show');
+            }
+          }, 300);
+        }
+      } else {
+        showNotification(data.message || 'Error unblocking user', 'error');
+        if (button) {
+          button.disabled = false;
+          button.innerHTML = `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6"/><path d="M9 9l6 6"/></svg> Unblock`;
+        }
+      }
+    })
+    .catch(error => {
+      console.error('Error unblocking user:', error);
+      showNotification('Error unblocking user', 'error');
+      if (button) {
+        button.disabled = false;
+        button.innerHTML = `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6"/><path d="M9 9l6 6"/></svg> Unblock`;
+      }
+    });
+  }
+
+  function viewProfile(userId) {
+    window.location.href = `/profile/${userId}/`;
+  }
+
+  function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    document.querySelectorAll('.notification').forEach(n => n.remove());
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.setAttribute('role', 'alert');
+    notification.setAttribute('aria-live', 'polite');
+    notification.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.remove()" aria-label="Close notification">&times;</button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 3000);
+  }
+
+  // Check URL hash for tab selection on page load
+  function checkHash() {
+    const hash = window.location.hash.substring(1);
+    const validTabs = ['mutual', 'likes-you', 'you-liked', 'blocked'];
+    if (validTabs.includes(hash)) {
+      switchTab(hash);
+    }
+  }
+
+  // Listen for hash changes
+  window.addEventListener('hashchange', checkHash);
+
+  // Initial setup
+  checkHash();
+  updateBadgeCounts();
+</script>
+{% endblock %}

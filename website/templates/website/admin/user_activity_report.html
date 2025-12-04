@@ -1,0 +1,197 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+.activity-report {
+    margin: 20px 0;
+}
+.user-header {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+.user-header h2 {
+    margin-top: 0;
+}
+.stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.stat-item {
+    background: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    min-width: 150px;
+}
+.stat-value {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+}
+.stat-label {
+    color: #7f8c8d;
+    font-size: 0.9em;
+}
+.activity-table {
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+.activity-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.activity-table th {
+    background: #3498db;
+    color: white;
+    padding: 12px 15px;
+    text-align: left;
+}
+.activity-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+}
+.activity-table tr:hover {
+    background: #f8f9fa;
+}
+.activity-type {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+.type-login { background: #d4edda; color: #155724; }
+.type-message { background: #d1ecf1; color: #0c5460; }
+.type-like { background: #fff3cd; color: #856404; }
+.type-block { background: #f8d7da; color: #721c24; }
+.type-profile { background: #e2e3e5; color: #383d41; }
+.type-date { background: #d6d8db; color: #1b1e21; }
+.export-buttons {
+    margin: 20px 0;
+    display: flex;
+    gap: 10px;
+}
+.export-buttons a {
+    display: inline-block;
+    padding: 10px 15px;
+    background: #27ae60;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+}
+.export-buttons a:hover {
+    background: #219653;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="activity-report">
+    <div class="user-header">
+        <h2>📋 User Activity Report</h2>
+        <p>
+            Showing activities for 
+            {% if users.count == 1 %}
+                user: <strong>{{ users.first.username }}</strong> ({{ users.first.email }})
+            {% else %}
+                {{ users.count }} selected users
+            {% endif %}
+        </p>
+    </div>
+
+    {% if users.count == 1 %}
+    <div class="stats">
+        <div class="stat-item">
+            <div class="stat-value">{{ logs.count }}</div>
+            <div class="stat-label">Total Activities</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ logs|slice:":100"|length }}</div>
+            <div class="stat-label">Showing (max 100)</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ logs|slice:":1"|first|date:"Y-m-d"|default:"-" }}</div>
+            <div class="stat-label">First Activity</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ logs|last|date:"Y-m-d"|default:"-" }}</div>
+            <div class="stat-label">Last Activity</div>
+        </div>
+    </div>
+
+    <div class="export-buttons">
+        <a href="{% url 'export_user_data_detail' users.first.id %}" target="_blank">
+            📥 Export Complete User Data (JSON)
+        </a>
+        <a href="{% url 'admin:website_useractivitylog_changelist' %}?user__id__exact={{ users.first.id }}">
+            🔍 View All Activities in Admin
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="activity-table">
+        <h3>Recent Activities</h3>
+        {% if logs %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Activity Type</th>
+                    <th>Target User</th>
+                    <th>IP Address</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activity in logs %}
+                <tr>
+                    <td>{{ activity.created_at|date:"Y-m-d H:i:s" }}</td>
+                    <td>
+                        <span class="activity-type type-{{ activity.activity_type|cut:'_' }}">
+                            {{ activity.get_activity_type_display }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if activity.target_user %}
+                            <a href="{% url 'admin:auth_user_change' activity.target_user.id %}">
+                                {{ activity.target_user.username }}
+                            </a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>{{ activity.ip_address|default:"-" }}</td>
+                    <td>
+                        {% if activity.additional_data %}
+                            <small>
+                                {% for key, value in activity.additional_data.items %}
+                                    {{ key }}: {{ value|truncatechars:30 }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </small>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="padding: 20px; text-align: center;">No activity logs found for selected users.</p>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: 20px;">
+        <a href="{% url 'admin:auth_user_changelist' %}" class="button">← Back to Users</a>
+    </div>
+</div>
+{% endblock %}
